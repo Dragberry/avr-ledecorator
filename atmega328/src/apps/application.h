@@ -16,7 +16,7 @@ public:
 
 	Application& operator++ ();
 
-	virtual bool isGoingOn();
+	virtual bool is_going_on();
 
 	virtual void build_image(uint8_t** image);
 

@@ -18,7 +18,7 @@ SnakeGame::~SnakeGame()
 	delete snake;
 }
 
-bool SnakeGame::isGoingOn()
+bool SnakeGame::is_going_on()
 {
 	return state && snake->getLength() < 10;
 }
