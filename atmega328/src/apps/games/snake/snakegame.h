@@ -11,6 +11,9 @@ private:
 	bool isImageBuilt;
 	uint8_t height;
 	uint8_t width;
+	uint8_t color_field;
+	uint8_t color_snake;
+	uint8_t color_food;
 
 	Snake* snake;
 	Food* food;
@@ -24,7 +27,13 @@ protected:
 	void onAction();
 
 public:
-	SnakeGame(uint8_t height, uint8_t width);
+	SnakeGame(
+			uint8_t height,
+			uint8_t width,
+			uint8_t color_field,
+			uint8_t color_snake,
+			uint8_t color_food
+			);
 
 	~SnakeGame();
 

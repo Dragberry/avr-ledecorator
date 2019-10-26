@@ -2,11 +2,20 @@
 #include <stdlib.h>
 #include "../../../screen/color.h"
 
-SnakeGame::SnakeGame(uint8_t height, uint8_t width)
+SnakeGame::SnakeGame(
+		uint8_t height,
+		uint8_t width,
+		uint8_t color_field,
+		uint8_t color_snake,
+		uint8_t color_food
+		)
 {
 	this->isImageBuilt = false;
 	this->height = height;
 	this->width = width;
+	this->color_field = color_field;
+	this->color_snake = color_snake;
+	this->color_food = color_food;
 	this->snake = new Snake(height, width, 4, Direction::Right);
 	this->food = NULL;
 	this->state = true;
@@ -20,7 +29,7 @@ SnakeGame::~SnakeGame()
 
 bool SnakeGame::is_going_on()
 {
-	return state && snake->getLength() < 10;
+	return state && snake->getLength() < height;
 }
 
 void SnakeGame::placeFood()
@@ -67,11 +76,11 @@ void SnakeGame::build_image(uint8_t** image)
 {
 	if (isImageBuilt)
 	{
-		image[food->y][food->x] = CYAN;
+		image[food->y][food->x] = color_food;
 		SnakeSection *head = snake->getHead();
-		image[head->y][head->x] = CYAN;
+		image[head->y][head->x] = color_snake;
 		SnakeSection *tail = snake->getTail();
-		image[tail->y][tail->x] = RED;
+		image[tail->y][tail->x] = color_field;
 	}
 	else
 	{
@@ -79,8 +88,18 @@ void SnakeGame::build_image(uint8_t** image)
 		{
 			for (uint8_t cell = 0; cell < width; cell++)
 			{
-				image[row][cell] =
-						snake->isHere(row, cell) || food->isHere(row, cell) ? CYAN : RED;
+				if (snake->isHere(row, cell))
+				{
+					image[row][cell] = color_snake;
+				}
+				else if (food->isHere(row, cell))
+				{
+					image[row][cell] = color_food;
+				}
+				else
+				{
+					image[row][cell] = color_field;
+				}
 			}
 		}
 		isImageBuilt = true;

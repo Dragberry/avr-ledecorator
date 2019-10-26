@@ -1,6 +1,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "screen/defenitions.h"
 #include "screen/color.h"
@@ -94,10 +95,6 @@ void init_screen()
 	for (uint8_t row = 0; row < SCREEN_HEIGHT; row++)
 	{
 		buffer[row] = new uint8_t[SCREEN_WIDTH];
-		for (uint8_t cell = 0; cell < SCREEN_WIDTH; cell++)
-		{
-			buffer[row][cell] = RED;
-		}
 	}
 }
 
@@ -122,7 +119,7 @@ void init_screen_timer()
 
 void init_app()
 {
-	app = new SnakeGame(SCREEN_HEIGHT, SCREEN_WIDTH);
+	app = new SnakeGame(SCREEN_HEIGHT, SCREEN_WIDTH, BLUE, YELLOW, RED);
 }
 
 void init_app_timer()
@@ -149,8 +146,6 @@ void setup()
 	init_SPI();
 	init_screen();
 	init_screen_timer();
-	init_app();
-	init_app_timer();
 //	USART_init(UBRR);
 	sei();
 }
@@ -171,9 +166,34 @@ void send_SPI(const uint8_t data)
 	while (!(SPSR & (1<<SPIF)));
 }
 
+void stop_app_timer() {
+	TCCR1B = 0;
+	TIMSK1 &= ~(1 << OCIE1A);
+	OCR1A = 0;
+}
+
+void stop_app() {
+	stop_app_timer();
+	delete app;
+	app = NULL;
+}
+
+void clear_screen() {
+	for (uint8_t row = 0; row < SCREEN_HEIGHT; row++) {
+		for (uint8_t cell = 0; cell < SCREEN_WIDTH; cell++) {
+			buffer[row][cell] = 0;
+		}
+	}
+}
 
 void loop()
 {
+	init_app();
+	init_app_timer();
+	while (app->is_going_on());
+	stop_app_timer();
+	stop_app();
+	clear_screen();
 //	uint8_t data = USART_receive();
 //	for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
 //	{
@@ -193,7 +213,6 @@ void loop()
 int main()
 {
 	setup();
-	reset_SPI();
 	while(1)
 	{
 		loop();
