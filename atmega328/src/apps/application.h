@@ -10,7 +10,6 @@ protected:
 	uint16_t time;
 
 	virtual void increment() = 0;
-	virtual void onAction() = 0;
 
 public:
 	virtual ~Application();
@@ -19,7 +18,7 @@ public:
 
 	virtual bool isGoingOn();
 
-	virtual void buildImage(uint8_t** image) = 0;
+	virtual void build_image(uint8_t** image);
 
 };
 

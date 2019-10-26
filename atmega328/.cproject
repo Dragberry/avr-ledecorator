@@ -109,15 +109,17 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="life|games|apps|common|screen|src|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+                        <entry excluding="snake|life|games|apps|common|screen|src|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
                         						
                         <entry excluding="apps|common|screen|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
                         						
                         <entry excluding="games" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
                         						
-                        <entry excluding="life" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games"/>
+                        <entry excluding="snake|life" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games/life"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games/snake"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/common"/>
                         						
@@ -239,15 +241,17 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="life|games|apps|common|screen|src|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+                        <entry excluding="snake|life|games|apps|common|screen|src|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
                         						
                         <entry excluding="apps|common|screen|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
                         						
                         <entry excluding="games" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
                         						
-                        <entry excluding="life" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games"/>
+                        <entry excluding="snake|life" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games/life"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games/snake"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/common"/>
                         						
