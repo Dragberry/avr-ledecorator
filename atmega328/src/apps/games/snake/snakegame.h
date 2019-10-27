@@ -37,7 +37,7 @@ public:
 
 	~SnakeGame();
 
-	bool is_going_on();
+	bool is_running();
 
 	void build_image(uint8_t** image);
 };

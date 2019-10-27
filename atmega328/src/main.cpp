@@ -9,6 +9,7 @@
 #include "screen/row.h"
 #include "apps/application.h"
 #include "apps/games/snake/snakegame.h"
+#include "apps/games/life/lifegame.h"
 
 #define FCPU 20000000UL
 #define USART_BAUDRATE  9600UL
@@ -119,7 +120,9 @@ void init_screen_timer()
 
 void init_app()
 {
-	app = new SnakeGame(SCREEN_HEIGHT, SCREEN_WIDTH, BLUE, YELLOW, RED);
+
+//	app = new SnakeGame(SCREEN_HEIGHT, SCREEN_WIDTH, BLUE, YELLOW, RED);
+	app = new LifeGame(YELLOW, BLUE);
 }
 
 void init_app_timer()
@@ -190,7 +193,7 @@ void loop()
 {
 	init_app();
 	init_app_timer();
-	while (app->is_going_on());
+	while (app->is_running());
 	stop_app_timer();
 	stop_app();
 	clear_screen();
