@@ -109,9 +109,9 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="snake|life|games|apps|common|screen|src|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+                        <entry excluding="snake|common|games|processors|life|apps|screen|src|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
                         						
-                        <entry excluding="apps|common|screen|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+                        <entry excluding="common|apps|screen|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
                         						
                         <entry excluding="games" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
                         						
@@ -125,7 +125,9 @@
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/data"/>
                         						
-                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen"/>
+                        <entry excluding="processors" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen/processors"/>
                         					
                     </sourceEntries>
                     				
@@ -241,9 +243,9 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="snake|life|games|apps|common|screen|src|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+                        <entry excluding="snake|common|games|processors|life|apps|screen|src|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
                         						
-                        <entry excluding="apps|common|screen|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+                        <entry excluding="common|apps|screen|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
                         						
                         <entry excluding="games" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
                         						
@@ -257,7 +259,9 @@
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/data"/>
                         						
-                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen"/>
+                        <entry excluding="processors" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen/processors"/>
                         					
                     </sourceEntries>
                     				

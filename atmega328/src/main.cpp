@@ -7,6 +7,10 @@
 #include "screen/color.h"
 #include "screen/section.h"
 #include "screen/row.h"
+#include "screen/processors/buffer.h"
+#include "screen/processors/processor.h"
+#include "screen/processors/fillscreenprocessor.h"
+#include "screen/processors/defaultscreenprocessor.h"
 #include "apps/application.h"
 #include "apps/games/snake/snakegame.h"
 #include "apps/games/life/lifegame.h"
@@ -34,9 +38,8 @@
 //
 //const uint8_t DIGITS[10] = { D_0, D_1, D_2, D_3, D_4, D_5, D_6, D_7, D_8, D_9 };
 
-uint8_t** buffer;
 
-Application* app;
+//Application* app;
 
 void setup();
 
@@ -92,11 +95,7 @@ void init_SPI()
 
 void init_screen()
 {
-	buffer = new uint8_t*[SCREEN_HEIGHT];
-	for (uint8_t row = 0; row < SCREEN_HEIGHT; row++)
-	{
-		buffer[row] = new uint8_t[SCREEN_WIDTH];
-	}
+
 }
 
 void init_screen_timer()
@@ -122,25 +121,25 @@ void init_app()
 {
 
 //	app = new SnakeGame(SCREEN_HEIGHT, SCREEN_WIDTH, BLUE, YELLOW, RED);
-	app = new LifeGame(YELLOW, BLUE);
+//	app = new LifeGame(YELLOW, BLUE);
 }
 
 void init_app_timer()
 {
-	// CTC
-	TCCR1A |= (0<<WGM10);
-	TCCR1A |= (0<<WGM11);
-	TCCR1B |= (1<<WGM12);
-	TCCR1B |= (0<<WGM13);
-	// 000 - f
-	// 100 - f/256
-	// 101 - f/1024
-	TCCR1B |= (1<<CS12);
-	TCCR1B |= (0<<CS11);
-	TCCR1B |= (0<<CS10);
-	TIMSK1 |= (1<<OCIE1A);
-	// 0.2s
-	OCR1A = 0x3D09;
+//	// CTC
+//	TCCR1A |= (0<<WGM10);
+//	TCCR1A |= (0<<WGM11);
+//	TCCR1B |= (1<<WGM12);
+//	TCCR1B |= (0<<WGM13);
+//	// 000 - f
+//	// 100 - f/256
+//	// 101 - f/1024
+//	TCCR1B |= (1<<CS12);
+//	TCCR1B |= (0<<CS11);
+//	TCCR1B |= (0<<CS10);
+//	TIMSK1 |= (1<<OCIE1A);
+//	// 0.2s
+//	OCR1A = 0x3D09;
 }
 
 void setup()
@@ -176,27 +175,19 @@ void stop_app_timer() {
 }
 
 void stop_app() {
-	stop_app_timer();
-	delete app;
-	app = NULL;
-}
-
-void clear_screen() {
-	for (uint8_t row = 0; row < SCREEN_HEIGHT; row++) {
-		for (uint8_t cell = 0; cell < SCREEN_WIDTH; cell++) {
-			buffer[row][cell] = 0;
-		}
-	}
+//	stop_app_timer();
+//	delete app;
+//	app = NULL;
 }
 
 void loop()
 {
-	init_app();
-	init_app_timer();
-	while (app->is_running());
-	stop_app_timer();
-	stop_app();
-	clear_screen();
+//	init_app();
+//	init_app_timer();
+//	while (app->is_running());
+//	stop_app_timer();
+//	stop_app();
+//	clear_screen();
 //	uint8_t data = USART_receive();
 //	for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
 //	{
@@ -213,12 +204,23 @@ void loop()
 //	}
 }
 
+Buffer* buffer = new Buffer();
+
+Processor* processors[2] =
+{
+	new DefaultScreenProcessor(),
+    new FillScreenProcessor()
+};
+
+Processor* processor = processors[0];
+
 int main()
 {
 	setup();
 	while(1)
 	{
-		loop();
+		processor->process(buffer);
+//		loop();
 	}
 	return 0;
 }
@@ -252,7 +254,7 @@ Row row = Row();
 
 void draw()
 {
-	app->build_image(buffer);
+//	app->build_image(buffer);
 }
 
 // row timer, 20ms
@@ -260,6 +262,10 @@ ISR(TIMER0_COMPA_vect)
 {
 	if (row.step == 0)
 	{
+		if (row.index == 0)
+		{
+			buffer->start_reading();
+		}
 		row.reset();
 		for (uint8_t sectionIdx = 0; sectionIdx < SECTIONS; sectionIdx++)
 		{
@@ -276,7 +282,7 @@ ISR(TIMER0_COMPA_vect)
 				uint8_t pictureX = (W_SECTION * sectionColumnIdx);
 				for (uint8_t xOffset = 0; xOffset < W_SECTION; xOffset++)
 				{
-					uint8_t value = buffer[pictureY][pictureX + xOffset];
+					uint8_t value = buffer->active_buffer[pictureY][pictureX + xOffset];
 					applyColors(row.sections[sectionIdx], value, xOffset);
 				}
 			}
@@ -290,7 +296,7 @@ ISR(TIMER0_COMPA_vect)
 				uint8_t pictureX = (W_SECTION * sectionColumnIdx);
 				for (uint8_t xOffset = 0; xOffset < W_SECTION; xOffset++)
 				{
-					uint8_t value = buffer[pictureY][pictureX + MAX_PIXEL_IDX_IN_SEGMENT - xOffset];
+					uint8_t value = buffer->active_buffer[pictureY][pictureX + MAX_PIXEL_IDX_IN_SEGMENT - xOffset];
 					applyColors(row.sections[sectionIdx], value, xOffset);
 				}
 			}
@@ -315,6 +321,10 @@ ISR(TIMER0_COMPA_vect)
 		PORTC = row.low;
 		PORTB = row.high;
 
+		if (row.index == 7)
+		{
+			buffer->stop_reading();
+		}
 
 	}
 	else
@@ -445,8 +455,8 @@ ISR(TIMER0_COMPA_vect)
 
 // app timer, 200ms
 ISR(TIMER1_COMPA_vect) {
-	++(*app);
-	draw();
+//	++(*app);
+//	draw();
 }
 
 ISR(USART_TX_vect) {
