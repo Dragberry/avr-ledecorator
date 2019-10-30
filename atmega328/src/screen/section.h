@@ -2,14 +2,15 @@
 #define SECTION_H_
 
 #include <avr/io.h>
-#include "color.h"
+
+#include "colors.h"
 
 class Section
 {
 public:
-	Color red;
-	Color green;
-	Color blue;
+	Colors red;
+	Colors green;
+	Colors blue;
 
 	void reset()
 	{

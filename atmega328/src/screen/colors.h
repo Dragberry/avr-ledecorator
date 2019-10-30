@@ -1,5 +1,5 @@
-#ifndef COLOR_H_
-#define COLOR_H_
+#ifndef COLORS_H_
+#define COLORS_H_
 
 #include <stdint.h>
 
@@ -12,7 +12,7 @@
 #define MAGENTA RED | BLUE
 #define WHITE RED | GREEN | BLUE
 
-class Color
+class Colors
 {
 public:
 	uint8_t level0;
@@ -30,4 +30,4 @@ public:
 };
 
 
-#endif /* COLOR_H_ */
+#endif /* COLORS_H_ */

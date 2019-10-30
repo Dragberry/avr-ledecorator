@@ -1,5 +1,5 @@
-#ifndef DEFENITIONS_H_
-#define DEFENITIONS_H_
+#ifndef DEFINITIONS_H_
+#define DEFINITIONS_H_
 
 #define W_SECTION 8
 #define MAX_PIXEL_IDX_IN_SEGMENT (W_SECTION - 1)

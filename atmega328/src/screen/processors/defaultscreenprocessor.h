@@ -1,88 +1,271 @@
 #ifndef DEFAULTSCREENPROCESSOR_H_
 #define DEFAULTSCREENPROCESSOR_H_
 
-#include "buffer.h"
 #include "processor.h"
-#include "../color.h"
+#include "../colors.h"
+#include "screen.h"
+
+#define ORANGE 0b00000111
 
 class DefaultScreenProcessor : public Processor
 {
 private:
-	uint16_t state = 0;
+	uint8_t state = 0;
+
+	uint8_t pumpkin_color = ORANGE;
+	uint8_t fire_color = YELLOW;
 
 public:
-	uint8_t process(Buffer* buffer)
+	uint8_t process(Screen* screen)
 	{
 		for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
 		{
 			for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
 			{
-				// 512 / 32
-				uint8_t xx = state % SCREEN_WIDTH;
-				// 512 / 32
-				uint8_t yy = state / SCREEN_WIDTH;
-
-				buffer->buffer[y][x] = BLUE;
-				buffer->buffer[yy][xx] = RED;
-
-//				uint8_t color;
-				for (uint8_t z = 0; z < 64; z++){
-					uint8_t r = xx * yy;
-
-				}
-
-
-
-//				if (state % 2)
-//				{
-//					color = RED;
-//				}
-//				else {
-//					color = YELLOW;
-//				}
-
-//				if (state > 224)
-//				{
-//					color = RED;
-//				}
-//				else if(state > 192)
-//				{
-//					color = YELLOW;
-//				}
-//				else if(state > 160)
-//				{
-//					color = GREEN;
-//				}
-//				else if(state > 128)
-//				{
-//					color = CYAN;
-//				}
-//				else if(state > 96)
-//				{
-//					color = BLUE;
-//				}
-//				else if(state > 64)
-//				{
-//					color = MAGENTA;
-//				}
-//				else if(state > 32)
-//				{
-//					color = WHITE;
-//				}
-//				else
-//				{
-//					color = BLACK;
-//				}
-
-
-//				buffer->buffer[y][x] = color;
+				screen->buffer[y][x] = BLUE;
 			}
 		}
-		if (++state == 512)
+		// 0...31
+		// 15
+		uint8_t** buf = screen->buffer;
+
+		uint8_t row_index = 1;
+		uint8_t* row = buf[row_index++];
+		row[16]=GREEN;
+
+		row = buf[row_index++];
+		row[15]=GREEN;
+
+		row = buf[row_index++];
+		row[11]=pumpkin_color;
+		row[12]=pumpkin_color;
+		row[13]=pumpkin_color;
+		row[14]=pumpkin_color;
+		row[15]=pumpkin_color;
+		row[16]=pumpkin_color;
+		row[17]=pumpkin_color;
+		row[18]=pumpkin_color;
+		row[19]=pumpkin_color;
+
+		row = buf[row_index++];
+		row[9]=pumpkin_color;
+		row[10]=pumpkin_color;
+		row[11]=pumpkin_color;
+		row[12]=pumpkin_color;
+		row[13]=pumpkin_color;
+		row[14]=pumpkin_color;
+		row[15]=pumpkin_color;
+		row[16]=pumpkin_color;
+		row[17]=pumpkin_color;
+		row[18]=pumpkin_color;
+		row[19]=pumpkin_color;
+		row[20]=pumpkin_color;
+		row[21]=pumpkin_color;
+
+		row = buf[row_index++];
+		row[8]=pumpkin_color;
+		row[9]=pumpkin_color;
+		row[10]=pumpkin_color;
+		row[11]=pumpkin_color;
+		row[12]=pumpkin_color;
+		row[13]=pumpkin_color;
+		row[14]=pumpkin_color;
+		row[15]=pumpkin_color;
+		row[16]=pumpkin_color;
+		row[17]=pumpkin_color;
+		row[18]=pumpkin_color;
+		row[19]=pumpkin_color;
+		row[20]=pumpkin_color;
+		row[21]=pumpkin_color;
+		row[22]=pumpkin_color;
+
+		row = buf[row_index++];
+		row[8]=pumpkin_color;
+		row[9]=pumpkin_color;
+		row[10]=pumpkin_color;
+		row[11]=fire_color;
+		row[12]=pumpkin_color;
+		row[13]=pumpkin_color;
+		row[14]=pumpkin_color;
+		row[15]=pumpkin_color;
+		row[16]=pumpkin_color;
+		row[17]=pumpkin_color;
+		row[18]=pumpkin_color;
+		row[19]=fire_color;
+		row[20]=pumpkin_color;
+		row[21]=pumpkin_color;
+		row[22]=pumpkin_color;
+
+		row = buf[row_index++];
+		row[7]=pumpkin_color;
+		row[8]=pumpkin_color;
+		row[9]=pumpkin_color;
+		row[10]=pumpkin_color;
+		row[11]=fire_color;
+		row[12]=fire_color;
+		row[13]=fire_color;
+		row[14]=pumpkin_color;
+		row[15]=pumpkin_color;
+		row[16]=pumpkin_color;
+		row[17]=fire_color;
+		row[18]=fire_color;
+		row[19]=fire_color;
+		row[20]=pumpkin_color;
+		row[21]=pumpkin_color;
+		row[22]=pumpkin_color;
+		row[23]=pumpkin_color;
+
+		row = buf[row_index++];
+		row[7]=pumpkin_color;
+		row[8]=pumpkin_color;
+		row[9]=pumpkin_color;
+		row[10]=pumpkin_color;
+		row[11]=pumpkin_color;
+		row[12]=pumpkin_color;
+		row[13]=pumpkin_color;
+		row[14]=pumpkin_color;
+		row[15]=pumpkin_color;
+		row[16]=pumpkin_color;
+		row[17]=pumpkin_color;
+		row[18]=pumpkin_color;
+		row[19]=pumpkin_color;
+		row[20]=pumpkin_color;
+		row[21]=pumpkin_color;
+		row[22]=pumpkin_color;
+		row[23]=pumpkin_color;
+
+		row = buf[row_index++];
+		row[7]=pumpkin_color;
+		row[8]=pumpkin_color;
+		row[9]=pumpkin_color;
+		row[10]=fire_color;
+		row[11]=pumpkin_color;
+		row[12]=pumpkin_color;
+		row[13]=pumpkin_color;
+		row[14]=pumpkin_color;
+		row[15]=pumpkin_color;
+		row[16]=pumpkin_color;
+		row[17]=pumpkin_color;
+		row[18]=pumpkin_color;
+		row[19]=pumpkin_color;
+		row[20]=fire_color;
+		row[21]=pumpkin_color;
+		row[22]=pumpkin_color;
+		row[23]=pumpkin_color;
+
+		row = buf[row_index++];
+		row[7]=pumpkin_color;
+		row[8]=pumpkin_color;
+		row[9]=pumpkin_color;
+		row[10]=fire_color;
+		row[11]=pumpkin_color;
+		row[12]=fire_color;
+		row[13]=fire_color;
+		row[14]=pumpkin_color;
+		row[15]=fire_color;
+		row[16]=fire_color;
+		row[17]=fire_color;
+		row[18]=pumpkin_color;
+		row[19]=fire_color;
+		row[20]=fire_color;
+		row[21]=pumpkin_color;
+		row[22]=pumpkin_color;
+		row[23]=pumpkin_color;
+
+		row = buf[row_index++];
+		row[7]=pumpkin_color;
+		row[8]=pumpkin_color;
+		row[9]=pumpkin_color;
+		row[10]=fire_color;
+		row[11]=fire_color;
+		row[12]=fire_color;
+		row[13]=fire_color;
+		row[14]=fire_color;
+		row[15]=fire_color;
+		row[16]=fire_color;
+		row[17]=fire_color;
+		row[18]=fire_color;
+		row[19]=fire_color;
+		row[20]=fire_color;
+		row[21]=pumpkin_color;
+		row[22]=pumpkin_color;
+		row[23]=pumpkin_color;
+
+		row = buf[row_index++];
+		row[8]=pumpkin_color;
+		row[9]=pumpkin_color;
+		row[10]=pumpkin_color;
+		row[11]=fire_color;
+		row[12]=pumpkin_color;
+		row[13]=fire_color;
+		row[14]=fire_color;
+		row[15]=fire_color;
+		row[16]=fire_color;
+		row[17]=pumpkin_color;
+		row[18]=fire_color;
+		row[19]=fire_color;
+		row[20]=pumpkin_color;
+		row[21]=pumpkin_color;
+		row[22]=pumpkin_color;
+
+		row = buf[row_index++];
+		row[8]=pumpkin_color;
+		row[9]=pumpkin_color;
+		row[10]=pumpkin_color;
+		row[11]=pumpkin_color;
+		row[12]=pumpkin_color;
+		row[13]=pumpkin_color;
+		row[14]=pumpkin_color;
+		row[15]=pumpkin_color;
+		row[16]=pumpkin_color;
+		row[17]=pumpkin_color;
+		row[18]=pumpkin_color;
+		row[19]=pumpkin_color;
+		row[20]=pumpkin_color;
+		row[21]=pumpkin_color;
+		row[22]=pumpkin_color;
+
+		row = buf[row_index++];
+		row[9]=pumpkin_color;
+		row[10]=pumpkin_color;
+		row[11]=pumpkin_color;
+		row[12]=pumpkin_color;
+		row[13]=pumpkin_color;
+		row[14]=pumpkin_color;
+		row[15]=pumpkin_color;
+		row[16]=pumpkin_color;
+		row[17]=pumpkin_color;
+		row[18]=pumpkin_color;
+		row[19]=pumpkin_color;
+		row[20]=pumpkin_color;
+		row[21]=pumpkin_color;
+
+//		for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
+//		{
+//			for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
+//			{
+//				// 512 / 32
+//				uint8_t xx = state % SCREEN_WIDTH;
+//				// 512 / 32
+//				uint8_t yy = state / SCREEN_WIDTH;
+//
+//				screen->buffer[y][x] = BLUE;
+//				screen->buffer[yy][xx] = RED;
+//
+//
+//			}
+//		}
+//		if (++state == 512)
+//		{
+//			state = 0;
+//		}
+
+		fire_color = state++ > 31 ? YELLOW : BLACK;
+		if (state == 64)
 		{
 			state = 0;
 		}
-		buffer->switch_buffer();
+		screen->switch_buffer();
 		return 0;
 	}
 };

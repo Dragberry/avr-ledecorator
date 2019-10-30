@@ -1,6 +1,7 @@
 #include "snakegame.h"
 #include <stdlib.h>
-#include "../../../screen/color.h"
+
+#include "../../../screen/colors.h"
 
 SnakeGame::SnakeGame(
 		uint8_t height,

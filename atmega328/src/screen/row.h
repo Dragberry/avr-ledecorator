@@ -2,7 +2,8 @@
 #define ROW_H_
 
 #include <stdint.h>
-#include "defenitions.h"
+
+#include "definitions.h"
 #include "section.h"
 
 class Row
