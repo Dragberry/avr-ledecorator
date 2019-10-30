@@ -114,7 +114,7 @@ void init_screen_timer()
 	TCCR0B |= (1<<CS00);
 	TIMSK0 |= (1<<OCIE0A);
 	// 0.2s
-	OCR0A = 0x4;
+	OCR0A = 4;
 }
 
 void init_app()
@@ -257,6 +257,9 @@ void draw()
 //	app->build_image(buffer);
 }
 
+
+uint8_t temp = 1;
+
 // row timer, 20ms
 ISR(TIMER0_COMPA_vect)
 {
@@ -306,6 +309,11 @@ ISR(TIMER0_COMPA_vect)
 		row.low = ~(rows & ROW_L_MASK);
 		row.high = ~((rows >> 6) & ROW_H_MASK);
 
+		if (row.index == ROWS - 1)
+		{
+			buffer->stop_reading();
+		}
+
 		reset_SPI();
 		for (uint8_t sectionIdx = 0; sectionIdx < SECTIONS; sectionIdx++)
 		{
@@ -320,12 +328,6 @@ ISR(TIMER0_COMPA_vect)
 		confirm_SPI();
 		PORTC = row.low;
 		PORTB = row.high;
-
-		if (row.index == 7)
-		{
-			buffer->stop_reading();
-		}
-
 	}
 	else
 	{

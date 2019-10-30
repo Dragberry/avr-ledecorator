@@ -8,7 +8,7 @@
 class DefaultScreenProcessor : public Processor
 {
 private:
-	uint8_t state = 0;
+	uint16_t state = 0;
 
 public:
 	uint8_t process(Buffer* buffer)
@@ -17,45 +17,71 @@ public:
 		{
 			for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
 			{
-				uint8_t color;
-				if (state > 224)
-				{
-					color = RED;
-				}
-				else if(state > 192)
-				{
-					color = YELLOW;
-				}
-				else if(state > 160)
-				{
-					color = GREEN;
-				}
-				else if(state > 128)
-				{
-					color = CYAN;
-				}
-				else if(state > 96)
-				{
-					color = BLUE;
-				}
-				else if(state > 64)
-				{
-					color = MAGENTA;
-				}
-				else if(state > 32)
-				{
-					color = WHITE;
-				}
-				else
-				{
-					color = BLACK;
+				// 512 / 32
+				uint8_t xx = state % SCREEN_WIDTH;
+				// 512 / 32
+				uint8_t yy = state / SCREEN_WIDTH;
+
+				buffer->buffer[y][x] = BLUE;
+				buffer->buffer[yy][xx] = RED;
+
+//				uint8_t color;
+				for (uint8_t z = 0; z < 64; z++){
+					uint8_t r = xx * yy;
+
 				}
 
 
-				buffer->buffer[y][x] = color;
+
+//				if (state % 2)
+//				{
+//					color = RED;
+//				}
+//				else {
+//					color = YELLOW;
+//				}
+
+//				if (state > 224)
+//				{
+//					color = RED;
+//				}
+//				else if(state > 192)
+//				{
+//					color = YELLOW;
+//				}
+//				else if(state > 160)
+//				{
+//					color = GREEN;
+//				}
+//				else if(state > 128)
+//				{
+//					color = CYAN;
+//				}
+//				else if(state > 96)
+//				{
+//					color = BLUE;
+//				}
+//				else if(state > 64)
+//				{
+//					color = MAGENTA;
+//				}
+//				else if(state > 32)
+//				{
+//					color = WHITE;
+//				}
+//				else
+//				{
+//					color = BLACK;
+//				}
+
+
+//				buffer->buffer[y][x] = color;
 			}
 		}
-		state++;
+		if (++state == 512)
+		{
+			state = 0;
+		}
 		buffer->switch_buffer();
 		return 0;
 	}

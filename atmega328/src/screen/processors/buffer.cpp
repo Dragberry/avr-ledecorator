@@ -16,7 +16,7 @@ Buffer::Buffer()
 
 void Buffer::switch_buffer()
 {
-	while (is_reading());
+	while (is_being_read);
 	uint8_t** temp = active_buffer;
 	active_buffer = buffer;
 	buffer = temp;
