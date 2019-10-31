@@ -3,17 +3,18 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "screen/section.h"
-#include "screen/row.h"
-#include "screen/processors/processor.h"
-#include "screen/processors/fillscreenprocessor.h"
-#include "screen/processors/defaultscreenprocessor.h"
 #include "apps/application.h"
 #include "apps/games/snake/snakegame.h"
 #include "apps/games/life/lifegame.h"
 #include "screen/colors.h"
 #include "screen/definitions.h"
+#include "screen/row.h"
+#include "screen/section.h"
 #include "screen/processors/screen.h"
+#include "screen/processors/processor.h"
+#include "screen/processors/fillscreenprocessor.h"
+#include "screen/processors/defaultscreenprocessor.h"
+#include "screen/processors/uartprocessor.h"
 
 #define FCPU 20000000UL
 #define USART_BAUDRATE  9600UL
@@ -45,22 +46,6 @@ void init_USART(uint16_t ubrr)
 	UCSR0C |= (1<<UCSZ01);
 }
 
-void USART_transmit(const uint8_t data)
-{
-	/* Wait for empty transmit buffer */
-	while (!(UCSR0A & (1<<UDRE0)));
-	/* Put data into buffer, sends the data */
-	UDR0 = data;
-}
-
-uint8_t USART_receive()
-{
-	/* Wait for data to be received */
-	while (!(UCSR0A & (1<<RXC0)));
-	/* Get and return received data from buffer */
-	return UDR0;
-}
-
 void init_app()
 {
 
@@ -89,7 +74,7 @@ void init_app_timer()
 void setup()
 {
 	screen = new Screen();
-//	USART_init(UBRR);
+	init_USART(UBRR);
 	sei();
 }
 
@@ -129,8 +114,9 @@ void loop()
 //	}
 }
 
-Processor* processors[2] =
+Processor* processors[3] =
 {
+	new UartProcessor(),
 	new DefaultScreenProcessor(),
     new FillScreenProcessor()
 };

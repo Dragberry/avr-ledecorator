@@ -9,6 +9,11 @@ uint8_t Processor::read_byte()
 	return UDR0;
 }
 
+uint8_t Processor::is_command(uint8_t data)
+{
+	return data & COMMAND_MASK;
+}
+
 uint8_t Processor::read_command()
 {
 	while (1)
