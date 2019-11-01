@@ -1,8 +1,11 @@
 #include "screen.h"
 
-Screen::Screen()
+Screen::Screen(DisplayInterface* display_interface, DataInterface* data_interface, TimerInterface* timer_interface)
 {
-	init_device();
+	this->display_interface = display_interface;
+	this->data_interface = data_interface;
+	this->timer_interface = timer_interface;
+
 	buffer_1 = new uint8_t*[SCREEN_HEIGHT];
 	buffer_2 = new uint8_t*[SCREEN_HEIGHT];
 	for (uint8_t row = 0; row < SCREEN_HEIGHT; row++)
@@ -17,53 +20,15 @@ Screen::Screen()
 
 	current_row = Row();
 	rows_state = 0xFF;
-	launch();
 }
 
-void Screen::init_device()
+inline void Screen::launch()
 {
-	DDRC = ROW_L_MASK;
-	DDRB = ROW_H_MASK;
-
-	SPI_DDR |= (1<<SPI_SS) | (1<<SPI_MOSI) | (1<<SPI_SCK);
-	SPI_PORT |= (1<<SPI_SS);
-	SPCR |= (1<<SPE) | (1<<MSTR);
-	SPSR |= (1<<SPI2X);
+	this->timer_interface->launch();
 }
 
-void Screen::launch()
-{
-	// CTC
-	TCCR0A |= (0<<WGM00);
-	TCCR0A |= (1<<WGM01);
-	TCCR0B |= (0<<WGM02);
-	// 001 - f
-	// 010 - f/8
-	// 011 - f/64
-	// 100 - f/256
-	// 101 - f/1024
-	TCCR0B |= (1<<CS02);
-	TCCR0B |= (0<<CS01);
-	TCCR0B |= (1<<CS00);
-	TIMSK0 |= (1<<OCIE0A);
-	// 0.2s
-	OCR0A = 4;
-}
-
-inline void Screen::start_row()
-{
-	SPI_PORT &= ~(1<<SPI_SS);
-}
-
-inline void Screen::confirm_row()
-{
-	SPI_PORT |= (1<<SPI_SS);
-}
-
-inline void Screen::send_byte(const uint8_t data)
-{
-	SPDR = data;
-	while (!(SPSR & (1<<SPIF)));
+inline void Screen::stop() {
+	this->timer_interface->stop();
 }
 
 void Screen::switch_buffer()
@@ -158,52 +123,52 @@ void Screen::draw_row()
 		{
 			stop_reading();
 		}
-		start_row();
-		send_byte(rows_state);
+		display_interface->start_row();
+		display_interface->send_byte(rows_state);
 		for (uint8_t sectionIdx = 0; sectionIdx < SECTIONS; sectionIdx++)
 		{
 			Section section = current_row.sections[sectionIdx];
-			send_byte(section.red.level0);
-			send_byte(section.green.level0);
-			send_byte(section.blue.level0);
+			display_interface->send_byte(section.red.level0);
+			display_interface->send_byte(section.green.level0);
+			display_interface->send_byte(section.blue.level0);
 		}
-		confirm_row();
+		display_interface->complete_row();
 	}
 	else
 	{
-		start_row();
-		send_byte(rows_state);
+		display_interface->start_row();
+		display_interface->send_byte(rows_state);
 		for (uint8_t sectionIdx = 0; sectionIdx < SECTIONS; sectionIdx++)
 		{
 			Section section = current_row.sections[sectionIdx];
 
 			if (current_row.brightness_step > 2)
 			{
-				send_byte(section.red.level3);
-				send_byte(section.green.level3);
-				send_byte(section.blue.level3);
+				display_interface->send_byte(section.red.level3);
+				display_interface->send_byte(section.green.level3);
+				display_interface->send_byte(section.blue.level3);
 			}
 			else if (current_row.brightness_step > 0)
 			{
-				send_byte(section.red.level2);
-				send_byte(section.green.level2);
-				send_byte(section.blue.level2);
+				display_interface->send_byte(section.red.level2);
+				display_interface->send_byte(section.green.level2);
+				display_interface->send_byte(section.blue.level2);
 			}
 			else if (current_row.brightness_step > 0)
 			{
-				send_byte(section.red.level1);
-				send_byte(section.green.level1);
-				send_byte(section.blue.level1);
+				display_interface->send_byte(section.red.level1);
+				display_interface->send_byte(section.green.level1);
+				display_interface->send_byte(section.blue.level1);
 			}
 			else
 			{
-				send_byte(section.red.level0);
-				send_byte(section.green.level0);
-				send_byte(section.blue.level0);
+				display_interface->send_byte(section.red.level0);
+				display_interface->send_byte(section.green.level0);
+				display_interface->send_byte(section.blue.level0);
 			}
 
 		}
-		confirm_row();
+		display_interface->complete_row();
 	}
 
 	if (++current_row.brightness_step == 4)

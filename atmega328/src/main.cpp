@@ -6,15 +6,12 @@
 #include "apps/application.h"
 #include "apps/games/snake/snakegame.h"
 #include "apps/games/life/lifegame.h"
-#include "screen/colors.h"
-#include "screen/definitions.h"
-#include "screen/row.h"
-#include "screen/section.h"
-#include "screen/processors/screen.h"
-#include "screen/processors/processor.h"
-#include "screen/processors/fillscreenprocessor.h"
-#include "screen/processors/defaultscreenprocessor.h"
-#include "screen/processors/uartprocessor.h"
+#include "screen/atmega328/atmega328interface.h"
+#include "screen/screen.h"
+#include "screen/workers/defaultscreenworker.h"
+#include "screen/workers/fillscreenworker.h"
+#include "screen/workers/uartworker.h"
+#include "screen/workers/worker.h"
 
 #define FCPU 20000000UL
 #define USART_BAUDRATE  9600UL
@@ -27,24 +24,6 @@ Screen* screen;
 void setup();
 
 void loop();
-
-void init_USART(uint16_t ubrr)
-{
-	UBRR0H = (uint8_t) (ubrr >> 8);
-	UBRR0L = (uint8_t) ubrr;
-
-	//	UCSR0B |= (1<<TXEN0);
-	//	UCSR0B |= (1<<TXCIE0);
-
-	UCSR0B |= (1<<RXEN0);
-	UCSR0B |= (1<<RXCIE0);
-
-	// 1 stop bit
-	UCSR0C |= (0<<USBS0);
-	// 8 bit
-	UCSR0C |= (1<<UCSZ00);
-	UCSR0C |= (1<<UCSZ01);
-}
 
 void init_app()
 {
@@ -73,9 +52,9 @@ void init_app_timer()
 
 void setup()
 {
-	screen = new Screen();
-	init_USART(UBRR);
-	sei();
+	Atmega328Interface* m328 = new Atmega328Interface(UBRR);
+	screen = new Screen(m328, m328, m328);
+	m328->launch();
 }
 
 void stop_app_timer() {
@@ -114,21 +93,21 @@ void loop()
 //	}
 }
 
-Processor* processors[1] =
+Worker* workers[1] =
 {
 //	new UartProcessor(),
-	new DefaultScreenProcessor()
+	new DefaultScreenWorker()
 //    new FillScreenProcessor()
 };
 
-Processor* processor = processors[0];
+Worker* worker = workers[0];
 
 int main()
 {
 	setup();
 	while(1)
 	{
-		processor->process(screen);
+		worker->do_work(screen);
 //		loop();
 	}
 	return 0;

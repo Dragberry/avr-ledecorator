@@ -1,9 +1,9 @@
-#include "processor.h"
-#include "screen.h"
+#include "../screen.h"
+#include "../workers/worker.h"
 
-class FillScreenProcessor : public Processor
+class FillScreenWorker : public Worker
 {
-	uint8_t process(Screen* screen)
+	uint8_t do_work(Screen* screen)
     {
         uint8_t data = read_byte();
         for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)

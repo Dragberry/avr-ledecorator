@@ -1,20 +1,20 @@
-#include "processor.h"
 #include <avr/io.h>
+#include "worker.h"
 
-Processor::~Processor() {}
+Worker::~Worker() {}
 
-uint8_t Processor::read_byte()
+uint8_t Worker::read_byte()
 {
 	while (!(UCSR0A & (1<<RXC0)));
 	return UDR0;
 }
 
-uint8_t Processor::is_command(uint8_t data)
+uint8_t Worker::is_command(uint8_t data)
 {
 	return data & COMMAND_MASK;
 }
 
-uint8_t Processor::read_command()
+uint8_t Worker::read_command()
 {
 	while (1)
 	{

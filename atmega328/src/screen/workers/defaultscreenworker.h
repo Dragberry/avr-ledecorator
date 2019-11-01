@@ -1,13 +1,13 @@
-#ifndef DEFAULTSCREENPROCESSOR_H_
-#define DEFAULTSCREENPROCESSOR_H_
+#ifndef DEFAULTSCREENWORKER_H_
+#define DEFAULTSCREENWORKER_H_
 
-#include "processor.h"
 #include "../colors.h"
-#include "screen.h"
+#include "../screen.h"
+#include "worker.h"
 
 #define ORANGE 0b00000111
 
-class DefaultScreenProcessor : public Processor
+class DefaultScreenWorker : public Worker
 {
 private:
 	uint8_t state = 0;
@@ -16,7 +16,7 @@ private:
 	uint8_t fire_color = YELLOW;
 
 public:
-	uint8_t process(Screen* screen)
+	uint8_t do_work(Screen* screen)
 	{
 		for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
 		{

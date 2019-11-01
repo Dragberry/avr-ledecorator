@@ -109,7 +109,7 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="snake|common|games|processors|life|apps|screen|src|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+                        <entry excluding="snake|workers|common|interfaces|games|atmega328|life|apps|screen|src|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
                         						
                         <entry excluding="common|apps|screen|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
                         						
@@ -125,9 +125,13 @@
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/data"/>
                         						
-                        <entry excluding="processors" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen"/>
+                        <entry excluding="workers|interfaces|atmega328" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen"/>
                         						
-                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen/processors"/>
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen/atmega328"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen/interfaces"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen/workers"/>
                         					
                     </sourceEntries>
                     				
@@ -243,7 +247,7 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="snake|common|games|processors|life|apps|screen|src|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+                        <entry excluding="snake|workers|common|interfaces|games|atmega328|life|apps|screen|src|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
                         						
                         <entry excluding="common|apps|screen|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
                         						
@@ -259,9 +263,13 @@
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/data"/>
                         						
-                        <entry excluding="processors" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen"/>
+                        <entry excluding="workers|interfaces|atmega328" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen"/>
                         						
-                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen/processors"/>
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen/atmega328"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen/interfaces"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen/workers"/>
                         					
                     </sourceEntries>
                     				

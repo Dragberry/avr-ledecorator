@@ -1,10 +1,10 @@
-#ifndef UARTPROCESSOR_H_
-#define UARTPROCESSOR_H_
+#ifndef UARTWORKER_H_
+#define UARTWORKER_H_
 
-#include "processor.h"
 #include "../colors.h"
+#include "../workers/worker.h"
 
-class UartProcessor : public Processor
+class UartWorker : public Worker
 {
 
 private:
@@ -12,7 +12,7 @@ private:
 	uint8_t x = 0;
 
 public:
-	uint8_t process(Screen* screen)
+	uint8_t do_work(Screen* screen)
 	{
 		uint8_t skip = 0;
 		uint8_t** buffer = screen->buffer;

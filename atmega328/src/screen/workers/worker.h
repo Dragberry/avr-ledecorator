@@ -1,9 +1,9 @@
-#ifndef PROCESSOR_H_
-#define PROCESSOR_H_
+#ifndef WORKER_H_
+#define WORKER_H_
 
 #include <stdint.h>
 #include "../definitions.h"
-#include "screen.h"
+#include "../screen.h"
 
 #define COMMAND_MASK 0b01000000
 
@@ -12,12 +12,12 @@
 #define CMD_CLEAR_SCREEN '@' // 0b0100 0000
 #define CMD_FILL_SCREEN 'A' // 0b0100 0001
 
-class Processor
+class Worker
 {
 public:
-	virtual ~Processor();
+	virtual ~Worker();
 
-    virtual uint8_t process(Screen* screen) = 0;
+    virtual uint8_t do_work(Screen* screen) = 0;
 
     uint8_t read_byte();
 
