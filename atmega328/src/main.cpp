@@ -114,11 +114,11 @@ void loop()
 //	}
 }
 
-Processor* processors[3] =
+Processor* processors[1] =
 {
-	new UartProcessor(),
-	new DefaultScreenProcessor(),
-    new FillScreenProcessor()
+//	new UartProcessor(),
+	new DefaultScreenProcessor()
+//    new FillScreenProcessor()
 };
 
 Processor* processor = processors[0];

@@ -15,7 +15,8 @@ Screen::Screen()
 
 	is_being_read = 0;
 
-	row = Row();
+	current_row = Row();
+	rows_state = 0xFF;
 	launch();
 }
 
@@ -110,19 +111,19 @@ void Screen::apply_colors(Section& section, const uint8_t color, const uint8_t o
 
 void Screen::draw_row()
 {
-	if (row.step == 0)
+	if (current_row.brightness_step == 0)
 	{
-		if (row.index == 0)
+		if (current_row.index == 0)
 		{
 			start_reading();
 		}
-		row.reset();
+		current_row.reset();
 		for (uint8_t sectionIdx = 0; sectionIdx < SECTIONS; sectionIdx++)
 		{
 			// 0,1,2,3,4,5,6,7...
 			uint8_t sectionRowIdx = sectionIdx / SECTIONS_PER_ROW;
 			// 0,0,0,0,1,1,1,1...
-			uint8_t pictureY = (H_SECTION * sectionRowIdx) + row.index;
+			uint8_t pictureY = (H_SECTION * sectionRowIdx) + current_row.index;
 			if (sectionRowIdx % 2 == 0) {
 				// not-inverted
 				// sectionRowIdx: 0
@@ -133,7 +134,7 @@ void Screen::draw_row()
 				for (uint8_t xOffset = 0; xOffset < W_SECTION; xOffset++)
 				{
 					uint8_t value = active_buffer[pictureY][pictureX + xOffset];
-					apply_colors(row.sections[sectionIdx], value, xOffset);
+					apply_colors(current_row.sections[sectionIdx], value, xOffset);
 				}
 			}
 			else
@@ -147,55 +148,48 @@ void Screen::draw_row()
 				for (uint8_t xOffset = 0; xOffset < W_SECTION; xOffset++)
 				{
 					uint8_t value = active_buffer[pictureY][pictureX + MAX_PIXEL_IDX_IN_SEGMENT - xOffset];
-					apply_colors(row.sections[sectionIdx], value, xOffset);
+					apply_colors(current_row.sections[sectionIdx], value, xOffset);
 				}
 			}
 
 		}
-		uint8_t rows = (1<<row.index);
-		row.low = ~(rows & ROW_L_MASK);
-		row.high = ~((rows >> 6) & ROW_H_MASK);
-
-		if (row.index == ROWS - 1)
+		rows_state = ~(1<<current_row.index);
+		if (current_row.index == ROWS - 1)
 		{
 			stop_reading();
 		}
-
 		start_row();
+		send_byte(rows_state);
 		for (uint8_t sectionIdx = 0; sectionIdx < SECTIONS; sectionIdx++)
 		{
-			Section section = row.sections[sectionIdx];
+			Section section = current_row.sections[sectionIdx];
 			send_byte(section.red.level0);
 			send_byte(section.green.level0);
 			send_byte(section.blue.level0);
 		}
-
-		PORTC = ROW_L_MASK;
-		PORTB = ROW_H_MASK;
 		confirm_row();
-		PORTC = row.low;
-		PORTB = row.high;
 	}
 	else
 	{
 		start_row();
+		send_byte(rows_state);
 		for (uint8_t sectionIdx = 0; sectionIdx < SECTIONS; sectionIdx++)
 		{
-			Section section = row.sections[sectionIdx];
+			Section section = current_row.sections[sectionIdx];
 
-			if (row.step > 2)
+			if (current_row.brightness_step > 2)
 			{
 				send_byte(section.red.level3);
 				send_byte(section.green.level3);
 				send_byte(section.blue.level3);
 			}
-			else if (row.step > 0)
+			else if (current_row.brightness_step > 0)
 			{
 				send_byte(section.red.level2);
 				send_byte(section.green.level2);
 				send_byte(section.blue.level2);
 			}
-			else if (row.step > 0)
+			else if (current_row.brightness_step > 0)
 			{
 				send_byte(section.red.level1);
 				send_byte(section.green.level1);
@@ -209,19 +203,15 @@ void Screen::draw_row()
 			}
 
 		}
-		PORTC = ROW_L_MASK;
-		PORTB = ROW_H_MASK;
 		confirm_row();
-		PORTC = row.low;
-		PORTB = row.high;
 	}
 
-	if (++row.step == 4)
+	if (++current_row.brightness_step == 4)
 	{
-		row.reset();
-		if (++row.index == ROWS)
+		current_row.reset();
+		if (++current_row.index == ROWS)
 		{
-			row.index = 0;
+			current_row.index = 0;
 		}
 	}
 }

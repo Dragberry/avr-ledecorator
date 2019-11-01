@@ -21,7 +21,9 @@ private:
 
 	volatile uint8_t is_being_read;
 
-	Row row;
+	Row current_row;
+
+	uint8_t rows_state;
 
 	void init_device();
 
