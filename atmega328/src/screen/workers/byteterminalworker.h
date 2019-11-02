@@ -6,10 +6,6 @@
 
 class ByteTerminalWorker : public Worker
 {
-private:
-	uint8_t y = 0;
-	uint8_t x = 0;
-
 public:
 	uint8_t do_work(Screen* screen)
 	{
@@ -22,14 +18,14 @@ public:
 			for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
 			{
 				uint8_t data = (cr && lf) ? BLACK : data_interface->get_data_byte();
-//				if (data & 0b01000000)
-//				{
-//					uint8_t command = data & 0b00111111;
-//					if (command < 2)
-//					{
-//						return command;
-//					}
-//				}
+				if (data & 0b01000000)
+				{
+					uint8_t command = data & 0b00111111;
+					if (command < TOTAL_WORKERS)
+					{
+						return command;
+					}
+				}
 				buffer[7][x] = data & (1<<0) ? data : BLACK;
 				buffer[6][x] = data & (1<<1) ? data : BLACK;
 				buffer[5][x] = data & (1<<2) ? data : BLACK;

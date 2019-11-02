@@ -18,10 +18,10 @@
 #define UBRR ((FCPU / (USART_BAUDRATE * 16UL)) - 1)
 
 Screen* screen;
-Worker* workers[1] =
+Worker* workers[TOTAL_WORKERS] =
 {
-		new ByteTerminalWorker(),
-//		new DefaultWorker(),
+	new DefaultWorker(),
+	new ByteTerminalWorker()
 };
 Worker* worker = workers[0];
 

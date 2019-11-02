@@ -9,15 +9,22 @@ class DefaultWorker : public Worker
 public:
 	uint8_t do_work(Screen* screen)
 	{
+		DataInterface* data_interface = screen->data_interface;
 		while (1)
 		{
-			uint8_t data = screen->data_interface->get_data_byte();
-			if (data & 0b01000000)
+			for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
 			{
-				uint8_t command = data & 0b00111111;
-				if (command < 2)
+				for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
 				{
-					return command;
+					uint8_t data = data_interface->get_data_byte();
+					if (data & 0b01000000)
+					{
+						uint8_t command = data & 0b00111111;
+						if (command < TOTAL_WORKERS)
+						{
+							return command;
+						}
+					}
 				}
 			}
 		}

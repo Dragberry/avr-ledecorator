@@ -106,13 +106,13 @@ void Screen::draw_row()
 			{
 				// inverted
 				// sectionRowIdx: 1
-				uint8_t sectionColumnIdx = MAX_SECTION_IDX_IN_ROW - (sectionIdx % SECTIONS_PER_ROW);
+				uint8_t sectionColumnIdx = SECTIONS_PER_ROW - 1 - (sectionIdx % SECTIONS_PER_ROW);
 				// sectionColumnIdx: 3,2,1,0
 				// pictureY: 8,9,10,11,12,13,14,15
 				uint8_t pictureX = (W_SECTION * sectionColumnIdx);
 				for (uint8_t xOffset = 0; xOffset < W_SECTION; xOffset++)
 				{
-					uint8_t value = active_buffer[pictureY][pictureX + MAX_PIXEL_IDX_IN_SEGMENT - xOffset];
+					uint8_t value = active_buffer[pictureY][pictureX + W_SECTION - 1 - xOffset];
 					apply_colors(current_row.sections[sectionIdx], value, xOffset);
 				}
 			}
