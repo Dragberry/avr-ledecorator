@@ -18,24 +18,11 @@ class Atmega328Interface :
 		public DisplayInterface,
 		public TimerInterface
 {
-public:
-	Atmega328Interface(uint8_t ubrr)
-	{
-		SPI_DDR |= (1<<SPI_SS) | (1<<SPI_MOSI) | (1<<SPI_SCK);
-		SPI_PORT |= (1<<SPI_SS);
-		SPCR |= (1<<SPE) | (1<<MSTR);
-		SPSR |= (1<<SPI2X);
+private:
+	const uint8_t ubrr;
 
-		UBRR0H = (uint8_t) (ubrr >> 8);
-		UBRR0L = (uint8_t) ubrr;
-		UCSR0B |= (1<<RXEN0);
-		UCSR0B |= (1<<RXCIE0);
-		// 1 stop bit
-		UCSR0C |= (0<<USBS0);
-		// 8 bit
-		UCSR0C |= (1<<UCSZ00);
-		UCSR0C |= (1<<UCSZ01);
-	}
+public:
+	Atmega328Interface(uint8_t ubrr) : ubrr(ubrr) {}
 
 	inline void start_row()
 	{
@@ -66,6 +53,21 @@ public:
 
 	inline void launch()
 	{
+		SPI_DDR |= (1<<SPI_SS) | (1<<SPI_MOSI) | (1<<SPI_SCK);
+		SPI_PORT |= (1<<SPI_SS);
+		SPCR |= (1<<SPE) | (1<<MSTR);
+		SPSR |= (1<<SPI2X);
+
+
+		UBRR0H = (uint8_t) (ubrr >> 8);
+		UBRR0L = (uint8_t) ubrr;
+		UCSR0B |= (1<<RXEN0);
+		// 1 stop bit
+		UCSR0C |= (0<<USBS0);
+		// 8 bit
+		UCSR0C |= (1<<UCSZ00);
+		UCSR0C |= (1<<UCSZ01);
+
 		// CTC
 		TCCR0A |= (0<<WGM00);
 		TCCR0A |= (1<<WGM01);

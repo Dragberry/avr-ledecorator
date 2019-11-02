@@ -1,5 +1,5 @@
-#ifndef DEFAULTSCREENWORKER_H_
-#define DEFAULTSCREENWORKER_H_
+#ifndef PUMPKINSCREENWORKER_H_
+#define PUMPKINSCREENWORKER_H_
 
 #include "../colors.h"
 #include "../screen.h"
@@ -7,13 +7,13 @@
 
 #define ORANGE 0b00000111
 
-class DefaultScreenWorker : public Worker
+class PumpkinScreenWorker : public Worker
 {
 private:
 	uint8_t state = 0;
 
 	uint8_t pumpkin_color = ORANGE;
-	uint8_t fire_color = YELLOW;
+	uint8_t fire_color = 0b00000111;
 
 public:
 	uint8_t do_work(Screen* screen)
@@ -22,14 +22,14 @@ public:
 		{
 			for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
 			{
-				screen->buffer[y][x] = BLUE;
+				screen->buffer[y][x] = 0b00000100;
 			}
 		}
 		// 0...31
 		// 15
 		uint8_t** buf = screen->buffer;
 
-		uint8_t row_index = 1;
+		uint8_t row_index = 0;
 		uint8_t* row = buf[row_index++];
 		row[16]=GREEN;
 
@@ -239,6 +239,19 @@ public:
 		row[19]=pumpkin_color;
 		row[20]=pumpkin_color;
 		row[21]=pumpkin_color;
+
+		row = buf[row_index++];
+		row[10]=pumpkin_color;
+		row[11]=pumpkin_color;
+		row[12]=pumpkin_color;
+		row[13]=pumpkin_color;
+		row[14]=pumpkin_color;
+		row[15]=pumpkin_color;
+		row[16]=pumpkin_color;
+		row[17]=pumpkin_color;
+		row[18]=pumpkin_color;
+		row[19]=pumpkin_color;
+		row[20]=pumpkin_color;
 
 //		for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
 //		{

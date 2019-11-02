@@ -8,9 +8,9 @@
 #include "apps/games/life/lifegame.h"
 #include "screen/atmega328/atmega328interface.h"
 #include "screen/screen.h"
-#include "screen/workers/defaultscreenworker.h"
-#include "screen/workers/fillscreenworker.h"
-#include "screen/workers/uartworker.h"
+#include "screen/workers/byteterminalworker.h"
+#include "screen/workers/defaultworker.h"
+#include "screen/workers/pumpkinscreenworker.h"
 #include "screen/workers/worker.h"
 
 #define FCPU 20000000UL
@@ -18,37 +18,12 @@
 #define UBRR ((FCPU / (USART_BAUDRATE * 16UL)) - 1)
 
 Screen* screen;
-
-//Application* app;
-
-void setup();
-
-void loop();
-
-void init_app()
+Worker* workers[1] =
 {
-
-//	app = new SnakeGame(SCREEN_HEIGHT, SCREEN_WIDTH, BLUE, YELLOW, RED);
-//	app = new LifeGame(YELLOW, BLUE);
-}
-
-void init_app_timer()
-{
-//	// CTC
-//	TCCR1A |= (0<<WGM10);
-//	TCCR1A |= (0<<WGM11);
-//	TCCR1B |= (1<<WGM12);
-//	TCCR1B |= (0<<WGM13);
-//	// 000 - f
-//	// 100 - f/256
-//	// 101 - f/1024
-//	TCCR1B |= (1<<CS12);
-//	TCCR1B |= (0<<CS11);
-//	TCCR1B |= (0<<CS10);
-//	TIMSK1 |= (1<<OCIE1A);
-//	// 0.2s
-//	OCR1A = 0x3D09;
-}
+		new ByteTerminalWorker(),
+//		new DefaultWorker(),
+};
+Worker* worker = workers[0];
 
 void setup()
 {
@@ -57,71 +32,15 @@ void setup()
 	m328->launch();
 }
 
-void stop_app_timer() {
-	TCCR1B = 0;
-	TIMSK1 &= ~(1 << OCIE1A);
-	OCR1A = 0;
-}
-
-void stop_app() {
-//	stop_app_timer();
-//	delete app;
-//	app = NULL;
-}
-
-void loop()
-{
-//	init_app();
-//	init_app_timer();
-//	while (app->is_running());
-//	stop_app_timer();
-//	stop_app();
-//	clear_screen();
-//	uint8_t data = USART_receive();
-//	for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
-//	{
-//		for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
-//		{
-//			uint8_t data = 0;
-//			do
-//			{
-//				data = USART_receive();
-//			} while(data == '\r' || data == '\n');
-//
-//			buffer[y][x] = data;
-//		}
-//	}
-}
-
-Worker* workers[1] =
-{
-//	new UartProcessor(),
-	new DefaultScreenWorker()
-//    new FillScreenProcessor()
-};
-
-Worker* worker = workers[0];
-
 int main()
 {
 	setup();
 	while(1)
 	{
-		worker->do_work(screen);
-//		loop();
+		worker = workers[worker->do_work(screen)];
 	}
-	return 0;
 }
 
-void draw()
-{
-//	app->build_image(buffer);
-}
-
-
-uint8_t temp = 1;
-
-// row timer, 20ms
 ISR(TIMER0_COMPA_vect)
 {
 	screen->draw_row();
@@ -202,19 +121,3 @@ ISR(TIMER0_COMPA_vect)
 //		}
 //	}
 //}
-
-// app timer, 200ms
-ISR(TIMER1_COMPA_vect) {
-//	++(*app);
-//	draw();
-}
-
-ISR(USART_TX_vect) {
-
-}
-
-ISR(USART_RX_vect) {
-//	while (!(UCSR0A & (1<<RXC0)));
-//	uint8_t temp = UDR0;
-//	PORTC = temp;
-}

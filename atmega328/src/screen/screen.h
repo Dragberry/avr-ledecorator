@@ -13,10 +13,6 @@
 class Screen
 {
 private:
-	DataInterface* data_interface;
-	DisplayInterface* display_interface;
-	TimerInterface* timer_interface;
-
 	uint8_t** buffer_1;
 	uint8_t** buffer_2;
 
@@ -31,6 +27,10 @@ private:
 	void apply_colors(Section& section, const uint8_t color, const uint8_t offset);
 
 public:
+	DataInterface* data_interface;
+	DisplayInterface* display_interface;
+	TimerInterface* timer_interface;
+
 	uint8_t** buffer;
 	uint8_t** active_buffer;
 
