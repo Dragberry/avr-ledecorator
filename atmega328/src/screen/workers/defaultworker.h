@@ -25,8 +25,13 @@ public:
 							return command;
 						}
 					}
+					else
+					{
+						screen.buffer[y][x] = data;
+					}
 				}
 			}
+			screen.switch_buffer();
 		}
 	}
 
