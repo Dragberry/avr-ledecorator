@@ -7,9 +7,9 @@
 class DefaultWorker : public Worker
 {
 public:
-	uint8_t do_work(Screen* screen)
+	uint8_t do_work(Screen& screen)
 	{
-		DataInterface* data_interface = screen->data_interface;
+		const DataInterface* data_interface = screen.data_interface;
 		while (1)
 		{
 			for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)

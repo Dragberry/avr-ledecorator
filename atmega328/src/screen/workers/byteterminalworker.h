@@ -7,14 +7,14 @@
 class ByteTerminalWorker : public Worker
 {
 public:
-	uint8_t do_work(Screen* screen)
+	uint8_t do_work(Screen& screen)
 	{
 		while (1)
 		{
-			DataInterface* data_interface = screen->data_interface;
+			const DataInterface* data_interface = screen.data_interface;
 			uint8_t cr = 0;
 			uint8_t lf = 0;
-			uint8_t** buffer = screen->buffer;
+			uint8_t** buffer = screen.buffer;
 			for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
 			{
 				uint8_t data = (cr && lf) ? BLACK : data_interface->get_data_byte();
@@ -61,7 +61,7 @@ public:
 					row[x] = BLACK;
 				}
 			}
-			screen->switch_buffer();
+			screen.switch_buffer();
 		}
 	}
 

@@ -17,7 +17,7 @@ class Worker
 public:
 	virtual ~Worker() {}
 
-    virtual uint8_t do_work(Screen* screen) = 0;
+    virtual uint8_t do_work(Screen& screen) = 0;
 };
 
 #endif

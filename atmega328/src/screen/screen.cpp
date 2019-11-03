@@ -1,11 +1,15 @@
 #include "screen.h"
 
-Screen::Screen(DisplayInterface* display_interface, DataInterface* data_interface, TimerInterface* timer_interface)
-{
-	this->display_interface = display_interface;
-	this->data_interface = data_interface;
-	this->timer_interface = timer_interface;
+Screen::Screen(
+		const CoreInterface* core_interface,
+		const DataInterface* data_interface,
+		const DisplayInterface* display_interface
+		) :
+		core_interface(core_interface),
+		data_interface(data_interface),
+		display_interface(display_interface)
 
+{
 	buffer_1 = new uint8_t*[SCREEN_HEIGHT];
 	buffer_2 = new uint8_t*[SCREEN_HEIGHT];
 	for (uint8_t row = 0; row < SCREEN_HEIGHT; row++)
@@ -22,13 +26,13 @@ Screen::Screen(DisplayInterface* display_interface, DataInterface* data_interfac
 	rows_state = 0xFF;
 }
 
-inline void Screen::launch()
+void Screen::launch()
 {
-	this->timer_interface->launch();
+	core_interface->launch();
 }
 
-inline void Screen::stop() {
-	this->timer_interface->stop();
+void Screen::stop() {
+	core_interface->stop();
 }
 
 void Screen::switch_buffer()

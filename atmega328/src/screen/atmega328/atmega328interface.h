@@ -3,9 +3,10 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+
+#include "../interfaces/coreinterface.h"
 #include "../interfaces/datainterface.h"
 #include "../interfaces/displayinterface.h"
-#include "../interfaces/timerinterface.h"
 
 #define SPI_DDR DDRB
 #define SPI_PORT PORTB
@@ -16,7 +17,7 @@
 class Atmega328Interface :
 		public DataInterface,
 		public DisplayInterface,
-		public TimerInterface
+		public CoreInterface
 {
 private:
 	const uint8_t ubrr;
@@ -24,34 +25,34 @@ private:
 public:
 	Atmega328Interface(uint8_t ubrr) : ubrr(ubrr) {}
 
-	inline void start_row()
+	inline void start_row() const
 	{
 		SPI_PORT &= ~(1<<SPI_SS);
 	}
 
-	inline void send_byte(const uint8_t byte)
+	inline void send_byte(const uint8_t byte) const
 	{
 		SPDR = byte;
 		while (!(SPSR & (1<<SPIF)));
 	}
 
-	inline void complete_row()
+	inline void complete_row()  const
 	{
 		SPI_PORT |= (1<<SPI_SS);
 	}
 
-	inline uint8_t get_data_byte()
+	inline uint8_t get_data_byte() const
 	{
 		while (!(UCSR0A & (1<<RXC0)));
 		return UDR0;
 	}
 
-	inline void send_data_byte(const uint8_t byte)
+	inline void send_data_byte(const uint8_t byte) const
 	{
 
 	}
 
-	inline void launch()
+	inline void launch() const
 	{
 		SPI_DDR |= (1<<SPI_SS) | (1<<SPI_MOSI) | (1<<SPI_SCK);
 		SPI_PORT |= (1<<SPI_SS);
@@ -87,7 +88,7 @@ public:
 		sei();
 	}
 
-	inline void stop()
+	inline void stop() const
 	{
 		TIMSK0 &= ~(1<<OCIE0A);
 	}

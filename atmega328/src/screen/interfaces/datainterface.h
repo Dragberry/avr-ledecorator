@@ -8,9 +8,9 @@ class DataInterface
 public:
 	virtual ~DataInterface() {}
 
-	virtual void send_data_byte(const uint8_t byte) = 0;
+	virtual void send_data_byte(const uint8_t byte) const = 0;
 
-	virtual uint8_t get_data_byte() = 0;
+	virtual uint8_t get_data_byte() const = 0;
 };
 
 #endif
