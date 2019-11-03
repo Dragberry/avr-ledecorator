@@ -2,6 +2,7 @@
 #include <avr/interrupt.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <util/delay.h>
 
 #define FCPU 20000000UL
 #define USART_BAUDRATE  9600UL
@@ -30,22 +31,37 @@ int main()
 	PORTC |= (1<<PC0) | (1<<PC1);
 	while(1)
 	{
+//		for (uint8_t y = 0; y < 16; y++)
+//		{
+//			for (uint8_t x = 0; x < 32; x++)
+//			{
+//				send_byte(0b00001111);
+//			}
+//		}
+		_delay_ms(500);
+		send_byte(0b01000000);
 		for (uint8_t y = 0; y < 16; y++)
 		{
 			for (uint8_t x = 0; x < 32; x++)
 			{
-				send_byte(0b00001111);
+				send_byte(0b00111111);
 			}
 		}
-
+		_delay_ms(500);
+		send_byte(0b01000000);
 		for (uint8_t y = 0; y < 16; y++)
 		{
 			for (uint8_t x = 0; x < 32; x++)
 			{
-				send_byte(0b00110011);
+				send_byte(0b00001100);
 			}
 		}
 	}
 
 	return 0;
 }
+
+//ISR(TIMER0_COMPA_vect)
+//{
+//	screen.draw_row();
+//}
