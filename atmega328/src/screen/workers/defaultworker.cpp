@@ -5,6 +5,7 @@ int8_t Screen::DefaultWorker::do_work()
 {
 	while (1)
 	{
+		uint8_t(*buffer)[SCREEN_WIDTH] = screen.buffer;
 		for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
 		{
 			for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
@@ -20,7 +21,7 @@ int8_t Screen::DefaultWorker::do_work()
 				}
 				else
 				{
-					screen.buffer[y][x] = data;
+					buffer[y][x] = data;
 				}
 			}
 		}
