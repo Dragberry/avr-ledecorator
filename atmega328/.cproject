@@ -61,6 +61,8 @@
                                 								
                                 <option id="de.innot.avreclipse.compiler.option.optimize.716371575" name="Optimization Level" superClass="de.innot.avreclipse.compiler.option.optimize" useByScannerDiscovery="false" value="de.innot.avreclipse.compiler.optimize.one" valueType="enumerated"/>
                                 								
+                                <option id="de.innot.avreclipse.compiler.option.optimize.packstruct.888958801" name="Pack structs (-fpack-struct)" superClass="de.innot.avreclipse.compiler.option.optimize.packstruct" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+                                								
                                 <inputType id="de.innot.avreclipse.compiler.winavr.input.1790341959" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
                                 							
                             </tool>
@@ -72,6 +74,8 @@
                                 <option id="de.innot.avreclipse.cppcompiler.option.optimize.345783446" name="Optimization Level" superClass="de.innot.avreclipse.cppcompiler.option.optimize" useByScannerDiscovery="false" value="de.innot.avreclipse.cppcompiler.optimize.one" valueType="enumerated"/>
                                 								
                                 <option id="de.innot.avreclipse.cppcompiler.option.otherflags.74101840" name="Other flags" superClass="de.innot.avreclipse.cppcompiler.option.otherflags" useByScannerDiscovery="false" value="-std=c++11" valueType="string"/>
+                                								
+                                <option id="de.innot.avreclipse.cppcompiler.option.optimize.packstruct.1637285570" superClass="de.innot.avreclipse.cppcompiler.option.optimize.packstruct" useByScannerDiscovery="false" value="false" valueType="boolean"/>
                                 								
                                 <inputType id="de.innot.avreclipse.cppcompiler.input.1482163993" superClass="de.innot.avreclipse.cppcompiler.input"/>
                                 							

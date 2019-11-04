@@ -29,6 +29,10 @@ int main()
 
 	DDRC |= (1<<PC0) | (1<<PC1);
 	PORTC |= (1<<PC0) | (1<<PC1);
+
+	uint8_t temp = 0;
+	uint8_t color_1 = 0b00110000;
+	uint8_t color_2 = 0b00001111;
 	while(1)
 	{
 //		for (uint8_t y = 0; y < 16; y++)
@@ -40,21 +44,29 @@ int main()
 //		}
 		_delay_ms(500);
 		send_byte(0b01000000);
-		for (uint8_t y = 0; y < 16; y++)
+		for (uint8_t y = 0; y < 8; y++)
 		{
 			for (uint8_t x = 0; x < 32; x++)
 			{
-				send_byte(0b00111111);
+				send_byte(color_1);
 			}
 		}
-		_delay_ms(500);
-		send_byte(0b01000000);
-		for (uint8_t y = 0; y < 16; y++)
+		for (uint8_t y = 8; y < 16; y++)
 		{
 			for (uint8_t x = 0; x < 32; x++)
 			{
-				send_byte(0b00001100);
+				send_byte(color_2);
 			}
+		}
+		if (temp % 2)
+		{
+			color_1 = 0b00110000;
+			color_2 = 0b00000011;
+		}
+		else
+		{
+			color_1 = 0b00001100;
+			color_2 = 0b00110011;
 		}
 	}
 
