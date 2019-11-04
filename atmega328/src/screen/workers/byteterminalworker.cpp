@@ -2,7 +2,7 @@
 #include "../commands.h"
 #include "../screen.h"
 
-int8_t Screen::ByteTerminalWorker::do_work()
+uint8_t Screen::ByteTerminalWorker::do_work()
 {
 	while (1)
 	{

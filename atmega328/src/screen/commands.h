@@ -5,8 +5,8 @@
 
 #define CR '\r'
 #define LF '\n'
-#define CMD_STOP -1
-#define CMD_DEFAULT '@' // 0b0100 0000
-#define CMD_FILL_SCREEN 'A' // 0b0100 0001
+#define CMD_STOP 63
+#define CMD_DEFAULT 0 		// @
+#define CMD_FILL_SCREEN 1 	// 1
 
 #endif

@@ -1,8 +1,6 @@
 #ifndef SECTION_H_
 #define SECTION_H_
 
-#include <avr/io.h>
-
 #include "colors.h"
 
 class Section

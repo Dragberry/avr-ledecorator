@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include "../screen.h"
 
-int8_t Screen::DefaultWorker::do_work()
+uint8_t Screen::DefaultWorker::do_work()
 {
 	while (1)
 	{

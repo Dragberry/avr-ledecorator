@@ -27,6 +27,7 @@ private:
 
 	volatile uint8_t is_being_read;
 
+
 	class Worker
 	{
 	protected:
@@ -38,24 +39,27 @@ private:
 	public:
 		virtual ~Worker() {}
 
-		virtual int8_t do_work() = 0;
+		virtual uint8_t do_work() = 0;
 	};
+
 
 	class DefaultWorker : public Worker
 	{
 	public:
 		DefaultWorker(Screen& screen, const DataInterface& data_interface) : Worker(screen, data_interface) {}
 
-		int8_t do_work();
+		uint8_t do_work();
 	};
+
 
 	class ByteTerminalWorker : public Worker
 	{
 	public:
 		ByteTerminalWorker(Screen& screen, const DataInterface& data_interface) : Worker(screen, data_interface) {}
 
-		int8_t do_work();
+		uint8_t do_work();
 	};
+
 
 	Worker* const workers[TOTAL_WORKERS];
 	Worker* worker;

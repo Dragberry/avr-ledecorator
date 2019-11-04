@@ -27,7 +27,7 @@ void Screen::launch()
 	core_interface.launch();
 	while(1)
 	{
-		int8_t result = worker->do_work();
+		uint8_t result = worker->do_work();
 		if (result == CMD_STOP)
 		{
 			return;

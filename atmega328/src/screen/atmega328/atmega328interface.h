@@ -44,7 +44,9 @@ public:
 	inline uint8_t get_data_byte() const
 	{
 		while (!(UCSR0A & (1<<RXC0)));
-		return UDR0;
+		uint8_t byte = UDR0;
+		UDR0 = 0;
+		return byte;
 	}
 
 	inline void send_data_byte(const uint8_t byte) const
@@ -62,7 +64,9 @@ public:
 
 		UBRR0H = (uint8_t) (ubrr >> 8);
 		UBRR0L = (uint8_t) ubrr;
+		UCSR0A |= U2X0;
 		UCSR0B |= (1<<RXEN0);
+		UCSR0B |= (1<<TXEN0);
 		// 1 stop bit
 		UCSR0C |= (0<<USBS0);
 		// 8 bit
