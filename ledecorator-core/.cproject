@@ -71,6 +71,8 @@
                                 								
                                 <option id="de.innot.avreclipse.cppcompiler.option.optimize.1186323944" name="Optimization Level" superClass="de.innot.avreclipse.cppcompiler.option.optimize" useByScannerDiscovery="false" value="de.innot.avreclipse.cppcompiler.optimize.one" valueType="enumerated"/>
                                 								
+                                <option id="de.innot.avreclipse.cppcompiler.option.otherflags.1476053301" superClass="de.innot.avreclipse.cppcompiler.option.otherflags" useByScannerDiscovery="false" value="-std=c++11 " valueType="string"/>
+                                								
                                 <inputType id="de.innot.avreclipse.cppcompiler.input.542242850" superClass="de.innot.avreclipse.cppcompiler.input"/>
                                 							
                             </tool>
@@ -107,9 +109,19 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+                        <entry excluding="common|screen|life|games|apps|src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
                         						
-                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+                        <entry excluding="common|screen|apps" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+                        						
+                        <entry excluding="games" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
+                        						
+                        <entry excluding="life" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games/life"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/common"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen"/>
                         					
                     </sourceEntries>
                     				
@@ -225,9 +237,19 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+                        <entry excluding="common|screen|life|games|apps|src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
                         						
-                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+                        <entry excluding="common|screen|apps" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+                        						
+                        <entry excluding="games" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
+                        						
+                        <entry excluding="life" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games/life"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/common"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen"/>
                         					
                     </sourceEntries>
                     				
@@ -296,5 +318,7 @@
     </storageModule>
     	
     <storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+    	
+    <storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
     
 </cproject>

@@ -4,29 +4,77 @@
 #include <stdlib.h>
 #include <util/delay.h>
 
+#include "apps/application.h"
+#include "apps/games/life/lifegame.h"
+
 #define FCPU 20000000UL
 #define USART_BAUDRATE  115200UL
 //#define UBRR ((FCPU / (USART_BAUDRATE * 16UL)) - 1)
 #define UBRR 1
 
-void send_byte(const uint8_t data)
+struct ScreenInterface
 {
-	uint8_t error = 0;
-	do
-	{
-		while (!(UCSR0A & (1<<UDRE0)));
-		UDR0 = data;
-		while (!(UCSR0A & (1<<RXC0)));
-		error = UDR0;
-	}
-	while (error);
-}
+	volatile uint8_t is_image_being_transmitted = 0;
+	volatile uint8_t is_last_byte_confirmed = 1;
+	uint8_t buffer_1[SCREEN_HEIGHT][SCREEN_WIDTH];
+	uint8_t buffer_2[SCREEN_HEIGHT][SCREEN_WIDTH];
+	uint8_t(*active_buffer)[SCREEN_WIDTH] = buffer_1;
+	uint8_t(*buffer)[SCREEN_WIDTH] = buffer_2;
 
-int main()
+	uint8_t y;
+	uint8_t x;
+
+	inline void swith_buffer()
+	{
+		uint8_t(*temp)[SCREEN_WIDTH] = active_buffer;
+		active_buffer = buffer;
+		buffer = temp;
+	}
+
+	inline void start()
+	{
+		UDR0 = 0b01000000;
+		is_last_byte_confirmed = 0;
+		is_image_being_transmitted = 1;
+	}
+
+	inline void send()
+	{
+		is_last_byte_confirmed = 0;
+		UDR0 = active_buffer[y][x];
+		if (++x == SCREEN_WIDTH)
+		{
+			x = 0;
+			if (++y == SCREEN_HEIGHT)
+			{
+				y = 0;
+				is_image_being_transmitted = 0;
+			}
+		}
+	}
+
+	inline uint8_t on_confirmed()
+	{
+		is_last_byte_confirmed = 1;
+		return UDR0;
+	}
+};
+
+ScreenInterface screen_interface;
+
+LifeGame life_game = LifeGame(0b00001100, 0b00000011);
+
+Application* app = &life_game;
+
+void setup()
 {
+	DDRC = 0xf;
+
 	UBRR0H = (uint8_t) (UBRR >> 8);
 	UBRR0L = (uint8_t) UBRR;
 	UCSR0A |= U2X0;
+
+	UCSR0B |= (1<<RXCIE0);
 	UCSR0B |= (1<<RXEN0);
 	UCSR0B |= (1<<TXEN0);
 	// 1 stop bit
@@ -36,43 +84,92 @@ int main()
 	UCSR0C |= (1<<UCSZ01);
 
 
-	uint8_t temp = 0;
-	uint8_t color_1 = 0b00001100;
-	uint8_t color_2 = 0b00110011;
-	while(1)
-	{
-//		_delay_ms(500);
-		send_byte(0b01000000);
-		for (uint8_t y = 0; y < 8; y++)
-		{
-			for (uint8_t x = 0; x < 32; x++)
-			{
-				send_byte(color_1);
-			}
-		}
-		for (uint8_t y = 8; y < 16; y++)
-		{
-			for (uint8_t x = 0; x < 32; x++)
-			{
-				send_byte(color_2);
-			}
-		}
-		if (++temp % 2)
-		{
-			color_1 = 0b00110000;
-			color_2 = 0b00000011;
-		}
-		else
-		{
-			color_1 = 0b00001100;
-			color_2 = 0b00110011;
-		}
-	}
+	// CTC
+	TCCR1A |= (0<<WGM10);
+	TCCR1A |= (0<<WGM11);
+	TCCR1B |= (1<<WGM12);
+	TCCR1B |= (0<<WGM13);
+	// 000 - f
+	// 100 - f/256
+	// 101 - f/1024
+	TCCR1B |= (1<<CS12);
+	TCCR1B |= (0<<CS11);
+	TCCR1B |= (1<<CS10);
+	TIMSK1 |= (1<<OCIE1A);
+	// 10s - f/1024 - 0x2faf0
+	// 1s - f/1024 - 0x4C4B
+	// 1/4s - f/1024 - 0x1313
+	// 1/16s - f/1024 - 0x4C5
+	OCR1A = 0x4c5;
 
-	return 0;
+
+	// data send timer
+	TCCR0A |= (0<<WGM00);
+	TCCR0A |= (1<<WGM01);
+	TCCR0B |= (0<<WGM02);
+	// 001 - f
+	// 010 - f/8
+	// 011 - f/64
+	// 100 - f/256
+	// 101 - f/1024
+	TCCR0B |= (1<<CS02);
+	TCCR0B |= (0<<CS01);
+	TCCR0B |= (0<<CS00);
+	TIMSK0 |= (1<<OCIE0A);
+	// 0.2s
+	OCR0A = 0x0;
+
+	sei();
 }
 
-//ISR(TIMER0_COMPA_vect)
-//{
-//	screen.draw_row();
-//}
+int main()
+{
+	setup();
+	screen_interface.start();
+	while(1);
+}
+
+ISR(USART_RX_vect)
+{
+	screen_interface.on_confirmed();
+}
+
+ISR(TIMER0_COMPA_vect)
+{
+	if (!screen_interface.is_image_being_transmitted)
+	{
+		return;
+	}
+	if (screen_interface.is_last_byte_confirmed)
+	{
+		screen_interface.send();
+	}
+}
+
+ISR(TIMER1_COMPA_vect)
+{
+	sei();
+	++(*app);
+	app->build_image(screen_interface.buffer);
+	if (!screen_interface.is_image_being_transmitted)
+	{
+		screen_interface.swith_buffer();
+		screen_interface.start();
+	}
+
+
+
+//	for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
+//	{
+//		for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
+//		{
+//			uint8_t data = screen_interface.buffer[y][x];
+//			screen_interface.buffer[y][x] = 0b00111111 & (++data);
+//		}
+//	}
+//	if (!screen_interface.is_image_being_transmitted)
+//	{
+//		screen_interface.swith_buffer();
+//		screen_interface.start();
+//	}
+}
