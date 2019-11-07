@@ -4,67 +4,19 @@
 #include <stdlib.h>
 #include <util/delay.h>
 
+#include "../../rgb-32x16-screen/lib/screen/definitions.h"
 #include "apps/application.h"
 #include "apps/games/life/lifegame.h"
+#include "screen/screeninterface.h"
 
 #define FCPU 20000000UL
 #define USART_BAUDRATE  115200UL
 //#define UBRR ((FCPU / (USART_BAUDRATE * 16UL)) - 1)
 #define UBRR 1
 
-struct ScreenInterface
-{
-	volatile uint8_t is_image_being_transmitted = 0;
-	volatile uint8_t is_last_byte_confirmed = 1;
-	uint8_t buffer_1[SCREEN_HEIGHT][SCREEN_WIDTH];
-	uint8_t buffer_2[SCREEN_HEIGHT][SCREEN_WIDTH];
-	uint8_t(*active_buffer)[SCREEN_WIDTH] = buffer_1;
-	uint8_t(*buffer)[SCREEN_WIDTH] = buffer_2;
-
-	uint8_t y;
-	uint8_t x;
-
-	inline void swith_buffer()
-	{
-		uint8_t(*temp)[SCREEN_WIDTH] = active_buffer;
-		active_buffer = buffer;
-		buffer = temp;
-	}
-
-	inline void start()
-	{
-		UDR0 = 0b01000000;
-		is_last_byte_confirmed = 0;
-		is_image_being_transmitted = 1;
-	}
-
-	inline void send()
-	{
-		is_last_byte_confirmed = 0;
-		UDR0 = active_buffer[y][x];
-		if (++x == SCREEN_WIDTH)
-		{
-			x = 0;
-			if (++y == SCREEN_HEIGHT)
-			{
-				y = 0;
-				is_image_being_transmitted = 0;
-			}
-		}
-	}
-
-	inline uint8_t on_confirmed()
-	{
-		is_last_byte_confirmed = 1;
-		return UDR0;
-	}
-};
-
 ScreenInterface screen_interface;
 
-LifeGame life_game = LifeGame(0b00001100, 0b00000011);
-
-Application* app = &life_game;
+Application* app = new LifeGame(0b00001100, 0b00000011);
 
 void setup()
 {
@@ -125,13 +77,13 @@ void setup()
 int main()
 {
 	setup();
-	screen_interface.start();
+	screen_interface.start_picture();
 	while(1);
 }
 
 ISR(USART_RX_vect)
 {
-	screen_interface.on_confirmed();
+	screen_interface.data_interface.byte_confirmed();
 }
 
 ISR(TIMER0_COMPA_vect)
@@ -140,7 +92,7 @@ ISR(TIMER0_COMPA_vect)
 	{
 		return;
 	}
-	if (screen_interface.is_last_byte_confirmed)
+	if (screen_interface.data_interface.is_last_byte_confirmed)
 	{
 		screen_interface.send();
 	}
@@ -154,7 +106,7 @@ ISR(TIMER1_COMPA_vect)
 	if (!screen_interface.is_image_being_transmitted)
 	{
 		screen_interface.swith_buffer();
-		screen_interface.start();
+		screen_interface.start_picture();
 	}
 
 

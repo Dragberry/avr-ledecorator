@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>ledecorator-core</name>
+	<name>rgb-32x16-screen</name>
 	<comment></comment>
 	<projects>
-		<project>rgb-32x16-screen</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

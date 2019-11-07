@@ -1,6 +1,6 @@
 #include "lifegame.h"
 #include <stdlib.h>
-#include "../../../screen/definitions.h"
+#include "../../../../../rgb-32x16-screen/lib/screen/definitions.h"
 
 LifeGame::LifeGame(uint8_t color_life, uint8_t color_dead)
 {
@@ -31,7 +31,6 @@ void LifeGame::increment()
 			uint8_t alive_neigbhoors = 0;
 			uint8_t left = x == 0 ? SCREEN_WIDTH - 1 : x - 1;
 			uint8_t right = x == SCREEN_WIDTH - 1 ? 0 : x + 1;
-
 
 			if (top_row[left] & alive_indicator)
 			{

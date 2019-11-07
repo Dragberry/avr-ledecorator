@@ -2,7 +2,7 @@
 #define APPLICATION_H_
 
 #include <stdint.h>
-#include "../screen/definitions.h"
+#include "../../../rgb-32x16-screen/lib/screen/definitions.h"
 
 class Application
 {
