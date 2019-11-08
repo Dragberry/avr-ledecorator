@@ -16,7 +16,7 @@ private:
 
 	uint8_t alive_indicator;
 
-	uint8_t field[SCREEN_HEIGHT][SCREEN_WIDTH];
+	uint8_t field[SCREEN_HEIGHT][SCREEN_WIDTH] = {{0}};
 
 protected:
 	void increment();

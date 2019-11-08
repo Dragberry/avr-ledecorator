@@ -1,6 +1,6 @@
 #include "lifegame.h"
 #include <stdlib.h>
-#include "../../../../../rgb-32x16-screen/lib/screen/definitions.h"
+#include "lib/screen/definitions.h"
 
 LifeGame::LifeGame(uint8_t color_life, uint8_t color_dead)
 {

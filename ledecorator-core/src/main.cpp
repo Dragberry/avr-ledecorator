@@ -4,17 +4,20 @@
 #include <stdlib.h>
 #include <util/delay.h>
 
-#include "../../rgb-32x16-screen/lib/screen/definitions.h"
+#include "lib/screen/definitions.h"
 #include "apps/application.h"
 #include "apps/games/life/lifegame.h"
-#include "screen/screeninterface.h"
+#include "hardware/atmega328/atmega328interface.h"
+#include "hardware/screen/screeninterface.h"
 
 #define FCPU 20000000UL
 #define USART_BAUDRATE  115200UL
 //#define UBRR ((FCPU / (USART_BAUDRATE * 16UL)) - 1)
 #define UBRR 1
 
-ScreenInterface screen_interface;
+Atmega328Interface m328 = Atmega328Interface();
+
+ScreenInterface screen_interface = ScreenInterface(m328);
 
 Application* app = new LifeGame(0b00001100, 0b00000011);
 
@@ -83,7 +86,7 @@ int main()
 
 ISR(USART_RX_vect)
 {
-	screen_interface.data_interface.byte_confirmed();
+//	screen_interface.data_interface.byte_confirmed();
 }
 
 ISR(TIMER0_COMPA_vect)
@@ -92,10 +95,10 @@ ISR(TIMER0_COMPA_vect)
 	{
 		return;
 	}
-	if (screen_interface.data_interface.is_last_byte_confirmed)
-	{
-		screen_interface.send();
-	}
+//	if (screen_interface.data_interface.is_last_byte_confirmed)
+//	{
+//		screen_interface.send();
+//	}
 }
 
 ISR(TIMER1_COMPA_vect)
