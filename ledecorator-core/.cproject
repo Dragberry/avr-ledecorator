@@ -99,6 +99,8 @@
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/rgb-32x16-screen/Release/lib/screen/definitions.o}&quot;"/>
                                     									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/rgb-32x16-screen/Release/lib/screen/colors.o}&quot;"/>
+                                    									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/rgb-32x16-screen/Release/lib/screen/commands.o}&quot;"/>
                                     								
                                 </option>
@@ -137,9 +139,11 @@
                         						
                         <entry excluding="games" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
                         						
-                        <entry excluding="life" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games"/>
+                        <entry excluding="snake|life" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games/life"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games/snake"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/common"/>
                         						
@@ -285,9 +289,11 @@
                         						
                         <entry excluding="games" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
                         						
-                        <entry excluding="life" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games"/>
+                        <entry excluding="snake|life" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games/life"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games/snake"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/common"/>
                         						

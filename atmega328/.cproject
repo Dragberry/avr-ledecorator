@@ -75,7 +75,7 @@
                                 								
                                 <option id="de.innot.avreclipse.cppcompiler.option.otherflags.74101840" name="Other flags" superClass="de.innot.avreclipse.cppcompiler.option.otherflags" useByScannerDiscovery="false" value="-std=c++11" valueType="string"/>
                                 								
-                                <option id="de.innot.avreclipse.cppcompiler.option.optimize.packstruct.1637285570" superClass="de.innot.avreclipse.cppcompiler.option.optimize.packstruct" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+                                <option id="de.innot.avreclipse.cppcompiler.option.optimize.packstruct.1637285570" name="Pack structs (-fpack-struct)" superClass="de.innot.avreclipse.cppcompiler.option.optimize.packstruct" useByScannerDiscovery="false" value="false" valueType="boolean"/>
                                 								
                                 <inputType id="de.innot.avreclipse.cppcompiler.input.1482163993" superClass="de.innot.avreclipse.cppcompiler.input"/>
                                 							
@@ -116,14 +116,6 @@
                         <entry excluding="snake|workers|common|interfaces|games|atmega328|life|apps|screen|src|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
                         						
                         <entry excluding="common|apps|screen|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
-                        						
-                        <entry excluding="games" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
-                        						
-                        <entry excluding="snake|life" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games"/>
-                        						
-                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games/life"/>
-                        						
-                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games/snake"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/common"/>
                         						
@@ -254,14 +246,6 @@
                         <entry excluding="snake|workers|common|interfaces|games|atmega328|life|apps|screen|src|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
                         						
                         <entry excluding="common|apps|screen|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
-                        						
-                        <entry excluding="games" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
-                        						
-                        <entry excluding="snake|life" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games"/>
-                        						
-                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games/life"/>
-                        						
-                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games/snake"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/common"/>
                         						

@@ -4,9 +4,11 @@
 #include <stdlib.h>
 #include <util/delay.h>
 
+#include "lib/screen/colors.h"
 #include "lib/screen/definitions.h"
 #include "apps/application.h"
 #include "apps/games/life/lifegame.h"
+#include "apps/games/snake/snakegame.h"
 #include "hardware/atmega328/atmega328interface.h"
 #include "hardware/screen/screeninterface.h"
 
@@ -19,7 +21,8 @@ Atmega328Interface m328 = Atmega328Interface();
 
 ScreenInterface screen_interface = ScreenInterface(m328);
 
-Application* app = new LifeGame(0b00001100, 0b00000011);
+//Application* app = new LifeGame(CYAN, MAGENTA);
+Application* app = new SnakeGame(SCREEN_HEIGHT, SCREEN_WIDTH, CYAN, YELLOW, RED);
 
 void setup()
 {

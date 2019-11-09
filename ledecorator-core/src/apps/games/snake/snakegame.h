@@ -8,7 +8,6 @@
 class SnakeGame : public Application
 {
 private:
-	bool isImageBuilt;
 	uint8_t height;
 	uint8_t width;
 	uint8_t color_field;
@@ -39,7 +38,7 @@ public:
 
 	bool is_running();
 
-	void build_image(uint8_t** image);
+	void build_image(uint8_t(*image)[SCREEN_WIDTH]);
 };
 
 #endif
