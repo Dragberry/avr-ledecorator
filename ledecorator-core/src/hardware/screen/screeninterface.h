@@ -10,28 +10,29 @@
 class ScreenInterface
 {
 private:
-	const ScreenDataInterface& screen_data_interface;
-
-	volatile uint8_t is_image_being_transmitted = 0;
-
 	uint8_t buffer_1[SCREEN_HEIGHT][SCREEN_WIDTH];
 	uint8_t buffer_2[SCREEN_HEIGHT][SCREEN_WIDTH];
-	uint8_t(*active_buffer)[SCREEN_WIDTH] = buffer_1;
-	uint8_t(*buffer)[SCREEN_WIDTH] = buffer_2;
 
 	uint8_t y = 0;
 	uint8_t x = 0;
 
 public:
+	ScreenDataInterface& screen_data_interface;
+
+	volatile uint8_t is_image_being_transmitted = 0;
+
+	uint8_t(*active_buffer)[SCREEN_WIDTH] = buffer_1;
+	uint8_t(*buffer)[SCREEN_WIDTH] = buffer_2;
+
 	ScreenInterface(ScreenDataInterface& screen_data_interface);
 
-	inline void start_picture();
+	void start_picture();
 
-	inline void complete_picture();
+	void send_next_byte();
 
-	inline void swith_buffer();
+	void switch_buffer();
 
-	inline void send_byte();
+	void complete_picture();
 };
 
 #endif

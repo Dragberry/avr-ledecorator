@@ -7,17 +7,9 @@
 
 class Atmega328Interface : public ScreenDataInterface
 {
-	inline void send_byte(const uint8_t data)
-	{
-		is_confirmed = 0;
-		UDR0 = data;
-	}
+	void send_byte(const uint8_t data);
 
-	inline uint8_t byte_confirmed()
-	{
-		is_confirmed = 1;
-		return UDR0;
-	}
+	uint8_t on_byte_confirmed();
 };
 
 #endif

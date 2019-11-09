@@ -5,10 +5,9 @@
 
 class ScreenDataInterface
 {
-protected:
+public:
 	volatile uint8_t is_confirmed = 1;
 
-public:
 	virtual ~ScreenDataInterface() {}
 
 	virtual void send_byte(const uint8_t byte);

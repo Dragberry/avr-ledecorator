@@ -86,19 +86,15 @@ int main()
 
 ISR(USART_RX_vect)
 {
-//	screen_interface.data_interface.byte_confirmed();
+	screen_interface.screen_data_interface.on_byte_confirmed();
 }
 
 ISR(TIMER0_COMPA_vect)
 {
-	if (!screen_interface.is_image_being_transmitted)
+	if (screen_interface.is_image_being_transmitted)
 	{
-		return;
+		screen_interface.send_next_byte();
 	}
-//	if (screen_interface.data_interface.is_last_byte_confirmed)
-//	{
-//		screen_interface.send();
-//	}
 }
 
 ISR(TIMER1_COMPA_vect)
@@ -108,23 +104,7 @@ ISR(TIMER1_COMPA_vect)
 	app->build_image(screen_interface.buffer);
 	if (!screen_interface.is_image_being_transmitted)
 	{
-		screen_interface.swith_buffer();
+		screen_interface.switch_buffer();
 		screen_interface.start_picture();
 	}
-
-
-
-//	for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
-//	{
-//		for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
-//		{
-//			uint8_t data = screen_interface.buffer[y][x];
-//			screen_interface.buffer[y][x] = 0b00111111 & (++data);
-//		}
-//	}
-//	if (!screen_interface.is_image_being_transmitted)
-//	{
-//		screen_interface.swith_buffer();
-//		screen_interface.start();
-//	}
 }
