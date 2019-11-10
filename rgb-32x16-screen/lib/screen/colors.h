@@ -1,6 +1,8 @@
 #ifndef COLORS_H_
 #define COLORS_H_
 
+#define Color uint8_t
+
 #define BLACK 0b00000000
 #define RED 0b00000011
 #define GREEN 0b00001100

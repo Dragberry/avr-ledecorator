@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "../../application.h"
+#include "../../../hardware/screendatainterface.h"
 
 #define ALIVE_INDICATOR_01 0b00000001
 #define ALIVE_INDICATOR_10 0b00000010
@@ -28,7 +29,7 @@ public:
 
 	bool is_running();
 
-	void build_image(uint8_t(*image)[SCREEN_WIDTH]);
+	void build_image(ScreenInterface& screen_interface) const;
 
 	void place_ship(const uint8_t start_x, const uint8_t start_y, const uint8_t next_alive)
 	{

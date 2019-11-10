@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "lib/screen/definitions.h"
+#include "../hardware/screen/screeninterface.h"
 
 class Application
 {
@@ -19,7 +20,7 @@ public:
 
 	virtual bool is_running();
 
-	virtual void build_image(uint8_t(*image)[SCREEN_WIDTH]);
+	virtual void build_image(ScreenInterface& screen_interface) const;
 
 };
 

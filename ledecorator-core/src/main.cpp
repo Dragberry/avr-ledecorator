@@ -7,6 +7,7 @@
 #include "lib/screen/colors.h"
 #include "lib/screen/definitions.h"
 #include "apps/application.h"
+#include "apps/console/console.h"
 #include "apps/games/life/lifegame.h"
 #include "apps/games/snake/snakegame.h"
 #include "hardware/atmega328/atmega328interface.h"
@@ -21,8 +22,8 @@ Atmega328Interface m328 = Atmega328Interface();
 
 ScreenInterface screen_interface = ScreenInterface(m328);
 
-//Application* app = new LifeGame(CYAN, MAGENTA);
-Application* app = new SnakeGame(SCREEN_HEIGHT, SCREEN_WIDTH, CYAN, YELLOW, RED);
+Application* app = new Console();
+//Application* app = new SnakeGame(SCREEN_HEIGHT, SCREEN_WIDTH, CYAN, YELLOW, RED);
 
 void setup()
 {
@@ -104,7 +105,7 @@ ISR(TIMER1_COMPA_vect)
 {
 	sei();
 	++(*app);
-	app->build_image(screen_interface.buffer);
+	app->build_image(screen_interface);
 	if (!screen_interface.is_image_being_transmitted)
 	{
 		screen_interface.switch_buffer();

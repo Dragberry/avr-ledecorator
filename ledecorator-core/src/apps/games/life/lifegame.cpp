@@ -78,15 +78,16 @@ void LifeGame::increment()
 
 }
 
-void LifeGame::build_image(uint8_t(*image)[SCREEN_WIDTH])
+void LifeGame::build_image(ScreenInterface& screen_interface) const
 {
-	for (uint8_t row = 0; row < SCREEN_HEIGHT; row++)
-	{
-		for (uint8_t cell = 0; cell < SCREEN_WIDTH; cell++)
-		{
-			image[row][cell] =
-					field[row][cell] & alive_indicator ? color_life : color_dead;
-		}
 
-	}
+//	for (uint8_t row = 0; row < SCREEN_HEIGHT; row++)
+//	{
+//		for (uint8_t cell = 0; cell < SCREEN_WIDTH; cell++)
+//		{
+//			screen_interface.buffer[row][cell] =
+//					field[row][cell] & alive_indicator ? color_life : color_dead;
+//		}
+//
+//	}
 }
