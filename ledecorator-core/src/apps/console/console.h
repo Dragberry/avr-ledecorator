@@ -104,7 +104,7 @@ const uint8_t D_9[7 * 5] = {
 		1,1,1,0,0
 };
 
-const uint8_t * const  DS[10] = {
+const uint8_t * const DS[10] = {
 		D_0, D_1, D_2, D_3, D_4, D_5, D_6, D_7, D_8, D_9
 };
 
