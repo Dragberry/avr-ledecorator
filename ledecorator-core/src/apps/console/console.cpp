@@ -3,7 +3,7 @@
 
 void Console::increment()
 {
-	counter++;
+	counter += 0.01;
 }
 
 bool Console::is_running()
@@ -14,5 +14,5 @@ bool Console::is_running()
 void Console::build_image(ScreenInterface& screen_interface) const
 {
 	screen_interface.clear_screen(CYAN);
-	screen_interface.draw_number(0, 4, counter, RED, CYAN);
+	screen_interface.draw_number(12, 4, counter, 2, 1, RED, CYAN);
 }

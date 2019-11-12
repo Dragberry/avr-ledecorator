@@ -7,7 +7,7 @@
 class Console : public Application
 {
 private:
-	uint16_t counter;
+	float counter;
 	uint8_t digits[5];
 
 protected:

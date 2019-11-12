@@ -1,6 +1,6 @@
+#include "../../common/datatypeutils.h"
 #include "../../data/characters.h"
 #include "screeninterface.h"
-#include "math.h"
 
 ScreenInterface::ScreenInterface(ScreenDataInterface& screen_data_interface) : screen_data_interface(screen_data_interface) {}
 
@@ -91,19 +91,16 @@ void ScreenInterface::draw_number(
 		uint8_t start_x,
 		uint8_t start_y,
 		float number,
+		const uint8_t pr_int,
+		const uint8_t pr_float,
 		const Color color,
 		const Color bg_color)
 {
-	uint8_t digits[5];
-	uint16_t integer = (uint16_t) number;
-	for (int8_t i = 0; i < 5; i++)
+	char data[pr_int + 1 + pr_float];
+	float_to_string(data, number, pr_int, pr_float);
+	for (uint8_t i = 0; i < 5; i++)
 	{
-		digits[i] = integer % 10;
-		integer /= 10;
-	}
-	for (int8_t i = 4; i >= 0; i--)
-	{
-		const ImageMono8x8& img = CHARACTERS[digits[i] + DIGITS_OFFSET];
+		const ImageMono8x8& img = CHARACTERS[data[i] + DIGITS_OFFSET - '0'];
 		draw_image(start_x, start_y, img, color, bg_color);
 		start_x += (img.width + 1);
 		if (start_x >= SCREEN_WIDTH)
@@ -111,5 +108,6 @@ void ScreenInterface::draw_number(
 			break;
 		}
 	}
-	draw_image(start_x, start_y, CHARACTERS[0], color, bg_color);
+
 }
+
