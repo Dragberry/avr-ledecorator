@@ -103,7 +103,7 @@ void ScreenInterface::draw_number(
 	{
 		data[0] = number > 0 ? '+' : '-';
 	}
-	float_to_string(data + (sign ? 1 : 0), number > 0 ? number : -number, pr_int, pr_float);
+	float_to_string(data + (sign ? 1 : 0), number, pr_int, pr_float);
 	for (uint8_t i = 0; i < 5; i++)
 	{
 		const ImageMono8x8& img = CHARACTERS[data[i] + DIGITS_OFFSET - '0'];

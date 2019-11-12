@@ -28,6 +28,10 @@ void float_to_string(
 				const uint8_t pr_int,
 				const uint8_t pr_float)
 {
+	if (number < 0)
+	{
+		number = -number;
+	}
 	uint16_t ipart = (uint16_t) number;
 	int_to_string(data, ipart, pr_int);
 	data[pr_int] = '.';
