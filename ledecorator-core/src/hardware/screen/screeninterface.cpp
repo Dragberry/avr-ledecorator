@@ -91,13 +91,19 @@ void ScreenInterface::draw_number(
 		uint8_t start_x,
 		uint8_t start_y,
 		float number,
+		const bool sign,
 		const uint8_t pr_int,
 		const uint8_t pr_float,
 		const Color color,
 		const Color bg_color)
 {
-	char data[pr_int + 1 + pr_float];
-	float_to_string(data, number, pr_int, pr_float);
+
+	char data[sign ? 1 : 0 + pr_int + 1 + pr_float];
+	if (sign)
+	{
+		data[0] = number > 0 ? '+' : '-';
+	}
+	float_to_string(data + (sign ? 1 : 0), number > 0 ? number : -number, pr_int, pr_float);
 	for (uint8_t i = 0; i < 5; i++)
 	{
 		const ImageMono8x8& img = CHARACTERS[data[i] + DIGITS_OFFSET - '0'];

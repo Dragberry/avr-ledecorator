@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define DIGITS_OFFSET 2
+#define DIGITS_OFFSET 5
 
 struct ImageMono8x8
 {
@@ -12,8 +12,50 @@ struct ImageMono8x8
 	const uint8_t data[8];
 };
 
-static const ImageMono8x8 CHARACTERS[12] =
+static const ImageMono8x8 CHARACTERS[15] =
 {
+		{
+				// +
+				5, 7,
+				{
+					0b00000000,
+					0b00100000,
+					0b00100000,
+					0b11111000,
+					0b00100000,
+					0b00100000,
+					0b00000000,
+					0b00000000,
+				}
+		},
+		{
+				// ,
+				5, 7,
+				{
+					0b00000000,
+					0b00000000,
+					0b00000000,
+					0b00000000,
+					0b00100000,
+					0b00100000,
+					0b01100000,
+					0b00000000,
+				}
+		},
+		{
+				// -
+				5, 7,
+				{
+					0b00000000,
+					0b00000000,
+					0b00000000,
+					0b11111000,
+					0b00000000,
+					0b00000000,
+					0b00000000,
+					0b00000000,
+				}
+		},
 		{
 				// .
 				1, 7,

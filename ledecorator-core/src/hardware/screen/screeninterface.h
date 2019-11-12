@@ -56,6 +56,7 @@ public:
 			uint8_t start_x,
 			uint8_t start_y,
 			float number,
+			const bool sign,
 			const uint8_t pr_int,
 			const uint8_t pr_float,
 			const Color color,
