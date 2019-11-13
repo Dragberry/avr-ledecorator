@@ -50,6 +50,32 @@ void ScreenInterface::clear_screen(const Color color)
 	}
 }
 
+void ScreenInterface::clear_area(
+		uint8_t start_x,
+		uint8_t start_y,
+		const uint8_t width,
+		const uint8_t height,
+		Color color)
+{
+	uint8_t max_y = start_y + height;
+	if (max_y > SCREEN_HEIGHT)
+	{
+		max_y = SCREEN_HEIGHT;
+	}
+	uint8_t max_x = start_x + width;
+	if (max_x > SCREEN_WIDTH)
+	{
+		max_x = SCREEN_WIDTH;
+	}
+	while (start_y < max_y)
+	{
+		for (uint8_t x = start_x; x < max_x; x++){
+			buffer[start_y][x] = color;
+		}
+		start_y++;
+	}
+}
+
 void ScreenInterface::draw_image(
 		uint8_t start_x,
 		uint8_t start_y,
@@ -57,13 +83,21 @@ void ScreenInterface::draw_image(
 		const uint8_t width,
 		const uint8_t height)
 {
-	const uint8_t max_y = height > SCREEN_HEIGHT ? SCREEN_HEIGHT : height;
-	const uint8_t max_x = width > SCREEN_WIDTH ? SCREEN_WIDTH : width;
-	for (uint8_t y = 0; y < max_y ; y++)
+	uint8_t max_y = start_y + height;
+	if (max_y > SCREEN_HEIGHT)
+	{
+		max_y = SCREEN_HEIGHT;
+	}
+	uint8_t max_x = start_x + width;
+	if (max_x > SCREEN_WIDTH)
+	{
+		max_x = SCREEN_WIDTH;
+	}
+	for (uint8_t y = 0, row_offset = 0; y < max_y ; y++, row_offset += width)
 	{
 		for (uint8_t x = 0; x < max_x; x++)
 		{
-			buffer[start_y + y][start_x + x] = data[y * width + x];
+			buffer[start_y + y][start_x + x] = data[row_offset + x];
 		}
 	}
 }
@@ -75,12 +109,20 @@ void ScreenInterface::draw_image(
 		const Color color,
 		const Color bg_color)
 {
-	const uint8_t max_y = start_y + img.height > SCREEN_HEIGHT - start_y ? SCREEN_HEIGHT : img.height;
-	const uint8_t max_x = start_x + img.width > SCREEN_WIDTH ? SCREEN_WIDTH - start_x : img.width;
-	for (uint8_t y = 0; y < max_y ; y++)
+	uint8_t height = SCREEN_HEIGHT - start_y;
+	if (height > img.height)
+	{
+		height = img.height;
+	}
+	uint8_t width = SCREEN_WIDTH - start_x;
+	if (width > img.width)
+	{
+		width = img.width;
+	}
+	for (uint8_t y = 0; y < height ; y++)
 	{
 		uint8_t *row = buffer[start_y + y];
-		for (uint8_t x = 0; x < max_x; x++)
+		for (uint8_t x = 0; x < width; x++)
 		{
 			row[start_x + x] = (0b10000000 >> x) & img.data[y] ? color : bg_color;
 		}

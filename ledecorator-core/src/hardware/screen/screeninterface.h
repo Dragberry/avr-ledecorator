@@ -38,6 +38,13 @@ public:
 
 	void clear_screen(const Color color);
 
+	void clear_area(
+			uint8_t start_x,
+			uint8_t start_y,
+			const uint8_t width,
+			const uint8_t height,
+			Color color);
+
 	void draw_image(
 			uint8_t start_x,
 			uint8_t start_y,
