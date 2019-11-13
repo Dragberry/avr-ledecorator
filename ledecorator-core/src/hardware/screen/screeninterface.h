@@ -8,6 +8,7 @@
 #include "lib/screen/definitions.h"
 #include "../screendatainterface.h"
 #include "../../data/characters.h"
+#include "../../data/images.h"
 
 class ScreenInterface
 {
@@ -48,9 +49,8 @@ public:
 	void draw_image(
 			uint8_t start_x,
 			uint8_t start_y,
-			const uint8_t* data,
-			const uint8_t width,
-			const uint8_t height);
+			const Image& img,
+			const Color bg_color);
 
 	void draw_image(
 			uint8_t start_x,
