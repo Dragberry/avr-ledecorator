@@ -68,15 +68,24 @@ public:
 			const Color color,
 			const Color bg_color);
 
+//	void draw_histogram(
+//			uint8_t start_x,
+//			uint8_t start_y,
+//			const uint8_t width,
+//			const uint8_t height,
+//			const int16_t* data_set,
+//			const uint8_t data_set_size,
+//			const Color color,
+//			const Color bg_color);
+
 	void draw_histogram(
-			uint8_t start_x,
-			uint8_t start_y,
-			const uint8_t width,
-			const uint8_t height,
-			const int16_t* data_set,
-			const uint8_t data_set_size,
-			const Color color,
-			const Color bg_color);
+			int8_t start_x,
+			int8_t start_y,
+			const int8_t offset_x,
+			const int8_t offset_y,
+			const int8_t width,
+			const int8_t height,
+			Color (*get_pixel)(const uint8_t x, const uint8_t y));
 };
 
 #endif

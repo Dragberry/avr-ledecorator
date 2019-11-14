@@ -86,28 +86,16 @@ void ScreenInterface::draw_image(
 		const Image& img,
 		const Color bg_color)
 {
-	uint8_t max_y = start_y + img.height;
-	if (max_y > SCREEN_HEIGHT)
-	{
-		max_y = SCREEN_HEIGHT;
-	}
-	uint8_t max_x = start_x + img.width;
-	if (max_x > SCREEN_WIDTH)
-	{
-		max_x = SCREEN_WIDTH;
-	}
-	for (uint8_t y = 0, row_offset = 0; y < max_y ; y++, row_offset += img.width)
-	{
-		for (uint8_t x = 0; x < max_x; x++)
-		{
-			Color color = img.data[row_offset + x];
-			if (bg_color != BLACK && color == BLACK)
+	draw_histogram((int8_t)start_x, (int8_t)start_y, (int8_t)0, (int8_t)0, (int8_t)img.width, (int8_t)img.height,
+			[&](const uint8_t x, const uint8_t y) -> Color
 			{
-				color = bg_color;
-			}
-			buffer[start_y + y][start_x + x] = color;
-		}
-	}
+				Color color = img.data[x];
+				if (bg_color != BLACK && color == BLACK)
+				{
+					return bg_color;
+				}
+				return color;
+			});
 }
 
 void ScreenInterface::draw_image(
@@ -166,69 +154,106 @@ void ScreenInterface::draw_number(
 	}
 }
 
-void ScreenInterface::draw_histogram(
-			uint8_t start_x,
-			uint8_t start_y,
-			const uint8_t width,
-			const uint8_t height,
-			const int16_t* data_set,
-			const uint8_t data_set_size,
-			const Color color,
-			const Color bg_color)
-{
-	// 720, 744, 761, 738, 739, 741
-	int16_t max = INT16_MIN; // 761
-	int16_t min = INT16_MAX; // 720
-	uint8_t i = 0;
-//	while (i < data_set_size)
-//	{
-//		int16_t current = data_set[i];
-//		if (current > max)
-//		{
-//			max = current;
-//		}
-//		if (current < min)
-//		{
-//			min = current;
-//		}
-//	}
-//	int16_t difference = max - min; 	// 41
-//	int16_t step = difference / height;	// 41 / 8 = 5
+//void ScreenInterface::draw_histogram(
+//			uint8_t start_x,
+//			uint8_t start_y,
+//			const uint8_t width,
+//			const uint8_t height,
+//			const int16_t* data_set,
+//			const uint8_t data_set_size,
+//			const Color color,
+//			const Color bg_color)
+//{
+//	// 720, 744, 761, 738, 739, 741
+//	int16_t max = INT16_MIN; // 761
+//	int16_t min = INT16_MAX; // 720
+//	uint8_t i = 0;
+////	while (i < data_set_size)
+////	{
+////		int16_t current = data_set[i];
+////		if (current > max)
+////		{
+////			max = current;
+////		}
+////		if (current < min)
+////		{
+////			min = current;
+////		}
+////	}
+////	int16_t difference = max - min; 	// 41
+////	int16_t step = difference / height;	// 41 / 8 = 5
+////	i = 0;
+////	uint8_t values[data_set_size];
+////	while (i < data_set_size)
+////	{
+////		int16_t temp = data_set[i] - min;
+////		// 720 - 720 = 0
+////		// 720 - 744 = 24
+////		// 720 - 761 = 31
+////		uint8_t value = (temp / step) + 1;
+////		// 0 / 5 + 1= 0
+////		// 24 / 5 + 1 = 5
+////		// 31 / 5 = 7
+////		values[i++] = value;
+////	}
+//	uint8_t values[6] = {0,1,2,3,4,5};
 //	i = 0;
-//	uint8_t values[data_set_size];
+//	draw_area(start_x, start_y, 1, height, bg_color);
+//	while ()
+//	{
+//
+//	}
+//
+//	start_x++;
 //	while (i < data_set_size)
 //	{
-//		int16_t temp = data_set[i] - min;
-//		// 720 - 720 = 0
-//		// 720 - 744 = 24
-//		// 720 - 761 = 31
-//		uint8_t value = (temp / step) + 1;
-//		// 0 / 5 + 1= 0
-//		// 24 / 5 + 1 = 5
-//		// 31 / 5 = 7
-//		values[i++] = value;
+//		for (uint8_t y = 0; y < height; y++)
+//		{
+//			if (values[i] > (height - y - 1))
+//			{
+//				buffer[start_y + y][start_x] = RED;
+//				buffer[start_y + y][start_x + 1] = RED;
+//			}
+//		}
+//		start_x += 4;
+//		i++;
 //	}
-	uint8_t values[6] = {0,1,2,3,4,5};
-	i = 0;
-	draw_area(start_x, start_y, 1, height, bg_color);
-	while ()
-	{
+//}
 
+void ScreenInterface::draw_histogram(
+		int8_t start_x,
+		int8_t start_y,
+		const int8_t offset_x,
+		const int8_t offset_y,
+		const int8_t width,
+		const int8_t height,
+		Color (*get_pixel)(const uint8_t x, const uint8_t y))
+{
+	int8_t max_height = SCREEN_HEIGHT - start_y;
+	if (max_height > height)
+	{
+		max_height = height;
 	}
-
-	start_x++;
-	while (i < data_set_size)
+	int8_t max_width = SCREEN_WIDTH - start_x;
+	if (max_width > width)
 	{
-		for (uint8_t y = 0; y < height; y++)
+		max_width = width;
+	}
+	for (int8_t y = 0; y < max_height; y++)
+	{
+		int8_t real_y = y + offset_y;
+		if (real_y < 0 || real_y >= height)
 		{
-			if (values[i] > (height - y - 1))
-			{
-				buffer[start_y + y][start_x] = RED;
-				buffer[start_y + y][start_x + 1] = RED;
-			}
+			continue;
 		}
-		start_x += 4;
-		i++;
+		for (int8_t x = 0; x < max_width; x++)
+		{
+			int8_t real_x = x + offset_x;
+			if (real_x < 0 || real_x >= width)
+			{
+				continue;
+			}
+			buffer[start_y + real_y][start_x + real_x] = get_pixel(x, y);
+		}
 	}
 }
-
