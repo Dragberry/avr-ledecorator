@@ -78,14 +78,47 @@ public:
 //			const Color color,
 //			const Color bg_color);
 
-	void draw_histogram(
+	template<typename PixelProvider>
+	void draw(
 			int8_t start_x,
 			int8_t start_y,
 			const int8_t offset_x,
 			const int8_t offset_y,
 			const int8_t width,
 			const int8_t height,
-			Color (*get_pixel)(const uint8_t x, const uint8_t y));
+			const PixelProvider&& get_pixel)
+	{
+		int8_t max_height = SCREEN_HEIGHT - start_y;
+		if (max_height > height)
+		{
+			max_height = height;
+		}
+		int8_t max_width = SCREEN_WIDTH - start_x;
+		if (max_width > width)
+		{
+			max_width = width;
+		}
+		for (int8_t y = 0; y < max_height; y++)
+		{
+			int8_t real_y = y + offset_y;
+			if (real_y < 0 || real_y >= height)
+			{
+				continue;
+			}
+			uint8_t(*row)[SCREEN_WIDTH] = buffer[start_y + real_y];
+			for (int8_t x = 0; x < max_width; x++)
+			{
+				int8_t real_x = x + offset_x;
+				if (real_x < 0 || real_x >= width)
+				{
+					continue;
+				}
+				row[start_x + real_x] = get_pixel(x, y);
+			}
+		}
+	}
+
+
 };
 
 #endif

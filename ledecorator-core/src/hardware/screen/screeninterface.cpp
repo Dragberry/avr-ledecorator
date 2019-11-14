@@ -86,10 +86,10 @@ void ScreenInterface::draw_image(
 		const Image& img,
 		const Color bg_color)
 {
-	draw_histogram((int8_t)start_x, (int8_t)start_y, (int8_t)0, (int8_t)0, (int8_t)img.width, (int8_t)img.height,
-			[&](const uint8_t x, const uint8_t y) -> Color
+	draw(start_x, start_y, 0, 0, img.width, img.height,
+			[bg_color, img](const uint8_t x, const uint8_t y) -> Color
 			{
-				Color color = img.data[x];
+				const Color color = img.data[y * img.width + x];
 				if (bg_color != BLACK && color == BLACK)
 				{
 					return bg_color;
@@ -105,24 +105,12 @@ void ScreenInterface::draw_image(
 		const Color color,
 		const Color bg_color)
 {
-	uint8_t height = SCREEN_HEIGHT - start_y;
-	if (height > img.height)
-	{
-		height = img.height;
-	}
-	uint8_t width = SCREEN_WIDTH - start_x;
-	if (width > img.width)
-	{
-		width = img.width;
-	}
-	for (uint8_t y = 0; y < height ; y++)
-	{
-		uint8_t *row = buffer[start_y + y];
-		for (uint8_t x = 0; x < width; x++)
-		{
-			row[start_x + x] = (0b10000000 >> x) & img.data[y] ? color : bg_color;
-		}
-	}
+	draw(start_x, start_y, 0, 0, img.width, img.height,
+
+			[img, color, bg_color](const uint8_t x, const uint8_t y) -> Color
+			{
+				return (0b10000000 >> x) & img.data[y] ? color : bg_color;;
+			});
 }
 
 void ScreenInterface::draw_number(
@@ -219,41 +207,3 @@ void ScreenInterface::draw_number(
 //		i++;
 //	}
 //}
-
-void ScreenInterface::draw_histogram(
-		int8_t start_x,
-		int8_t start_y,
-		const int8_t offset_x,
-		const int8_t offset_y,
-		const int8_t width,
-		const int8_t height,
-		Color (*get_pixel)(const uint8_t x, const uint8_t y))
-{
-	int8_t max_height = SCREEN_HEIGHT - start_y;
-	if (max_height > height)
-	{
-		max_height = height;
-	}
-	int8_t max_width = SCREEN_WIDTH - start_x;
-	if (max_width > width)
-	{
-		max_width = width;
-	}
-	for (int8_t y = 0; y < max_height; y++)
-	{
-		int8_t real_y = y + offset_y;
-		if (real_y < 0 || real_y >= height)
-		{
-			continue;
-		}
-		for (int8_t x = 0; x < max_width; x++)
-		{
-			int8_t real_x = x + offset_x;
-			if (real_x < 0 || real_x >= width)
-			{
-				continue;
-			}
-			buffer[start_y + real_y][start_x + real_x] = get_pixel(x, y);
-		}
-	}
-}
