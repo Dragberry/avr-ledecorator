@@ -1,6 +1,5 @@
 #ifndef SCREENINTERFACE_H_
 #define SCREENINTERFACE_H_
-
 #include <avr/io.h>
 #include <stdint.h>
 #include "lib/screen/colors.h"
@@ -39,7 +38,7 @@ public:
 
 	void clear_screen(const Color color);
 
-	void clear_area(
+	void draw_area(
 			uint8_t start_x,
 			uint8_t start_y,
 			const uint8_t width,
@@ -66,6 +65,16 @@ public:
 			const bool sign,
 			const uint8_t pr_int,
 			const uint8_t pr_float,
+			const Color color,
+			const Color bg_color);
+
+	void draw_histogram(
+			uint8_t start_x,
+			uint8_t start_y,
+			const uint8_t width,
+			const uint8_t height,
+			const int16_t* data_set,
+			const uint8_t data_set_size,
 			const Color color,
 			const Color bg_color);
 };
