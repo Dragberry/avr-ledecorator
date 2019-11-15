@@ -113,6 +113,69 @@ void ScreenInterface::draw_image(
 			});
 }
 
+void ScreenInterface::draw_string(
+		const char* string,
+		const uint8_t string_size,
+		uint8_t start_x,
+		uint8_t start_y,
+		const int8_t offset_x,
+		const int8_t offset_y,
+		const uint8_t width,
+		const uint8_t height,
+		const Color color,
+		const Color bg_color)
+{
+	int8_t passed_width = offset_x;
+	if (offset_x > 0)
+	{
+		draw_area(start_x, start_y, passed_width, height, bg_color);
+		if (passed_width >= height)
+		{
+			return;
+		}
+		start_x += offset_x;
+	}
+	int8_t passed_string_width = 0;
+	for (uint8_t i = 0; i < string_size; i++)
+	{
+		const ImageMono8x8& img = CHARACTERS[string[i] + DIGITS_OFFSET - '0'];
+		passed_string_width += (img.width);
+		passed_width = passed_string_width + offset_x;
+		if (passed_width < 0)
+		{
+			continue;
+		}
+		else
+		{
+			draw_image(start_x, start_y, img, color, bg_color);
+		}
+		if (passed_width >= width)
+		{
+			break;
+		}
+		start_x += img.width;
+		passed_string_width++;
+		passed_width++;
+		if (passed_width < 0)
+		{
+			continue;
+		}
+		else if (passed_width >= width)
+		{
+			break;
+		}
+		else
+		{
+			draw_area(start_x, start_y, 1, height, bg_color);
+		}
+		start_x++;
+	}
+	if (passed_width < height)
+	{
+		draw_area(start_x, start_y, height - passed_width, height, bg_color);
+	}
+}
+
 void ScreenInterface::draw_number(
 		uint8_t start_x,
 		uint8_t start_y,

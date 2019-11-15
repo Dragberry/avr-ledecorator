@@ -58,6 +58,19 @@ public:
 			const Color color,
 			const Color bg_color);
 
+	void draw_string(
+			const char* string,
+			const uint8_t string_size,
+			uint8_t start_x,
+			uint8_t start_y,
+			const int8_t offset_x,
+			const int8_t offset_y,
+			const uint8_t width,
+			const uint8_t height,
+			const Color color,
+			const Color bg_color);
+
+
 	void draw_number(
 			uint8_t start_x,
 			uint8_t start_y,
@@ -105,7 +118,7 @@ public:
 			{
 				continue;
 			}
-			uint8_t(*row)[SCREEN_WIDTH] = buffer[start_y + real_y];
+			uint8_t(*row) = buffer[start_y + real_y];
 			for (int8_t x = 0; x < max_width; x++)
 			{
 				int8_t real_x = x + offset_x;
