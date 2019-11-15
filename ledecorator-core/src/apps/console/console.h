@@ -7,6 +7,8 @@
 class Console : public Application
 {
 private:
+	int8_t offset_h = 0;
+	int8_t offset_l = 0;
 	float counter = 10.0;
 	uint8_t digits[5];
 

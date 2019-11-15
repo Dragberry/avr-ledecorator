@@ -125,11 +125,12 @@ void ScreenInterface::draw_string(
 		const Color color,
 		const Color bg_color)
 {
+
 	int8_t passed_width = offset_x;
 	if (offset_x > 0)
 	{
 		draw_area(start_x, start_y, passed_width, height, bg_color);
-		if (passed_width >= height)
+		if (passed_width >= width)
 		{
 			return;
 		}
@@ -170,9 +171,9 @@ void ScreenInterface::draw_string(
 		}
 		start_x++;
 	}
-	if (passed_width < height)
+	if (passed_width < width)
 	{
-		draw_area(start_x, start_y, height - passed_width, height, bg_color);
+		draw_area(start_x, start_y, width - passed_width, height, bg_color);
 	}
 }
 
