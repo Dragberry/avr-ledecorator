@@ -54,6 +54,8 @@ public:
 	void draw_image(
 			uint8_t start_x,
 			uint8_t start_y,
+			const int8_t offset_x,
+			const int8_t offset_y,
 			const ImageMono8x8& img,
 			const Color color,
 			const Color bg_color);

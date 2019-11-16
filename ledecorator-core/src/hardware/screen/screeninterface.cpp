@@ -101,11 +101,13 @@ void ScreenInterface::draw_image(
 void ScreenInterface::draw_image(
 		uint8_t start_x,
 		uint8_t start_y,
+		const int8_t offset_x,
+		const int8_t offset_y,
 		const ImageMono8x8& img,
 		const Color color,
 		const Color bg_color)
 {
-	draw(start_x, start_y, 0, 0, img.width, img.height,
+	draw(start_x, start_y, offset_x, offset_y, img.width, img.height,
 
 			[img, color, bg_color](const uint8_t x, const uint8_t y) -> Color
 			{
@@ -148,7 +150,16 @@ void ScreenInterface::draw_string(
 		}
 		else
 		{
-			draw_image(start_x, start_y, img, color, bg_color);
+			int8_t char_offset_x = passed_width - img.width;
+			if (char_offset_x >= 0)
+			{
+				char_offset_x = 0;
+			}
+			else
+			{
+				passed_width += char_offset_x;
+			}
+			draw_image(start_x, start_y, char_offset_x, 0, img, color, bg_color);
 		}
 		if (passed_width >= width)
 		{
@@ -167,7 +178,14 @@ void ScreenInterface::draw_string(
 		}
 		else
 		{
-			draw_area(start_x, start_y, 1, height, bg_color);
+			if (passed_width - 1 >= 0)
+			{
+				draw_area(start_x, start_y, 1, height, bg_color);
+			}
+			else
+			{
+				passed_width--;
+			}
 		}
 		start_x++;
 	}
@@ -197,7 +215,7 @@ void ScreenInterface::draw_number(
 	for (uint8_t i = 0; i < 5; i++)
 	{
 		const ImageMono8x8& img = CHARACTERS[data[i] + DIGITS_OFFSET - '0'];
-		draw_image(start_x, start_y, img, color, bg_color);
+		draw_image(start_x, start_y, 0, 0, img, color, bg_color);
 		start_x += (img.width + 1);
 		if (start_x >= SCREEN_WIDTH)
 		{
