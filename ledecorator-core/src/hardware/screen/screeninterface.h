@@ -38,12 +38,24 @@ public:
 
 	void clear_screen(const Color color);
 
-	void draw_area(
+	void draw_line_vertical(
+			const uint8_t start_x,
+			uint8_t start_y,
+			const uint8_t length,
+			const Color color);
+
+	void draw_line_horizontal(
 			uint8_t start_x,
+			const uint8_t start_y,
+			const uint8_t length,
+			const Color color);
+
+	void draw_area(
+			const uint8_t start_x,
 			uint8_t start_y,
 			const uint8_t width,
 			const uint8_t height,
-			Color color);
+			const Color color);
 
 	void draw_image(
 			uint8_t start_x,
