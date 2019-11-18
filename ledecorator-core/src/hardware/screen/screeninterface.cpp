@@ -179,7 +179,7 @@ void ScreenInterface::draw_string(
 		}
 		start_x += offset_x;
 	}
-	int8_t passed_string_width = 0; // 0
+	int8_t passed_string_width = 0;
 	for (uint8_t i = 0; i < string_size; i++)
 	{
 		const ImageMono8x8& img = CHARACTERS[string[i] + DIGITS_OFFSET - '0'];
@@ -221,35 +221,6 @@ void ScreenInterface::draw_string(
 	if (passed_width < width)
 	{
 		draw_area(start_x, start_y, width - passed_width, height, bg_color);
-	}
-}
-
-void ScreenInterface::draw_number(
-		uint8_t start_x,
-		uint8_t start_y,
-		float number,
-		const bool sign,
-		const uint8_t pr_int,
-		const uint8_t pr_float,
-		const Color color,
-		const Color bg_color)
-{
-
-	char data[sign ? 1 : 0 + pr_int + 1 + pr_float];
-	if (sign)
-	{
-		data[0] = number > 0 ? '+' : '-';
-	}
-	float_to_string(data + (sign ? 1 : 0), number, pr_int, pr_float);
-	for (uint8_t i = 0; i < 5; i++)
-	{
-		const ImageMono8x8& img = CHARACTERS[data[i] + DIGITS_OFFSET - '0'];
-		draw_image(start_x, start_y, 0, 0, img, color, bg_color);
-		start_x += (img.width + 1);
-		if (start_x >= SCREEN_WIDTH)
-		{
-			break;
-		}
 	}
 }
 

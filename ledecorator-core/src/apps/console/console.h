@@ -10,7 +10,7 @@ private:
 	int8_t offset_h = 0;
 	int8_t offset_l = 0;
 	float counter = 10.0;
-	uint8_t digits[5];
+	char counter_string[5];
 
 protected:
 	void increment();

@@ -26,8 +26,14 @@ void float_to_string(
 				char* data,
 				float number,
 				const uint8_t pr_int,
-				const uint8_t pr_float)
+				const uint8_t pr_float,
+				const bool with_sign)
 {
+	if (with_sign)
+	{
+		data[0] = number > 0 ? '+' : '-';
+		data++;
+	}
 	if (number < 0)
 	{
 		number = -number;
@@ -37,5 +43,5 @@ void float_to_string(
 	data[pr_int] = '.';
 	float fpart = number - (float) ipart;
 	ipart = fpart * powf(10, pr_float);
-	int_to_string(data + pr_int + 1, ipart, pr_float);
+	int_to_string(data +  pr_int + 1, ipart, pr_float);
 }

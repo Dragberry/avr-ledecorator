@@ -59,7 +59,8 @@ void setup()
 	// 1s - f/1024 - 0x4C4B
 	// 1/4s - f/1024 - 0x1313
 	// 1/16s - f/1024 - 0x4C5
-	OCR1A = 0x4c4b;
+	// 1/32s - f/1024 - 262
+	OCR1A = 0x262;
 
 
 	// data send timer

@@ -12,6 +12,7 @@ void float_to_string(
 		char* data,
 		float number,
 		const uint8_t pr_int,
-		const uint8_t pr_float);
+		const uint8_t pr_float,
+		const bool with_sign);
 
 #endif
