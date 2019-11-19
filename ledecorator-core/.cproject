@@ -133,11 +133,11 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="common|screen|life|games|apps|src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+                        <entry excluding="bmp280|common|screen|life|games|apps|src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
                         						
                         <entry excluding="data|hardware|common|screen|apps" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
                         						
-                        <entry excluding="console|games" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
+                        <entry excluding="sensors|console|games" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/console"/>
                         						
@@ -147,13 +147,17 @@
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games/snake"/>
                         						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/sensors"/>
+                        						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/common"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/data"/>
                         						
-                        <entry excluding="screen|atmega328" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware"/>
+                        <entry excluding="bmp280|screen|atmega328" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/atmega328"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/bmp280"/>
                         						
                         <entry excluding="interfaces" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/screen"/>
                         					
@@ -287,11 +291,11 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="common|screen|life|games|apps|src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+                        <entry excluding="bmp280|common|screen|life|games|apps|src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
                         						
                         <entry excluding="data|hardware|common|screen|apps" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
                         						
-                        <entry excluding="console|games" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
+                        <entry excluding="sensors|console|games" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/console"/>
                         						
@@ -301,13 +305,17 @@
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games/snake"/>
                         						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/sensors"/>
+                        						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/common"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/data"/>
                         						
-                        <entry excluding="screen|atmega328" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware"/>
+                        <entry excluding="bmp280|screen|atmega328" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/atmega328"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/bmp280"/>
                         						
                         <entry excluding="interfaces" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/screen"/>
                         					

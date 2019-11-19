@@ -10,6 +10,7 @@
 #include "apps/console/console.h"
 #include "apps/games/life/lifegame.h"
 #include "apps/games/snake/snakegame.h"
+#include "apps/sensors/sensorsapp.h"
 #include "hardware/atmega328/atmega328interface.h"
 #include "hardware/screen/screeninterface.h"
 
@@ -22,7 +23,7 @@ Atmega328Interface m328 = Atmega328Interface();
 
 ScreenInterface screen_interface = ScreenInterface(m328);
 
-Application* app = new Console();
+Application* app = new SensorsApp();
 //Application* app = new SnakeGame(SCREEN_HEIGHT, SCREEN_WIDTH, CYAN, YELLOW, RED);
 
 void setup()

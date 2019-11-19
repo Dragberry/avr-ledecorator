@@ -29,5 +29,5 @@ void Console::build_image(ScreenInterface& screen_interface) const
 	screen_interface.clear_screen(BLACK);
 	screen_interface.draw_string(counter_string, 5, 8, 0, offset_h, 0, 24, 7, RED, BLACK);
 	screen_interface.draw_string("-12.2", 5, 8, 8, offset_l, 0, 24, 7, RED, BLACK);
-	screen_interface.draw_image(0, 0, IMG_TEMPERATURE, BLACK);
+	screen_interface.draw_image(0, 0, IMG_PRESSURE, BLACK);
 }
