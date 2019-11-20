@@ -3,26 +3,31 @@
 
 void SensorsApp::increment()
 {
-	if (time % 2)
-	{
-		sensor = &temperature_sensor;
+	if (time % refresh_period) {
+		active_sensor = select_sensor();
+		active_sensor->read_value();
+		active_sensor->convert_value();
 	}
-	else
+}
+
+Sensor* SensorsApp::select_sensor()
+{
+	if (active_sensor_index >= SENSORS)
 	{
-		sensor = &pressure_sensor;
+		active_sensor_index = 0;
 	}
-	float_to_string(sensor->display_value, 35.2, 2, 1, true);
+	return sensors[active_sensor_index++];
 }
 
 bool SensorsApp::is_running()
 {
-	return true;
+	return time < display_period;
 }
 
 void SensorsApp::build_image(ScreenInterface& screen_interface) const
 {
 	screen_interface.clear_screen(BLACK);
-	screen_interface.draw_image(0, 0, sensor->pictogram, BLACK);
+	screen_interface.draw_image(0, 0, active_sensor->pictogram, BLACK);
 	screen_interface.draw_string(
-			sensor->display_value, sensor->display_value_length, 8, 0, 0, 0, 24, 7, YELLOW, BLACK);
+			active_sensor->get_display_value(), active_sensor->display_value_length, 8, 0, 0, 0, 24, 7, YELLOW, BLACK);
 }

@@ -23,7 +23,7 @@ Atmega328Interface m328 = Atmega328Interface();
 
 ScreenInterface screen_interface = ScreenInterface(m328);
 
-Application* app = new SensorsApp();
+Application* app;
 //Application* app = new SnakeGame(SCREEN_HEIGHT, SCREEN_WIDTH, CYAN, YELLOW, RED);
 
 void setup()
@@ -61,7 +61,7 @@ void setup()
 	// 1/4s - f/1024 - 0x1313
 	// 1/16s - f/1024 - 0x4C5
 	// 1/32s - f/1024 - 262
-	OCR1A = 0x262;
+	OCR1A = 0x4c4b;
 
 
 	// data send timer
@@ -83,11 +83,18 @@ void setup()
 	sei();
 }
 
+uint8_t i = 0;
+
 int main()
 {
 	setup();
-	screen_interface.start_picture();
-	while(1);
+	while(1)
+	{
+		app = new SensorsApp();
+		screen_interface.start_picture();
+		while(app->is_running());
+		delete app;
+	}
 }
 
 ISR(USART_RX_vect)

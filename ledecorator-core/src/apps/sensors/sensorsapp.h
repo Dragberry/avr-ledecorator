@@ -2,78 +2,28 @@
 #define SENSORSAPP_H_
 
 #include "../application.h"
+#include "sensors.h"
 
-class Sensor
-{
-public:
-	const Image& pictogram;
-
-	const uint8_t display_value_length;
-
-	char* display_value;
-
-	Sensor(const Image& pictogram, const uint8_t display_value_length) :
-			pictogram(pictogram),
-			display_value_length(display_value_length)
-	{
-		display_value = new char[display_value_length];
-	}
-
-	virtual ~Sensor()
-	{
-		delete [] display_value;
-	}
-
-	virtual void read_value() = 0;
-
-	virtual void transform_value() = 0;
-};
-
-class TemperatureSensor : public Sensor
-{
-private:
-	float value = 0;
-
-public:
-	TemperatureSensor() : Sensor(IMG_TEMPERATURE, 5) {}
-
-	void read_value()
-	{
-
-	}
-
-	void transform_value()
-	{
-
-	}
-};
-
-class PressureSensor : public Sensor
-{
-private:
-	uint16_t value = 0;
-
-public:
-	PressureSensor() : Sensor(IMG_PRESSURE, 5) {}
-
-	void read_value()
-	{
-
-	}
-
-	void transform_value()
-	{
-
-	}
-};
+#define SENSORS 2
 
 class SensorsApp : public Application
 {
 private:
-	TemperatureSensor temperature_sensor = TemperatureSensor();
-	PressureSensor pressure_sensor = PressureSensor();
-	Sensor* sensor = &temperature_sensor;
+    uint8_t refresh_period = 16;
+    uint8_t display_period = 80;
 
+    TemperatureSensor temperature_sensor;
+    PressureSensor pressure_sensor;
+
+    Sensor* sensors[2] = {
+        &temperature_sensor,
+        &pressure_sensor
+    };
+
+    uint8_t active_sensor_index;
+    Sensor* active_sensor = sensors[active_sensor_index];
+
+    Sensor* select_sensor();
 
 protected:
 	void increment();

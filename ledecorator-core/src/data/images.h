@@ -2,6 +2,7 @@
 #define IMAGES_H_
 
 #include <stdint.h>
+#include "lib/screen/colors.h"
 
 struct Image
 {
