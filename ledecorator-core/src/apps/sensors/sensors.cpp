@@ -14,11 +14,6 @@ void TemperatureSensor::read_value()
 
 void TemperatureSensor::convert_value()
 {
-//	display_value[0] = '+';
-//	display_value[1] = '1';
-//	display_value[2] = '2';
-//	display_value[3] = '.';
-//	display_value[4] = '5';
 	float_to_string(display_value, value, 2, 1, true);
 }
 
@@ -29,10 +24,6 @@ void PressureSensor::read_value()
 
 void PressureSensor::convert_value()
 {
-//	display_value[0] = '7';
-//	display_value[1] = '5';
-//	display_value[2] = '2';
-
 	int_to_string(display_value, value, 3);
 }
 

@@ -1,6 +1,7 @@
 #ifndef IMAGES_H_
 #define IMAGES_H_
 
+#include <avr/pgmspace.h>
 #include <stdint.h>
 #include "lib/screen/colors.h"
 
@@ -8,10 +9,10 @@ struct Image
 {
 	const uint8_t width;
 	const uint8_t height;
-	const uint8_t* data;
-};
+	const uint8_t* const data;
+} PROGMEM;
 
-const static uint8_t IMG_TEMPERATURE_DATA[128] =
+const uint8_t IMG_TEMPERATURE_DATA[128] PROGMEM =
 {
 		BLACK,	BLACK,	BLACK,	BLUE,	BLUE,	BLACK,	BLACK,	BLACK,
 		BLACK,	BLACK,	BLUE,	WHITE,	WHITE,	BLUE,	BLACK,	BLACK,
@@ -31,9 +32,9 @@ const static uint8_t IMG_TEMPERATURE_DATA[128] =
 		BLACK,	BLACK,	BLUE,	BLUE,	BLUE,	BLUE,	BLACK,	BLACK,
 };
 
-const static Image IMG_TEMPERATURE = {8, 16, IMG_TEMPERATURE_DATA};
+const Image IMG_TEMPERATURE PROGMEM = {8, 16, IMG_TEMPERATURE_DATA};
 
-const static uint8_t IMG_PRESSURE_DATA[128] =
+const uint8_t IMG_PRESSURE_DATA[128] PROGMEM =
 {
 		BLACK,	BLACK,	BLACK,	BLACK,	BLACK,	BLACK,	BLACK,	BLACK,
 		BLACK,	BLACK,	BLACK,	BLACK,	BLACK,	BLACK,	BLACK,	BLACK,
@@ -53,7 +54,7 @@ const static uint8_t IMG_PRESSURE_DATA[128] =
 		BLACK,	BLACK,	BLACK,	BLACK,	BLACK,	BLACK,	BLACK,	BLACK,
 };
 
-const static Image IMG_PRESSURE = {8, 16, IMG_PRESSURE_DATA};
+const Image IMG_PRESSURE PROGMEM = {8, 16, IMG_PRESSURE_DATA};
 
 
 #endif

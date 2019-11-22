@@ -1,4 +1,5 @@
 #include "screeninterface.h"
+#include <avr/pgmspace.h>
 #include <math.h>
 #include "../../common/datatypeutils.h"
 
@@ -125,13 +126,15 @@ void ScreenInterface::draw_area(
 void ScreenInterface::draw_image(
 		uint8_t start_x,
 		uint8_t start_y,
-		const Image& img,
+		const Image* img,
 		const Color bg_color)
 {
-	draw(start_x, start_y, 0, 0, img.width, img.height,
-			[bg_color, img](const uint8_t x, const uint8_t y) -> Color
+	const uint8_t img_width = pgm_read_byte(&(img->width));
+	draw(start_x, start_y, 0, 0, img_width, pgm_read_byte(&(img->height)),
+			[bg_color, img, img_width](const uint8_t x, const uint8_t y) -> Color
 			{
-				const Color color = img.data[y * img.width + x];
+				const uint8_t* data = (uint8_t*) pgm_read_ptr(&(img->data));
+				const Color color = pgm_read_byte(&(data[y * img_width + x]));
 				if (bg_color != BLACK && color == BLACK)
 				{
 					return bg_color;
@@ -145,15 +148,15 @@ void ScreenInterface::draw_image(
 		uint8_t start_y,
 		const int8_t offset_x,
 		const int8_t offset_y,
-		const ImageMono8x8& img,
+		const ImageMono8x8* img,
 		const Color color,
 		const Color bg_color)
 {
-	draw(start_x, start_y, offset_x, offset_y, img.width, img.height,
+	draw(start_x, start_y, offset_x, offset_y, pgm_read_byte(&(img->width)), pgm_read_byte(&(img->height)),
 
 			[img, color, bg_color](const uint8_t x, const uint8_t y) -> Color
 			{
-				return (0b10000000 >> x) & img.data[y] ? color : bg_color;;
+				return (0b10000000 >> x) & pgm_read_byte(&(img->data[y])) ? color : bg_color;
 			});
 }
 
@@ -182,9 +185,10 @@ void ScreenInterface::draw_string(
 	int8_t passed_string_width = 0;
 	for (uint8_t i = 0; i < string_size; i++)
 	{
-		const ImageMono8x8& img = CHARACTERS[string[i] + DIGITS_OFFSET - '0'];
-		passed_string_width += (img.width);
-		passed_width += (img.width);
+		const ImageMono8x8* img = get_character_image(string[i]);
+		const uint8_t img_width = pgm_read_byte(&(img->width));
+		passed_string_width += img_width ;
+		passed_width += img_width ;
 		if (passed_width < -1)
 		{
 			passed_width++;
@@ -192,13 +196,13 @@ void ScreenInterface::draw_string(
 		}
 		else
 		{
-			int8_t char_offset_x = passed_width - img.width;
+			int8_t char_offset_x = passed_width - img_width ;
 			if (char_offset_x > 0)
 			{
 				char_offset_x = 0;
 			}
 			draw_image(start_x, start_y, char_offset_x, 0, img, color, bg_color);
-			start_x += (img.width + char_offset_x);
+			start_x += (img_width  + char_offset_x);
 		}
 		if (passed_width >= width)
 		{

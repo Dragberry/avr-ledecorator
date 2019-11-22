@@ -7,11 +7,11 @@
 class Sensor
 {
 public:
-	const Image& pictogram;
+	const Image* pictogram;
 
 	const uint8_t display_value_length;
 
-	Sensor(const Image& pictogram, const uint8_t display_value_length) :
+	Sensor(const Image* pictogram, const uint8_t display_value_length) :
 		pictogram(pictogram),
 		display_value_length(display_value_length) {}
 
@@ -30,7 +30,7 @@ class SensorTemplate : public Sensor
 public:
 	char display_value[pr_int + pr_float + (pr_float ? 1 : 0) + (with_sign ? 1 : 0)];
 
-	SensorTemplate(const Image& pictogram) :
+	SensorTemplate(const Image* pictogram) :
 		Sensor(pictogram, pr_int + pr_float + (pr_float ? 1 : 0) + (with_sign ? 1 : 0)) {}
 
 	virtual ~SensorTemplate() {}
@@ -49,7 +49,7 @@ private:
 	float value = 0;
 
 public:
-	TemperatureSensor() : SensorTemplate(IMG_TEMPERATURE) {}
+	TemperatureSensor() : SensorTemplate(&IMG_TEMPERATURE) {}
 
 	void read_value();
 
@@ -62,7 +62,7 @@ private:
 	uint16_t value = 0;
 
 public:
-	PressureSensor() : SensorTemplate(IMG_PRESSURE) {}
+	PressureSensor() : SensorTemplate(&IMG_PRESSURE) {}
 
 	void read_value();
 
