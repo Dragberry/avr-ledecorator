@@ -5,9 +5,10 @@
 #include "lib/screen/colors.h"
 #include "lib/screen/commands.h"
 #include "lib/screen/definitions.h"
-#include "../screendatainterface.h"
-#include "../../data/characters.h"
+
+#include "../../data/imagemono8x8.h"
 #include "../../data/images.h"
+#include "../screendatainterface.h"
 
 class ScreenInterface
 {

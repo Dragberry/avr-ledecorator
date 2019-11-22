@@ -152,11 +152,11 @@ void ScreenInterface::draw_image(
 		const Color color,
 		const Color bg_color)
 {
-	draw(start_x, start_y, offset_x, offset_y, pgm_read_byte(&(img->width)), pgm_read_byte(&(img->height)),
+	draw(start_x, start_y, offset_x, offset_y, img->get_width(), img->get_height(),
 
 			[img, color, bg_color](const uint8_t x, const uint8_t y) -> Color
 			{
-				return (0b10000000 >> x) & pgm_read_byte(&(img->data[y])) ? color : bg_color;
+				return img->get_bit(x, y) ? color : bg_color;
 			});
 }
 
@@ -185,8 +185,8 @@ void ScreenInterface::draw_string(
 	int8_t passed_string_width = 0;
 	for (uint8_t i = 0; i < string_size; i++)
 	{
-		const ImageMono8x8* img = get_character_image(string[i]);
-		const uint8_t img_width = pgm_read_byte(&(img->width));
+		const ImageMono8x8* img = ImageMono8x8::for_character(string[i]);
+		const uint8_t img_width = img->get_width();
 		passed_string_width += img_width ;
 		passed_width += img_width ;
 		if (passed_width < -1)

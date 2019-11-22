@@ -3,9 +3,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "apps/application.h"
-#include "apps/games/snake/snakegame.h"
-#include "apps/games/life/lifegame.h"
 #include "screen/atmega328/atmega328interface.h"
 #include "screen/screen.h"
 

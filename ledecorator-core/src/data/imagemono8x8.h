@@ -1,5 +1,5 @@
-#ifndef CHARACTERS_H_
-#define CHARACTERS_H_
+#ifndef IMAGEMONO8X8_H_
+#define IMAGEMONO8X8_H_
 
 #include <avr/pgmspace.h>
 #include <stdint.h>
@@ -11,6 +11,24 @@ struct ImageMono8x8
 	const uint8_t width;
 	const uint8_t height;
 	const uint8_t data[8];
+
+	inline const uint8_t get_width() const
+	{
+		 return pgm_read_byte(&width);
+	}
+
+	inline const uint8_t get_height() const
+	{
+		 return pgm_read_byte(&height);
+	}
+
+	inline const uint8_t get_bit(const uint8_t x, const uint8_t y) const
+	{
+		return (0b10000000 >> x) & pgm_read_byte(&(data[y]));
+	}
+
+	 static const ImageMono8x8* for_character(const char char_index);
+
 } PROGMEM;
 
 const ImageMono8x8 CHAR_PLUS PROGMEM =
@@ -266,11 +284,5 @@ const ImageMono8x8* const CHARS[15] PROGMEM =
 		&CHAR_8,
 		&CHAR_9,
 };
-
-inline ImageMono8x8* get_character_image(const char char_index)
-{
-	return (ImageMono8x8*) pgm_read_ptr(&(CHARS[char_index - OFFSET]));
-}
-
 
 #endif
