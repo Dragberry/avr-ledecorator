@@ -90,7 +90,7 @@ int main()
 	setup();
 	while(1)
 	{
-		app = new SensorsApp();
+		app = new Console();
 		screen_interface.start_picture();
 		while(app->is_running());
 		delete app;
