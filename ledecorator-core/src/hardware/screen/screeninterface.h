@@ -20,6 +20,11 @@ private:
 	uint8_t x = 0;
 
 public:
+	enum Align : uint8_t
+	{
+		LEFT, RIGHT
+	};
+
 	ScreenDataInterface& screen_data_interface;
 
 	volatile uint8_t is_image_being_transmitted = 0;
@@ -76,6 +81,7 @@ public:
 	void draw_string(
 			const char* string,
 			const uint8_t string_size,
+			const Align align,
 			uint8_t start_x,
 			uint8_t start_y,
 			const int8_t offset_x,

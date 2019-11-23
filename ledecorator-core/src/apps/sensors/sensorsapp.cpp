@@ -29,5 +29,8 @@ void SensorsApp::build_image(ScreenInterface& screen_interface) const
 	screen_interface.clear_screen(BLACK);
 	screen_interface.draw_image(0, 0, active_sensor->pictogram, BLACK);
 	screen_interface.draw_string(
-			active_sensor->get_display_value(), active_sensor->display_value_length, 8, 0, 0, 0, 24, 7, YELLOW, BLACK);
+			active_sensor->get_display_value(),
+			active_sensor->display_value_length,
+			ScreenInterface::Align::RIGHT,
+			8, 0, 0, 0, 24, 7, YELLOW, BLACK);
 }

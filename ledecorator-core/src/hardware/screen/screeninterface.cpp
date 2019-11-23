@@ -162,6 +162,7 @@ void ScreenInterface::draw_image(
 void ScreenInterface::draw_string(
 		const char* string,
 		const uint8_t string_size,
+		const Align align,
 		uint8_t start_x,
 		uint8_t start_y,
 		const int8_t offset_x,
@@ -172,14 +173,28 @@ void ScreenInterface::draw_string(
 		const Color bg_color)
 {
 	int8_t passed_width = offset_x;
-	if (offset_x > 0)
+	if (align == Align::RIGHT)
+	{
+		int8_t string_width = 0;
+		for (uint8_t i = 0; i < string_size; i++)
+		{
+			const ImageMono8x8* img = ImageMono8x8::for_character(string[i]);
+			string_width += (img->get_width() + 1);
+		}
+		int8_t right_align_offset = width - string_width;
+		if (right_align_offset > 0)
+		{
+			passed_width += right_align_offset;
+		}
+	}
+	if (passed_width > 0)
 	{
 		draw_area(start_x, start_y, passed_width, height, bg_color);
 		if (passed_width >= width)
 		{
 			return;
 		}
-		start_x += offset_x;
+		start_x += passed_width;
 	}
 	int8_t passed_string_width = 0;
 	for (uint8_t i = 0; i < string_size; i++)
