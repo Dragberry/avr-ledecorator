@@ -116,7 +116,8 @@ void ScreenInterface::draw_area(
 	}
 	while (start_y < max_y)
 	{
-		for (uint8_t x = start_x; x < max_x; x++){
+		for (uint8_t x = start_x; x < max_x; x++)
+		{
 			buffer[start_y][x] = color;
 		}
 		start_y++;
@@ -129,12 +130,10 @@ void ScreenInterface::draw_image(
 		const Image* img,
 		const Color bg_color)
 {
-	const uint8_t img_width = pgm_read_byte(&(img->width));
-	draw(start_x, start_y, 0, 0, img_width, pgm_read_byte(&(img->height)),
-			[bg_color, img, img_width](const uint8_t x, const uint8_t y) -> Color
+	draw(start_x, start_y, 0, 0, img->get_width(), img->get_height(),
+			[bg_color, img](const uint8_t x, const uint8_t y) -> Color
 			{
-				const uint8_t* data = (uint8_t*) pgm_read_ptr(&(img->data));
-				const Color color = pgm_read_byte(&(data[y * img_width + x]));
+				const Color color = img->get_pixel(x, y);
 				if (bg_color != BLACK && color == BLACK)
 				{
 					return bg_color;

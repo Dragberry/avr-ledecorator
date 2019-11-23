@@ -2,7 +2,7 @@
 #define SENSORS_H_
 
 #include <stdint.h>
-#include "../../data/images.h"
+#include "../../data/image.h"
 
 class Sensor
 {

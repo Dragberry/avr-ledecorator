@@ -27,7 +27,7 @@ struct ImageMono8x8
 		return (0b10000000 >> x) & pgm_read_byte(&(data[y]));
 	}
 
-	 static const ImageMono8x8* for_character(const char char_index);
+	static const ImageMono8x8* for_character(const char char_index);
 
 } PROGMEM;
 
