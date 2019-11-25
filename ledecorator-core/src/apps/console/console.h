@@ -10,7 +10,9 @@
 class Console : public Application, public I2C::SlaveHandler
 {
 private:
-	char string[20];
+	char string[4];
+	uint8_t i2c_state = 0;
+	uint8_t state = 0;
 
 protected:
 	void increment();
@@ -18,6 +20,7 @@ protected:
 public:
 	Console()
 	{
+		I2C::set_local_device_addr(100, 1);
 		I2C::init();
 		I2C::set_slave_handler(this);
 	}
@@ -31,9 +34,10 @@ public:
 
 	void build_image(ScreenInterface& screen_interface) const;
 
-	void hansle_recieve(uint8_t data_length, uint8_t* data)
+	void handle_recieve(uint8_t data_length, uint8_t* data)
 	{
-		for (uint8_t i = 0; i < 20; i++)
+		i2c_state++;
+		for (uint8_t i = 0; i < 4; i++)
 		{
 			string[i] = data[i];
 		}

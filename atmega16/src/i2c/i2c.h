@@ -57,8 +57,8 @@
 #define I2C_OK				0x00
 #define I2C_ERROR_NODEV		0x01
 
-#define I2C_SEND_DATA_BUFFER_SIZE 4
-#define I2C_RECEIVE_DATA_BUFFER_SIZE 4
+#define I2C_SEND_DATA_BUFFER_SIZE 16
+#define I2C_RECEIVE_DATA_BUFFER_SIZE 16
 
 namespace I2C {
 	enum State

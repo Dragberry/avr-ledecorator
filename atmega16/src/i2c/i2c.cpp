@@ -30,16 +30,6 @@ void I2C::init()
 void I2C::set_bitrate(uint16_t bitrate_khz)
 {
 	uint8_t bitrate_div;
-	// set i2c bitrate
-	// SCL freq = F_CPU/(16+2*TWBR))
-	#ifdef TWPS0
-		// for processors with additional bitrate division (mega128)
-		// SCL freq = F_CPU/(16+2*TWBR*4^TWPS)
-		// set TWPS to zero
-		cbi(TWSR, TWPS0);
-		cbi(TWSR, TWPS1);
-	#endif
-	// calculate bitrate division
 	bitrate_div = ((F_CPU / 1000l) / bitrate_khz);
 	if(bitrate_div >= 16)
 		bitrate_div = (bitrate_div - 16) / 2;
@@ -49,7 +39,7 @@ void I2C::set_bitrate(uint16_t bitrate_khz)
 void I2C::set_local_device_addr(uint8_t device_addr, uint8_t gen_call_en)
 {
 	// set local device address (used in slave mode only)
-	outb(TWAR, ((device_addr & 0xFE) | (gen_call_en ? 1 : 0)));
+	outb(TWAR, ((device_addr & 0xFE) | (gen_call_en ? 1 : 0)) );
 }
 
 void I2C::set_slave_handler(SlaveHandler* handler)
