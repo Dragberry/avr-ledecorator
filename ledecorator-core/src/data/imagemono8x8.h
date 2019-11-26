@@ -4,7 +4,7 @@
 #include <avr/pgmspace.h>
 #include <stdint.h>
 
-#define OFFSET 43
+#define LAST_CHARACTER_INDEX 101
 
 struct ImageMono8x8
 {
@@ -31,8 +31,41 @@ struct ImageMono8x8
 
 } PROGMEM;
 
+const ImageMono8x8 CHAR_NULL PROGMEM =
+{
+
+		0, 7,
+		{
+			0b00000000,
+			0b00000000,
+			0b00000000,
+			0b00000000,
+			0b00000000,
+			0b00000000,
+			0b00000000,
+			0b00000000,
+		}
+};
+
+const ImageMono8x8 CHAR_SPACE PROGMEM =
+{
+
+		3, 7,
+		{
+			0b00000000,
+			0b00000000,
+			0b00000000,
+			0b00000000,
+			0b00000000,
+			0b00000000,
+			0b00000000,
+			0b00000000,
+		}
+};
+
 const ImageMono8x8 CHAR_PLUS PROGMEM =
 {
+
 		3, 7,
 		{
 			0b00000000,
@@ -362,7 +395,7 @@ const ImageMono8x8 CHAR_QUESTION PROGMEM =
 		}
 };
 
-const ImageMono8x8 CHAR_@ PROGMEM =
+const ImageMono8x8 CHAR_MAIL PROGMEM =
 {
 		// @
 		5, 7,
@@ -376,7 +409,7 @@ const ImageMono8x8 CHAR_@ PROGMEM =
 			0b01111000,
 			0b00000000
 		}
-}
+};
 
 const ImageMono8x8 CHAR_A PROGMEM =
 {
@@ -392,7 +425,7 @@ const ImageMono8x8 CHAR_A PROGMEM =
 			0b10001000,
 			0b00000000
 		}
-}
+};
 
 const ImageMono8x8 CHAR_B PROGMEM =
 {
@@ -408,7 +441,7 @@ const ImageMono8x8 CHAR_B PROGMEM =
 			0b11110000,
 			0b00000000
 		}
-}
+};
 
 const ImageMono8x8 CHAR_C PROGMEM =
 {
@@ -471,7 +504,7 @@ const ImageMono8x8 CHAR_F PROGMEM =
 			0b11110000,
 			0b10000000,
 			0b10000000,
-			0b00000000,
+			0b10000000,
 			0b00000000
 		}
 };
@@ -514,13 +547,13 @@ const ImageMono8x8 CHAR_I PROGMEM =
 		// I
 		5, 7,
 		{
-			0b00111000,
-			0b00010000,
-			0b00010000,
-			0b00010000,
-			0b00010000,
-			0b00010000,
-			0b00111000,
+			0b01110000,
+			0b00100000,
+			0b00100000,
+			0b00100000,
+			0b00100000,
+			0b00100000,
+			0b01110000,
 			0b00000000
 		}
 };
@@ -797,8 +830,55 @@ const ImageMono8x8 CHAR_Z PROGMEM =
 		}
 };
 
-const ImageMono8x8* const CHARS[15] PROGMEM =
+const ImageMono8x8* const CHARS[91] PROGMEM =
 {
+		//0
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		// 10
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		// 20
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		// 30
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
+		&CHAR_SPACE,
 		&CHAR_PLUS,
 		&CHAR_COMMA,
 		&CHAR_MINUS,
@@ -820,7 +900,7 @@ const ImageMono8x8* const CHARS[15] PROGMEM =
 		&CHAR_EQ,
 		&CHAR_ANGLE_BRACKET_CLOSE,
 		&CHAR_QUESTION,
-		&CHAR_@,
+		&CHAR_MAIL,
 		&CHAR_A,
 		&CHAR_B,
 		&CHAR_C,

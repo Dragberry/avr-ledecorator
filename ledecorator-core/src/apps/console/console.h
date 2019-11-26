@@ -10,7 +10,8 @@
 class Console : public Application, public I2C::SlaveHandler
 {
 private:
-	char string[4];
+	ScreenInterface::String string_h;
+	ScreenInterface::String string_l;
 	uint8_t i2c_state = 0;
 	uint8_t state = 0;
 
@@ -18,17 +19,9 @@ protected:
 	void increment();
 
 public:
-	Console()
-	{
-		I2C::set_local_device_addr(100, 1);
-		I2C::init();
-		I2C::set_slave_handler(this);
-	}
+	Console();
 
-	~Console()
-	{
-		I2C::set_slave_handler(NULL);
-	}
+	~Console();
 
 	bool is_running();
 
@@ -36,11 +29,11 @@ public:
 
 	void handle_recieve(uint8_t data_length, uint8_t* data)
 	{
-		i2c_state++;
-		for (uint8_t i = 0; i < 4; i++)
-		{
-			string[i] = data[i];
-		}
+//		i2c_state++;
+//		for (uint8_t i = 0; i < 4; i++)
+//		{
+//			string[i] = data[i];
+//		}
 	}
 
 	uint8_t handle_transmit(uint8_t data_length, uint8_t* data)

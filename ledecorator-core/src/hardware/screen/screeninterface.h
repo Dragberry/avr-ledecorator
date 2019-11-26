@@ -25,6 +25,33 @@ public:
 		LEFT, RIGHT
 	};
 
+	class String
+	{
+	public:
+		uint16_t time;
+		const char* string;
+		uint8_t length;
+		uint16_t width;
+
+		void increment()
+		{
+			++time;
+		}
+
+		void set_string(const char* string, const uint8_t length)
+		{
+			this->string = string;
+			this->length = length;
+			int16_t width = 0;
+			for (uint8_t i = 0; i < length; i++)
+			{
+				const ImageMono8x8* img = ImageMono8x8::for_character(string[i]);
+				width += (img->get_width() + 1);
+			}
+		}
+
+	};
+
 	ScreenDataInterface& screen_data_interface;
 
 	volatile uint8_t is_image_being_transmitted = 0;
@@ -84,13 +111,21 @@ public:
 			const Align align,
 			uint8_t start_x,
 			uint8_t start_y,
-			const int8_t offset_x,
-			const int8_t offset_y,
+			const int16_t offset_x,
+			const int16_t offset_y,
 			const uint8_t width,
 			const uint8_t height,
 			const Color color,
 			const Color bg_color);
 
+	void draw_string(
+			const String& string,
+			uint8_t start_x,
+			uint8_t start_y,
+			const uint8_t width,
+			const uint8_t height,
+			const Color color,
+			const Color bg_color);
 //	void draw_histogram(
 //			uint8_t start_x,
 //			uint8_t start_y,

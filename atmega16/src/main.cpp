@@ -24,17 +24,10 @@ void setup()
 	I2C::init();
 }
 
-bool state = false;
+uint8_t state = 0;
 
-uint8_t data_1[4] =
-{
-		'1', '2', '3', '4'
-};
-
-uint8_t data_2[4] =
-{
-		'5', '6', '7', '8'
-};
+const char* str_1 = "ABCD";
+const char* str_2 = ";:<=";
 
 int main()
 {
@@ -50,5 +43,5 @@ ISR(TIMER1_COMPA_vect)
 {
 	PORTA = state ? 0xFF : 0x00;
 	state = !state;
-	I2C::master_send(100, 4, state ? data_1 : data_2);
+	I2C::master_send(100, 4, (state++ % 2 == 0 ? (uint8_t* )str_1 : (uint8_t* )str_2));
 }

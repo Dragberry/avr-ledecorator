@@ -165,23 +165,23 @@ void ScreenInterface::draw_string(
 		const Align align,
 		uint8_t start_x,
 		uint8_t start_y,
-		const int8_t offset_x,
-		const int8_t offset_y,
+		const int16_t offset_x,
+		const int16_t offset_y,
 		const uint8_t width,
 		const uint8_t height,
 		const Color color,
 		const Color bg_color)
 {
-	int8_t passed_width = offset_x;
+	int16_t passed_width = offset_x;
 	if (align == Align::RIGHT)
 	{
-		int8_t string_width = 0;
+		int16_t string_width = 0;
 		for (uint8_t i = 0; i < string_size; i++)
 		{
 			const ImageMono8x8* img = ImageMono8x8::for_character(string[i]);
 			string_width += (img->get_width() + 1);
 		}
-		int8_t right_align_offset = width - string_width;
+		int16_t right_align_offset = width - string_width;
 		if (right_align_offset > 0)
 		{
 			passed_width += right_align_offset;
@@ -196,7 +196,7 @@ void ScreenInterface::draw_string(
 		}
 		start_x += passed_width;
 	}
-	int8_t passed_string_width = 0;
+	int16_t passed_string_width = 0;
 	for (uint8_t i = 0; i < string_size; i++)
 	{
 		const ImageMono8x8* img = ImageMono8x8::for_character(string[i]);
@@ -210,7 +210,7 @@ void ScreenInterface::draw_string(
 		}
 		else
 		{
-			int8_t char_offset_x = passed_width - img_width ;
+			int16_t char_offset_x = passed_width - img_width;
 			if (char_offset_x > 0)
 			{
 				char_offset_x = 0;
@@ -240,6 +240,36 @@ void ScreenInterface::draw_string(
 	{
 		draw_area(start_x, start_y, width - passed_width, height, bg_color);
 	}
+}
+
+void ScreenInterface::draw_string(
+			const String& string,
+			uint8_t start_x,
+			uint8_t start_y,
+			const uint8_t width,
+			const uint8_t height,
+			const Color color,
+			const Color bg_color)
+{
+	int16_t offset_x = 0;
+	if (string.width > width)
+	{
+		int16_t width_with_offset = string.width + width;
+		int16_t temp = string.time % width_with_offset;
+		offset_x = width;
+		offset_x -= temp;
+		if (-offset_x > (int16_t) string.width)
+		{
+			offset_x = width;
+		}
+	}
+	draw_string(
+			string.string, string.length,
+			Align::LEFT,
+			start_x, start_y,
+			offset_x, 0,
+			width, height,
+			color, bg_color);
 }
 
 //void ScreenInterface::draw_histogram(
