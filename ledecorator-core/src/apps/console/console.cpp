@@ -7,6 +7,7 @@ Console::Console()
 {
 	string_h.set_string("HAPPY BIRTHDAY", 14);
 	string_l.set_string("GAVRILA", 7);
+	string_l.align = DrawableString::Align::RIGHT;
 }
 
 Console::~Console()

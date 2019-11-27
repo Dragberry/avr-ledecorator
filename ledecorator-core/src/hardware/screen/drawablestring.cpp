@@ -14,13 +14,28 @@ void DrawableString::increment()
 {
 	if (is_big)
 	{
-		if (offset_x + string_width)
+		if (align == LEFT)
 		{
-			offset_x--;
+			if (offset_x + string_width)
+			{
+				offset_x--;
+			}
+			else
+			{
+				offset_x = width;
+			}
 		}
 		else
 		{
-			offset_x = width;
+			if (width - offset_x)
+			{
+				offset_x++;
+			}
+			else
+			{
+				offset_x = -string_width;
+			}
+
 		}
 	}
 }
