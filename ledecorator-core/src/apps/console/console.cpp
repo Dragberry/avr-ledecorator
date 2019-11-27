@@ -31,6 +31,6 @@ void Console::build_image(ScreenInterface& screen_interface) const
 //	screen_interface.draw_area(8, 0, 8, 8, YELLOW);
 //	screen_interface.draw_area(16, 0, 8, 8, i2c_state % 2 ? YELLOW : RED);
 //	screen_interface.draw_area(24, 0, 8, 8, state % 2 ? YELLOW : CYAN);
-	screen_interface.draw_string(string_h, 0, 0, 32, 8, WHITE, BLACK);
-	screen_interface.draw_string(string_l, 0, 8, 32, 8, BLUE, BLACK);
+	string_h.draw(screen_interface);
+	string_l.draw(screen_interface);
 }

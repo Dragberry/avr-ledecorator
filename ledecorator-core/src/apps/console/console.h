@@ -4,14 +4,15 @@
 #include <stdlib.h>
 #include "../application.h"
 #include "../../hardware/screendatainterface.h"
+#include "../../hardware/screen/drawablestring.h"
 #include "../../hardware/i2c/i2c.h"
 #include "../../hardware/i2c/i2cslavehandler.h"
 
 class Console : public Application, public I2C::SlaveHandler
 {
 private:
-	ScreenInterface::String string_h;
-	ScreenInterface::String string_l;
+	DrawableString string_h = DrawableString(0, 0, 32, 8);
+	DrawableString string_l = DrawableString(0, 8, 32, 8);
 	uint8_t i2c_state = 0;
 	uint8_t state = 0;
 
