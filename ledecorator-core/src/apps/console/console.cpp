@@ -5,20 +5,23 @@
 
 Console::Console()
 {
-	string_h.set_string("HAPPY BIRTHDAY", 14);
-	string_l.set_string("GAVRILA", 7);
-	string_l.align = DrawableString::Align::RIGHT;
+	string_h.set_string("DOBROE UTRO", 11);
+	string_h.align = DrawableString::Align::LEFT;
+	string_h.color = MAGENTA;
+	string_l.set_string("SVINUSHKA", 9);
+	string_l.align = DrawableString::Align::LEFT;
+	string_l.color = YELLOW;
 }
 
-Console::~Console()
-{
-
-}
+Console::~Console() {}
 
 void Console::increment()
 {
 	string_h.increment();
-	string_l.increment();
+	if (time >= 32)
+	{
+		string_l.increment();
+	}
 }
 
 bool Console::is_running()

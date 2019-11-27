@@ -66,19 +66,9 @@ void DrawableString::draw(ScreenInterface& screen_interface) const
 {
 	uint8_t x = start_x;
 	int16_t passed_width = offset_x;
-	if (align == Align::RIGHT)
+	if (!is_big && align == Align::RIGHT)
 	{
-		int16_t string_width = 0;
-		for (uint8_t i = 0; i < string_length; i++)
-		{
-			const ImageMono8x8* img = ImageMono8x8::for_character(string[i]);
-			string_width += (img->get_width() + 1);
-		}
-		int16_t right_align_offset = width - string_width;
-		if (right_align_offset > 0)
-		{
-			passed_width += right_align_offset;
-		}
+		passed_width += (width - string_width);
 	}
 	if (passed_width > 0)
 	{

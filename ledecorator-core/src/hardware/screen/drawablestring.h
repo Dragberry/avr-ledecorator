@@ -9,19 +9,10 @@
 class DrawableString
 {
 private:
-	bool is_big = 0;
-	int16_t string_width = 0;
-public:
 	const char* string = 0;
 	uint8_t string_length = 0;
-
-	enum Align : uint8_t
-	{
-		LEFT, RIGHT
-	}
-	align = LEFT;
-	Color color = WHITE;
-	Color bg_color = BLACK;
+	int16_t string_width = 0;
+	bool is_big = false;
 
 	const uint8_t start_x;
 	const uint8_t start_y;
@@ -29,6 +20,15 @@ public:
 	const int8_t height;
 
 	int16_t offset_x = 0;
+
+public:
+	enum Align : uint8_t
+	{
+		LEFT, RIGHT
+	}
+	align = LEFT;
+	Color color = WHITE;
+	Color bg_color = BLACK;
 
 	DrawableString(
 			const uint8_t start_x,
