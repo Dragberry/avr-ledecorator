@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "../../application.h"
-#include "../../../hardware/screendatainterface.h"
 
 #define ALIVE_INDICATOR_01 0b00000001
 #define ALIVE_INDICATOR_10 0b00000010

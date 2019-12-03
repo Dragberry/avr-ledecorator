@@ -1,5 +1,5 @@
-#ifndef SCREENINTERFACE_H_
-#define SCREENINTERFACE_H_
+#ifndef SCREENINTERFACE_HPP_
+#define SCREENINTERFACE_HPP_
 #include <avr/io.h>
 #include <stdint.h>
 #include "lib/screen/colors.h"
@@ -8,9 +8,9 @@
 
 #include "../../data/image.h"
 #include "../../data/imagemono8x8.h"
-#include "../screendatainterface.h"
+#include "../uart/uart.hpp"
 
-class ScreenInterface
+class ScreenInterface : public UART::RxHandler
 {
 private:
 	uint8_t buffer_1[SCREEN_HEIGHT][SCREEN_WIDTH];
@@ -19,20 +19,24 @@ private:
 	uint8_t y = 0;
 	uint8_t x = 0;
 
+	volatile uint8_t is_byte_confirmed = 1;
+
 public:
 	enum Align : uint8_t
 	{
 		LEFT, RIGHT
 	};
 
-	ScreenDataInterface& screen_data_interface;
-
 	volatile uint8_t is_image_being_transmitted = 0;
 
 	uint8_t(*active_buffer)[SCREEN_WIDTH] = buffer_1;
 	uint8_t(*buffer)[SCREEN_WIDTH] = buffer_2;
 
-	ScreenInterface(ScreenDataInterface& screen_data_interface);
+	ScreenInterface();
+
+	~ScreenInterface();
+
+	void handle_rx(const uint8_t byte);
 
 	void start_picture();
 

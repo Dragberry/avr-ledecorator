@@ -1,4 +1,5 @@
 #include "sensors.h"
+#include "../../hardware/i2c/i2c.h"
 #include "../../common/datatypeutils.h"
 
 template <uint8_t pr_int, uint8_t pr_float, bool with_sign>
@@ -9,17 +10,26 @@ char* SensorTemplate<pr_int, pr_float, with_sign>::get_display_value()
 
 void TemperatureSensor::read_value()
 {
-	value = 34.4;
+	uint8_t request[1] = {1};
+	I2C::master_send(100, 1, request);
+	uint8_t response[1];
+	I2C::master_receive(100, 1, response);
+	value = response[0];
 }
 
 void TemperatureSensor::convert_value()
 {
-	float_to_string(display_value, value, 2, 1, true);
+	int_to_string(display_value, value, 3);
+//	float_to_string(display_value, value, 2, 1, true);
 }
 
 void PressureSensor::read_value()
 {
-	value = 749;
+	uint8_t request[1] = {181};
+	I2C::master_send(100, 1, request);
+	uint8_t response[1];
+	I2C::master_receive(100, 1, response);
+	value = response[0];
 }
 
 void PressureSensor::convert_value()

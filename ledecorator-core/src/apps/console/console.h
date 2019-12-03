@@ -3,12 +3,11 @@
 
 #include <stdlib.h>
 #include "../application.h"
-#include "../../hardware/screendatainterface.h"
 #include "../../hardware/screen/drawablestring.h"
 #include "../../hardware/i2c/i2c.h"
 #include "../../hardware/i2c/i2cslavehandler.h"
 
-class Console : public Application, public I2C::SlaveHandler
+class Console : public Application
 {
 private:
 	DrawableString string_h = DrawableString(0, 0, 32, 8);

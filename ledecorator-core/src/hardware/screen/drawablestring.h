@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 #include "lib/screen/colors.h"
-#include "screeninterface.h"
 #include "../../data/imagemono8x8.h"
+#include "screeninterface.hpp"
 
 class DrawableString
 {

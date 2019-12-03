@@ -11,8 +11,8 @@
 void I2C::init()
 {
 	//set pull-up resistors on I2C bus pins
-	sbi(PORTC, 0);	// i2c SCL on ATmega163,323,16,32,etc
-	sbi(PORTC, 1);	// i2c SDA on ATmega163,323,16,32,etc
+	sbi(PORTC, PC5);	// i2c SCL on ATmega163,323,16,32,etc
+	sbi(PORTC, PC4);	// i2c SDA on ATmega163,323,16,32,etc
 	// clear SlaveReceive and SlaveTransmit handler to null
 	slave_handler = NULL;
 	// set i2c bit rate to 100KHz
@@ -32,13 +32,6 @@ void I2C::set_bitrate(uint16_t bitrate_khz)
 	uint8_t bitrate_div;
 	// set i2c bitrate
 	// SCL freq = F_CPU/(16+2*TWBR))
-	#ifdef TWPS0
-		// for processors with additional bitrate division (mega128)
-		// SCL freq = F_CPU/(16+2*TWBR*4^TWPS)
-		// set TWPS to zero
-		cbi(TWSR, TWPS0);
-		cbi(TWSR, TWPS1);
-	#endif
 	// calculate bitrate division
 	bitrate_div = ((F_CPU / 1000l) / bitrate_khz);
 	if(bitrate_div >= 16)
@@ -201,15 +194,25 @@ uint8_t I2C::master_send_ni(uint8_t device_addr, uint8_t length, uint8_t* data)
 
 uint8_t I2C::master_receive_ni(uint8_t device_addr, uint8_t length, uint8_t *data)
 {
+	cbi(PORTC, PC0);
+	cbi(PORTC, PC1);
+	cbi(PORTC, PC2);
+	cbi(PORTC, PC3);
+
+
 	uint8_t retval = I2C_OK;
 
 	// disable TWI interrupt
 	cbi(TWCR, TWIE);
 
 	// send start condition
+
+	sbi(PORTC, PC0);
+
 	send_start();
 	wait_for_complete();
 
+	sbi(PORTC, PC1);
 	// send device address with read
 	send_byte(device_addr | 0x01);
 	wait_for_complete();
@@ -217,10 +220,11 @@ uint8_t I2C::master_receive_ni(uint8_t device_addr, uint8_t length, uint8_t *dat
 	// check if device is present and live
 	if(inb(TWSR) == TW_MR_SLA_ACK)
 	{
+		sbi(PORTC, PC2);
 		// accept receive data and ack it
 		while(length > 1)
 		{
-			receive_byte(true);
+			receive_byte(-1);
 			wait_for_complete();
 			*data++ = get_received_byte();
 			// decrement length
@@ -228,12 +232,13 @@ uint8_t I2C::master_receive_ni(uint8_t device_addr, uint8_t length, uint8_t *dat
 		}
 
 		// accept receive data and nack it (last-byte signal)
-		receive_byte(false);
+		receive_byte(0);
 		wait_for_complete();
 		*data++ = get_received_byte();
 	}
 	else
 	{
+		sbi(PORTC, PC4);
 		// device did not ACK it's address,
 		// data will not be transferred
 		// return error
@@ -310,12 +315,12 @@ void I2C::handle()
 	case TW_MR_SLA_ACK:					// 0x40: Slave address acknowledged
 		if(receive_data_index < (receive_data_length - 1))
 		{	// data byte will be received, reply with ACK (more bytes in transfer)
-			receive_byte(true);
+			receive_byte(TRUE);
 		}
 		else
 		{
 			// data byte will be received, reply with NACK (final byte in transfer)
-			receive_byte(false);
+			receive_byte(FALSE);
 		}
 		break;
 	// Slave Receiver status codes
@@ -338,18 +343,18 @@ void I2C::handle()
 		if(receive_data_index < I2C_RECEIVE_DATA_BUFFER_SIZE)
 		{
 			// receive data byte and return ACK
-			receive_byte(true);
+			receive_byte(TRUE);
 		}
 		else
 		{
 			// receive data byte and return NACK
-			receive_byte(false);
+			receive_byte(FALSE);
 		}
 		break;
 	case TW_SR_DATA_NACK:				// 0x88: data byte has been received, NACK has been returned
 	case TW_SR_GCALL_DATA_NACK:			// 0x98: data byte has been received, NACK has been returned
 		// receive data byte and return NACK
-		receive_byte(false);
+		receive_byte(FALSE);
 		break;
 	case TW_SR_STOP:					// 0xA0: STOP or REPEATED START has been received while addressed as slave
 		// switch to SR mode with SLA ACK

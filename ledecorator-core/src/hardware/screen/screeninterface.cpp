@@ -1,27 +1,39 @@
-#include "screeninterface.h"
+#include "screeninterface.hpp"
+
 #include <avr/pgmspace.h>
-#include <math.h>
 #include "../../common/datatypeutils.h"
+#include "../../common/utils.hpp"
 
-#define INT16_MAX 0x7fff
-#define INT16_MIN (-INT16_MAX - 1)
+ScreenInterface::ScreenInterface()
+{
+	UART::init(UART::BaudRate::B_500_000);
+	UART::set_rx_handler(this);
+}
 
+ScreenInterface::~ScreenInterface() {
+	UART::stop();
+}
 
-ScreenInterface::ScreenInterface(ScreenDataInterface& screen_data_interface) : screen_data_interface(screen_data_interface) {}
+void ScreenInterface::handle_rx(uint8_t byte)
+{
+	is_byte_confirmed = 1;
+}
 
 void ScreenInterface::start_picture()
 {
-	screen_data_interface.send_byte(COMMAND_MASK | CMD_DEFAULT);
+	is_byte_confirmed = 0;
+	UART::send_byte(COMMAND_MASK | CMD_DEFAULT);
 	is_image_being_transmitted = 1;
 }
 
 void ScreenInterface::send_next_byte()
 {
-	if (!screen_data_interface.is_confirmed)
+	if (!is_byte_confirmed)
 	{
 		return;
 	}
-	screen_data_interface.send_byte(active_buffer[y][x]);
+	is_byte_confirmed = 0;
+	UART::send_byte(active_buffer[y][x]);
 	if (++x == SCREEN_WIDTH)
 	{
 		x = 0;

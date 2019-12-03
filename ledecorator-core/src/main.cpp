@@ -11,17 +11,10 @@
 #include "apps/games/life/lifegame.h"
 #include "apps/games/snake/snakegame.h"
 #include "apps/sensors/sensorsapp.h"
-#include "hardware/atmega328/atmega328interface.h"
-#include "hardware/screen/screeninterface.h"
+#include "hardware/screen/screeninterface.hpp"
+#include "hardware/uart/uart.hpp"
 
-#define FCPU 20000000UL
-#define USART_BAUDRATE  115200UL
-//#define UBRR ((FCPU / (USART_BAUDRATE * 16UL)) - 1)
-#define UBRR 1
-
-Atmega328Interface m328 = Atmega328Interface();
-
-ScreenInterface screen_interface = ScreenInterface(m328);
+ScreenInterface screen_interface = ScreenInterface();
 
 Application* app;
 //Application* app = new SnakeGame(SCREEN_HEIGHT, SCREEN_WIDTH, CYAN, YELLOW, RED);
@@ -29,20 +22,6 @@ Application* app;
 void setup()
 {
 	DDRC = 0xf;
-
-	UBRR0H = (uint8_t) (UBRR >> 8);
-	UBRR0L = (uint8_t) UBRR;
-	UCSR0A |= U2X0;
-
-	UCSR0B |= (1<<RXCIE0);
-	UCSR0B |= (1<<RXEN0);
-	UCSR0B |= (1<<TXEN0);
-	// 1 stop bit
-	UCSR0C |= (0<<USBS0);
-	// 8 bit
-	UCSR0C |= (1<<UCSZ00);
-	UCSR0C |= (1<<UCSZ01);
-
 
 	// CTC
 	TCCR1A |= (0<<WGM10);
@@ -61,7 +40,7 @@ void setup()
 	// 1/4s - f/1024 - 0x1313
 	// 1/16s - f/1024 - 0x4C5
 	// 1/32s - f/1024 - 262
-	OCR1A = 0x262;
+	OCR1A = 0x4c4b;
 
 
 	// data send timer
@@ -83,8 +62,6 @@ void setup()
 	sei();
 }
 
-uint8_t i = 0;
-
 int main()
 {
 	setup();
@@ -97,13 +74,9 @@ int main()
 	}
 }
 
-ISR(USART_RX_vect)
-{
-	screen_interface.screen_data_interface.on_byte_confirmed();
-}
-
 ISR(TIMER0_COMPA_vect)
 {
+
 	if (screen_interface.is_image_being_transmitted)
 	{
 		screen_interface.send_next_byte();

@@ -3,7 +3,8 @@
 
 #include <stdint.h>
 #include "lib/screen/definitions.h"
-#include "../hardware/screen/screeninterface.h"
+
+#include "../hardware/screen/screeninterface.hpp"
 
 class Application
 {
