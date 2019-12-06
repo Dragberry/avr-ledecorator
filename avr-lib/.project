@@ -3,8 +3,6 @@
 	<name>avr-lib</name>
 	<comment></comment>
 	<projects>
-		<project>atmega328</project>
-		<project>ledecorator-core</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

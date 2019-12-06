@@ -155,8 +155,6 @@
                         						
                         <entry excluding="uart|atmega328|i2c|bmp280|screen" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware"/>
                         						
-                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/atmega328"/>
-                        						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/bmp280"/>
                         						
                         <entry excluding="interfaces" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/screen"/>
@@ -314,8 +312,6 @@
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/data"/>
                         						
                         <entry excluding="uart|atmega328|i2c|bmp280|screen" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware"/>
-                        						
-                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/atmega328"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/bmp280"/>
                         						

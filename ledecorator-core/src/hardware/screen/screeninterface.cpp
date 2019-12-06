@@ -5,7 +5,7 @@
 
 ScreenInterface::ScreenInterface()
 {
-	UART::init(UART::BaudRate::B_500_000);
+	UART::init(UART::BaudRate::B_4_800);
 	UART::set_rx_handler(this);
 }
 

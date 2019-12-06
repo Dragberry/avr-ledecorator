@@ -9,9 +9,10 @@
 
 namespace UART
 {
-	enum BaudRate : uint16_t
+	enum BaudRate : unsigned int
 	{
 		B_4_800 = UBRR_2X(4800UL),
+		B_9_600 = UBRR_2X(9600UL),
 		B_250_000 = UBRR_2X(250000UL),
 		B_500_000 = UBRR_2X(500000UL),
 		B_1_250_000 = UBRR_2X(1250000UL),

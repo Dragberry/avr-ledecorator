@@ -155,6 +155,10 @@
                                 								
                                 <option id="de.innot.avreclipse.compiler.option.optimize.1590060907" name="Optimization Level" superClass="de.innot.avreclipse.compiler.option.optimize" value="de.innot.avreclipse.compiler.optimize.size" valueType="enumerated"/>
                                 								
+                                <option id="de.innot.avreclipse.compiler.option.optimize.shortenums.1564483478" superClass="de.innot.avreclipse.compiler.option.optimize.shortenums" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+                                								
+                                <option id="de.innot.avreclipse.compiler.option.optimize.packstruct.676554383" superClass="de.innot.avreclipse.compiler.option.optimize.packstruct" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+                                								
                                 <inputType id="de.innot.avreclipse.compiler.winavr.input.1779371960" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
                                 							
                             </tool>
@@ -169,7 +173,7 @@
                                 								
                                 <option id="de.innot.avreclipse.cppcompiler.option.optimize.packstruct.126950013" name="Pack structs (-fpack-struct)" superClass="de.innot.avreclipse.cppcompiler.option.optimize.packstruct" useByScannerDiscovery="false" value="false" valueType="boolean"/>
                                 								
-                                <option id="de.innot.avreclipse.cppcompiler.option.otherflags.1435662606" superClass="de.innot.avreclipse.cppcompiler.option.otherflags" useByScannerDiscovery="false" value="-std=c++14" valueType="string"/>
+                                <option id="de.innot.avreclipse.cppcompiler.option.otherflags.1435662606" name="Other flags" superClass="de.innot.avreclipse.cppcompiler.option.otherflags" useByScannerDiscovery="false" value="-std=c++14" valueType="string"/>
                                 								
                                 <inputType id="de.innot.avreclipse.cppcompiler.input.652123893" superClass="de.innot.avreclipse.cppcompiler.input"/>
                                 							
