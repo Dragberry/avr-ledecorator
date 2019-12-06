@@ -2,7 +2,6 @@
 
 #include <avr/pgmspace.h>
 #include "../../common/datatypeutils.h"
-#include "../../common/utils.hpp"
 
 ScreenInterface::ScreenInterface()
 {

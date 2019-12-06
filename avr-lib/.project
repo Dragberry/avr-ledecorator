@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>ledecorator-core</name>
+	<name>avr-lib</name>
 	<comment></comment>
 	<projects>
+		<project>atmega328</project>
+		<project>ledecorator-core</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -3,6 +3,8 @@
 	<name>rgb-32x16-screen</name>
 	<comment></comment>
 	<projects>
+		<project>atmega328</project>
+		<project>ledecorator-core</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

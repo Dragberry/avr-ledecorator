@@ -2,12 +2,13 @@
 #define SCREEN_H_
 
 #include <stdint.h>
+#include "lib/screen/colors.h"
+#include "lib/screen/commands.h"
+#include "lib/screen/definitions.h"
 #include "interfaces/coreinterface.h"
 #include "interfaces/datainterface.h"
 #include "interfaces/displayinterface.h"
-#include "colors.h"
-#include "commands.h"
-#include "definitions.h"
+#include "pixel.h"
 #include "row.h"
 #include "section.h"
 
@@ -66,7 +67,7 @@ private:
 
 	void switch_buffer();
 
-	void apply_colors(Colors& colors, const uint8_t color, const uint8_t current_bit);
+	void apply_colors(Pixel& pixel, const uint8_t color, const uint8_t current_bit);
 
 	void apply_colors(Section& section, const uint8_t color, const uint8_t offset);
 

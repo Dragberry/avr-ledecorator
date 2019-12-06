@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include "../commands.h"
+#include "lib/screen/commands.h"
 #include "../screen.h"
 
 uint8_t Screen::ByteTerminalWorker::do_work()

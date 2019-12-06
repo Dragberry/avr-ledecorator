@@ -4,6 +4,8 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+#include "lib/avr/hardware/uart.hpp"
+
 #include "../interfaces/coreinterface.h"
 #include "../interfaces/datainterface.h"
 #include "../interfaces/displayinterface.h"
@@ -19,11 +21,8 @@ class Atmega328Interface :
 		public DisplayInterface,
 		public CoreInterface
 {
-private:
-	const uint8_t ubrr;
-
 public:
-	Atmega328Interface(uint8_t ubrr) : ubrr(ubrr) {}
+	Atmega328Interface() {}
 
 	inline void start_row() const
 	{
@@ -43,15 +42,11 @@ public:
 
 	inline uint8_t get_data_byte() const
 	{
-		while (!(UCSR0A & (1<<RXC0)));
-		uint8_t byte = UDR0;
-		UDR0 = 0;
-		return byte;
+		return UART::receive_byte_ack('A');
 	}
 
 	inline void send_data_byte(const uint8_t byte) const
 	{
-
 	}
 
 	inline void launch() const
@@ -61,17 +56,7 @@ public:
 		SPCR |= (1<<SPE) | (1<<MSTR);
 		SPSR |= (1<<SPI2X);
 
-
-		UBRR0H = (uint8_t) (ubrr >> 8);
-		UBRR0L = (uint8_t) ubrr;
-		UCSR0A |= U2X0;
-		UCSR0B |= (1<<RXEN0);
-		UCSR0B |= (1<<TXEN0);
-		// 1 stop bit
-		UCSR0C |= (0<<USBS0);
-		// 8 bit
-		UCSR0C |= (1<<UCSZ00);
-		UCSR0C |= (1<<UCSZ01);
+		UART::init(UART::BaudRate::B_500_000);
 
 		// CTC
 		TCCR0A |= (0<<WGM00);

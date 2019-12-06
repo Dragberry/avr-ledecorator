@@ -12,7 +12,6 @@
 #define FALSE	0
 #define TRUE	-1
 
-
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdint.h>

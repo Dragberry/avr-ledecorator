@@ -1,5 +1,5 @@
+#include "lib/avr/hardware/i2c.h"
 #include "sensors.h"
-#include "../../hardware/i2c/i2c.h"
 #include "../../common/datatypeutils.h"
 
 template <uint8_t pr_int, uint8_t pr_float, bool with_sign>

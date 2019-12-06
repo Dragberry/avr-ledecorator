@@ -2,7 +2,7 @@
 #include <avr/interrupt.h>
 #include <stdlib.h>
 #include "uart.hpp"
-#include "../../common/utils.hpp"
+#include "../software/operators.hpp"
 
 UART::RxHandler::~RxHandler() {}
 
@@ -26,12 +26,12 @@ void UART::set_tx_handler(TxHandler* handler)
 	tx_handler = handler;
 }
 
-void UART::init(BaudRate baud_rate)
+void UART::init(UART::BaudRate baud_rate)
 {
 	UBRR0H = (uint8_t) (baud_rate >> 8);
-	UBRR0L = (uint8_t) baud_rate;
+	UBRR0L = (uint8_t) (baud_rate);
 
-//	sbi(UCSR0A, U2X0);
+	sbi(UCSR0A, U2X0);
 
 	sbi(UCSR0B, RXEN0);
 	sbi(UCSR0B, TXEN0);
@@ -39,7 +39,7 @@ void UART::init(BaudRate baud_rate)
 	cbi(UCSR0C, USBS0);
 	// 8 bit
 	sbi(UCSR0C, UCSZ00);
-	cbi(UCSR0C, UCSZ01);
+	sbi(UCSR0C, UCSZ01);
 }
 
 void UART::stop()
@@ -64,6 +64,20 @@ void UART::send_string(const char* string)
 		send_byte(string[index++]);
 	}
 	send_byte('\n');
+}
+
+uint8_t UART::receive_byte()
+{
+	while (!(UCSR0A & (1<<RXC0)));
+	return UDR0;
+}
+
+uint8_t UART::receive_byte_ack(uint8_t ack)
+{
+	while (!(UCSR0A & (1<<RXC0)));
+	uint8_t byte = UDR0;
+	UDR0 = ack;
+	return byte;
 }
 
 ISR(USART_RX_vect)

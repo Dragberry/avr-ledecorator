@@ -1,5 +1,5 @@
 #include "sensorsapp.h"
-#include "../../hardware/i2c/i2c.h"
+#include "lib/avr/hardware/i2c.h"
 #include "../../common/datatypeutils.h"
 
 SensorsApp::SensorsApp()

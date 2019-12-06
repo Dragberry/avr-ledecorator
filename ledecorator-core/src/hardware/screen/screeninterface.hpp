@@ -1,14 +1,16 @@
 #ifndef SCREENINTERFACE_HPP_
 #define SCREENINTERFACE_HPP_
+
 #include <avr/io.h>
 #include <stdint.h>
+
+#include "lib/avr/hardware/uart.hpp"
 #include "lib/screen/colors.h"
 #include "lib/screen/commands.h"
 #include "lib/screen/definitions.h"
 
 #include "../../data/image.h"
 #include "../../data/imagemono8x8.h"
-#include "../uart/uart.hpp"
 
 class ScreenInterface : public UART::RxHandler
 {

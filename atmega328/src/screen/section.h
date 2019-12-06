@@ -1,14 +1,14 @@
 #ifndef SECTION_H_
 #define SECTION_H_
 
-#include "colors.h"
+#include "pixel.h"
 
 class Section
 {
 public:
-	Colors red;
-	Colors green;
-	Colors blue;
+	Pixel red;
+	Pixel green;
+	Pixel blue;
 
 	void reset()
 	{

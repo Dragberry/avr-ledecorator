@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <util/delay.h>
 
+#include "lib/avr/hardware/uart.hpp"
 #include "lib/screen/colors.h"
 #include "lib/screen/definitions.h"
 #include "apps/application.h"
@@ -11,13 +12,10 @@
 #include "apps/games/life/lifegame.h"
 #include "apps/games/snake/snakegame.h"
 #include "apps/sensors/sensorsapp.h"
-#include "hardware/screen/screeninterface.hpp"
-#include "hardware/uart/uart.hpp"
 
 ScreenInterface screen_interface = ScreenInterface();
 
 Application* app;
-//Application* app = new SnakeGame(SCREEN_HEIGHT, SCREEN_WIDTH, CYAN, YELLOW, RED);
 
 void setup()
 {
@@ -76,7 +74,6 @@ int main()
 
 ISR(TIMER0_COMPA_vect)
 {
-
 	if (screen_interface.is_image_being_transmitted)
 	{
 		screen_interface.send_next_byte();

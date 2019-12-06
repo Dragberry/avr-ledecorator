@@ -61,18 +61,18 @@ inline void Screen::stop_reading()
 	is_being_read = 0;
 }
 
-void Screen::apply_colors(Colors& colors, const uint8_t color, const uint8_t currentBit)
+void Screen::apply_colors(Pixel& pixel, const uint8_t color, const uint8_t currentBit)
 {
 	if (color > 0b00)
 	{
-		colors.level0 |= currentBit;
-		colors.level1 |= currentBit;
+		pixel.level0 |= currentBit;
+		pixel.level1 |= currentBit;
 		if (color > 0b01)
 		{
-			colors.level2 |= currentBit;
+			pixel.level2 |= currentBit;
 			if (color > 0b10)
 			{
-				colors.level3 |= currentBit;
+				pixel.level3 |= currentBit;
 			}
 		}
 	}

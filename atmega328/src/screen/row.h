@@ -2,8 +2,7 @@
 #define ROW_H_
 
 #include <stdint.h>
-
-#include "definitions.h"
+#include "lib/screen/definitions.h"
 #include "section.h"
 
 class Row

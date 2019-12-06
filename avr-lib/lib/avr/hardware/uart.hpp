@@ -2,15 +2,20 @@
 #define UART_HPP_
 
 #include <stdint.h>
+#include <stdlib.h>
 
-#define UBRR(BAUDRATE) ((F_CPU / (BAUDRATE * 16UL)) - 1)
+#define UBRR_1X(BAUDRATE) ((unsigned int) ((F_CPU / (BAUDRATE * 16UL)) - 1UL))
+#define UBRR_2X(BAUDRATE) ((unsigned int) ((F_CPU / (BAUDRATE * 8UL)) - 1UL))
 
 namespace UART
 {
-	enum BaudRate
+	enum BaudRate : uint16_t
 	{
-		B_500_000 = UBRR(500000UL),
-		B_1_000_000 = UBRR(1000000UL),
+		B_4_800 = UBRR_2X(4800UL),
+		B_250_000 = UBRR_2X(250000UL),
+		B_500_000 = UBRR_2X(500000UL),
+		B_1_250_000 = UBRR_2X(1250000UL),
+		B_2_500_000 = UBRR_2X(2500000UL),
 	};
 
 	class RxHandler
@@ -21,7 +26,7 @@ namespace UART
 		virtual void handle_rx(const uint8_t byte) = 0;
 	};
 
-	static RxHandler* rx_handler;
+	static RxHandler* rx_handler = NULL;
 
 	void set_rx_handler(RxHandler* rx_handler);
 
@@ -33,7 +38,7 @@ namespace UART
 		virtual void handle_tx() = 0;
 	};
 
-	static TxHandler* tx_handler;
+	static TxHandler* tx_handler = NULL;
 
 	void set_tx_handler(TxHandler* tx_handler);
 
@@ -44,6 +49,10 @@ namespace UART
 	void send_byte(const uint8_t byte);
 
 	void send_string(const char* string);
+
+	uint8_t receive_byte();
+
+	uint8_t receive_byte_ack(uint8_t ack);
 }
 
 #endif
