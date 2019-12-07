@@ -7,8 +7,8 @@ Screen::Screen(
 :
 		core_interface(core_interface),
 		display_interface(display_interface),
-		buffer_1{0},
-		buffer_2{0},
+		buffer_1{},
+		buffer_2{},
 		active_buffer(buffer_1),
 		buffer(buffer_2),
 		current_row(),

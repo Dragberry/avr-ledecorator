@@ -50,12 +50,6 @@ void UART::stop()
 	set_tx_handler(NULL);
 }
 
-void UART::send_byte(const uint8_t byte)
-{
-	while (!(UCSR0A & (1<<UDRE0)));
-	UDR0 = byte;
-}
-
 void UART::send_string(const char* string)
 {
 	uint8_t index = 0;
@@ -64,12 +58,6 @@ void UART::send_string(const char* string)
 		send_byte(string[index++]);
 	}
 	send_byte('\n');
-}
-
-uint8_t UART::receive_byte()
-{
-	while (!(UCSR0A & (1<<RXC0)));
-	return UDR0;
 }
 
 uint8_t UART::receive_byte_ack(uint8_t ack)

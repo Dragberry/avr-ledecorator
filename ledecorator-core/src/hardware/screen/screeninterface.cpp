@@ -5,7 +5,7 @@
 
 ScreenInterface::ScreenInterface()
 {
-	UART::init(UART::BaudRate::B_4_800);
+	UART::init(UART::BaudRate::B_500_000);
 	UART::set_rx_handler(this);
 }
 
@@ -15,23 +15,24 @@ ScreenInterface::~ScreenInterface() {
 
 void ScreenInterface::handle_rx(uint8_t byte)
 {
-	is_byte_confirmed = 1;
+	is_byte_being_transmitted = 0;
 }
 
 void ScreenInterface::start_picture()
 {
-	is_byte_confirmed = 0;
-	UART::send_byte(COMMAND_MASK | CMD_DEFAULT);
+	is_byte_being_transmitted = 1;
 	is_image_being_transmitted = 1;
+	UART::send_byte(COMMAND_MASK | CMD_DEFAULT);
+
 }
 
 void ScreenInterface::send_next_byte()
 {
-	if (!is_byte_confirmed)
+	if (is_byte_being_transmitted)
 	{
 		return;
 	}
-	is_byte_confirmed = 0;
+	is_byte_being_transmitted = 1;
 	UART::send_byte(active_buffer[y][x]);
 	if (++x == SCREEN_WIDTH)
 	{

@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <avr/io.h>
 
 #define UBRR_1X(BAUDRATE) ((unsigned int) ((F_CPU / (BAUDRATE * 16UL)) - 1UL))
 #define UBRR_2X(BAUDRATE) ((unsigned int) ((F_CPU / (BAUDRATE * 8UL)) - 1UL))
@@ -47,11 +48,19 @@ namespace UART
 
 	void stop();
 
-	void send_byte(const uint8_t byte);
+	inline void send_byte(const uint8_t byte)
+	{
+		while (!(UCSR0A & (1<<UDRE0)));
+		UDR0 = byte;
+	}
 
 	void send_string(const char* string);
 
-	uint8_t receive_byte();
+	inline uint8_t receive_byte()
+	{
+		while (!(UCSR0A & (1<<RXC0)));
+		return UDR0;
+	}
 
 	uint8_t receive_byte_ack(uint8_t ack);
 }

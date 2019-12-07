@@ -21,7 +21,7 @@ private:
 	uint8_t y = 0;
 	uint8_t x = 0;
 
-	volatile uint8_t is_byte_confirmed = 1;
+	volatile uint8_t is_byte_being_transmitted = 0;
 
 public:
 	enum Align : uint8_t

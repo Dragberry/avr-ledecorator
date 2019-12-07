@@ -56,7 +56,7 @@ public:
 		SPCR |= (1<<SPE) | (1<<MSTR);
 		SPSR |= (1<<SPI2X);
 
-		UART::init(UART::BaudRate::B_4_800);
+		UART::init(UART::BaudRate::B_500_000);
 
 		// CTC
 		TCCR0A |= (0<<WGM00);
