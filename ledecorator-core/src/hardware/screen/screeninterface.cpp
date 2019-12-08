@@ -7,10 +7,13 @@ ScreenInterface::ScreenInterface()
 {
 	UART::init(UART::BaudRate::B_500_000);
 	UART::set_rx_handler(this);
+	Timers::T0::start(0, Timers::Prescaller::F_256, &screen_data_transmitter);
 }
 
-ScreenInterface::~ScreenInterface() {
+ScreenInterface::~ScreenInterface()
+{
 	UART::stop();
+	Timers::T0::stop();
 }
 
 void ScreenInterface::handle_rx(uint8_t byte)

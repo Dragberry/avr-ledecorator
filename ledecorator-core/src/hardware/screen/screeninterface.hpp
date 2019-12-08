@@ -4,6 +4,7 @@
 #include <avr/io.h>
 #include <stdint.h>
 
+#include "lib/avr/hardware/timers.hpp"
 #include "lib/avr/hardware/uart.hpp"
 #include "lib/screen/colors.h"
 #include "lib/screen/commands.h"
@@ -22,6 +23,23 @@ private:
 	uint8_t x = 0;
 
 	volatile uint8_t is_byte_being_transmitted = 0;
+
+	class ScreenDataTransmitter : public Timers::Handler
+	{
+	public:
+		ScreenInterface& screen_interace;
+
+		ScreenDataTransmitter(ScreenInterface& screen_interace) : screen_interace(screen_interace) {}
+
+		void handle()
+		{
+			if (screen_interace.is_image_being_transmitted)
+			{
+				screen_interace.send_next_byte();
+			}
+		}
+
+	} screen_data_transmitter = ScreenDataTransmitter(*this);
 
 public:
 	enum Align : uint8_t
