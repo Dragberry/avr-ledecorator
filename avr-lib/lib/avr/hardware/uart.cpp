@@ -11,11 +11,11 @@ void UART::set_rx_handler(RxHandler* handler)
 	rx_handler = handler;
 	if (handler != NULL)
 	{
-		sbi(UCSR0B, RXCIE0);
+		sbi(UART_UCSRB, UART_RXCIE);
 	}
 	else
 	{
-		cbi(UCSR0B, RXCIE0);
+		cbi(UART_UCSRB, UART_RXCIE);
 	}
 }
 
@@ -28,26 +28,39 @@ void UART::set_tx_handler(TxHandler* handler)
 
 void UART::init(UART::BaudRate baud_rate)
 {
-	UBRR0H = (uint8_t) (baud_rate >> 8);
-	UBRR0L = (uint8_t) (baud_rate);
+	UART_UBRRH = (uint8_t) (baud_rate >> 8);
+	UART_UBRRL = (uint8_t) (baud_rate);
 
-	sbi(UCSR0A, U2X0);
+	sbi(UART_UCSRA, UART_U2X);
 
-	sbi(UCSR0B, RXEN0);
-	sbi(UCSR0B, TXEN0);
+	sbi(UART_UCSRB, UART_RXEN);
+	sbi(UART_UCSRB, UART_TXEN);
 	// 1 stop bit
-	cbi(UCSR0C, USBS0);
+	cbi(UART_UCSRC, UART_USBS);
 	// 8 bit
-	sbi(UCSR0C, UCSZ00);
-	sbi(UCSR0C, UCSZ01);
+	sbi(UART_UCSRC, UART_UCSZ0);
+	sbi(UART_UCSRC, UART_UCSZ1);
 }
 
 void UART::stop()
 {
-	cbi(UCSR0B, RXEN0);
-	cbi(UCSR0B, TXEN0);
+	cbi(UART_UCSRB, UART_RXEN);
+	cbi(UART_UCSRB, UART_TXEN);
 	set_rx_handler(NULL);
 	set_tx_handler(NULL);
+}
+
+void UART::send_byte_as_binary(const uint8_t byte)
+{
+	send_byte('0');
+	send_byte('b');
+	uint8_t i = 0;
+	while (i < 8)
+	{
+		send_byte((byte & (0b10000000 >> i++)) ? '1' : '0');
+	}
+	send_byte('\n');
+	send_byte('\r');
 }
 
 void UART::send_string(const char* string)
@@ -58,18 +71,19 @@ void UART::send_string(const char* string)
 		send_byte(string[index++]);
 	}
 	send_byte('\n');
+	send_byte('\r');
 }
 
 uint8_t UART::receive_byte_ack(uint8_t ack)
 {
-	while (!(UCSR0A & (1<<RXC0)));
-	uint8_t byte = UDR0;
-	UDR0 = ack;
+	while (!(UART_UCSRA & (1<<UART_UDRE)));
+	uint8_t byte = UART_UDR;
+	UART_UDR = ack;
 	return byte;
 }
 
 ISR(USART_RX_vect)
 {
-	UART::rx_handler->handle_rx(UDR0);
+	UART::rx_handler->handle_rx(UART_UDR);
 }
 

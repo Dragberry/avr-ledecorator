@@ -15,13 +15,6 @@ namespace Timers
 		F_1024	// 101
 	};
 
-	enum Event
-	{
-		COMPARE_A,
-		COMPARE_B,
-		OVERFLOW
-	};
-
 	class Handler
 	{
 	public:

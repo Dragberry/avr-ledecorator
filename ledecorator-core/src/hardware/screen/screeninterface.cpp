@@ -3,10 +3,14 @@
 #include <avr/pgmspace.h>
 #include "../../common/datatypeutils.h"
 
+#define SCRREN_DEBUG
+
 ScreenInterface::ScreenInterface()
 {
+	#ifndef SCRREN_DEBUG
 	UART::init(UART::BaudRate::B_500_000);
 	UART::set_rx_handler(this);
+	#endif
 	Timers::T0::start(0, Timers::Prescaller::F_256, &screen_data_transmitter);
 }
 
@@ -23,10 +27,11 @@ void ScreenInterface::handle_rx(uint8_t byte)
 
 void ScreenInterface::start_picture()
 {
-	is_byte_being_transmitted = 1;
 	is_image_being_transmitted = 1;
+	#ifndef SCRREN_DEBUG
+	is_byte_being_transmitted = 1;
 	UART::send_byte(COMMAND_MASK | CMD_DEFAULT);
-
+	#endif
 }
 
 void ScreenInterface::send_next_byte()
@@ -36,7 +41,9 @@ void ScreenInterface::send_next_byte()
 		return;
 	}
 	is_byte_being_transmitted = 1;
+	#ifndef SCRREN_DEBUG
 	UART::send_byte(active_buffer[y][x]);
+	#endif
 	if (++x == SCREEN_WIDTH)
 	{
 		x = 0;

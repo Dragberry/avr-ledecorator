@@ -5,6 +5,35 @@
 #include <stdlib.h>
 #include <avr/io.h>
 
+#if defined (__AVR_ATmega16__)
+	#define UART_UDRE	UDRE
+	#define UART_UCSRA 	UCSRA
+	#define UART_UCSRB 	UCSRB
+	#define UART_UCSRC 	UCSRC
+	#define UART_UDR 	UDR
+	#define UART_RXC 	RXC
+	#define UART_RXEN 	RXEN
+	#define UART_RXCIE 	RXCIE
+	#define UART_TXC 	TXC
+	#define UART_TXEN 	TXEN
+	#define UART_TXCIE 	TXCIE
+	#define UART_UBRRH	UBRRH
+	#define UART_UBRRL	UBRRL
+	#define UART_U2X	U2X
+	#define UART_USBS	USBS
+	#define UART_UCSZ0	UCSZ0
+	#define UART_UCSZ1	UCSZ1
+#elif defined (__AVR_ATmega328P__)
+	#define UART_UDRE	UDRE0
+	#define UART_UCSRA 	UCSR0A
+	#define UART_UDR 	UDR0
+	#define UART_RXC 	RXC0
+#else
+	#if !defined(__COMPILING_AVR_LIBC__)
+		#warning "device type not defined"
+	#endif
+#endif
+
 #define UBRR_1X(BAUDRATE) ((unsigned int) ((F_CPU / (BAUDRATE * 16UL)) - 1UL))
 #define UBRR_2X(BAUDRATE) ((unsigned int) ((F_CPU / (BAUDRATE * 8UL)) - 1UL))
 
@@ -50,16 +79,18 @@ namespace UART
 
 	inline void send_byte(const uint8_t byte)
 	{
-		while (!(UCSR0A & (1<<UDRE0)));
-		UDR0 = byte;
+		while (!(UART_UCSRA & (1<<UART_UDRE)));
+		UART_UDR = byte;
 	}
+
+	void send_byte_as_binary(const uint8_t byte);
 
 	void send_string(const char* string);
 
 	inline uint8_t receive_byte()
 	{
-		while (!(UCSR0A & (1<<RXC0)));
-		return UDR0;
+		while (!(UART_UCSRA & (1<<UART_RXC)));
+		return UART_UDR;
 	}
 
 	uint8_t receive_byte_ack(uint8_t ack);

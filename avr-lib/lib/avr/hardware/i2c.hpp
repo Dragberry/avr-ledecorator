@@ -63,6 +63,26 @@
 #define I2C_SEND_DATA_BUFFER_SIZE 4
 #define I2C_RECEIVE_DATA_BUFFER_SIZE 4
 
+#define I2C_DEBUG
+
+#ifdef I2C_DEBUG
+#include "uart.hpp"
+#endif
+
+#if defined (__AVR_ATmega16__)
+#define I2C_PORT PORTC
+#define I2C_SCL PC0
+#define I2C_SDA PC1
+#elif defined (__AVR_ATmega328P__)
+#define I2C_PORT PORTC
+#define I2C_SCL PC5
+#define I2C_SDA PC4
+#else
+#  if !defined(__COMPILING_AVR_LIBC__)
+#    warning "device type not defined"
+#  endif
+#endif
+
 namespace I2C {
 	enum State
 	{
@@ -134,6 +154,187 @@ namespace I2C {
 
 	//! I2C (TWI) interrupt service routine
 	void handle();
+
+	inline void on_start()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: M->START");
+			UART::send_string("I2C: M->SEND ADDRESS");
+			UART::send_byte_as_binary(device_addr_rw);
+		#endif
+		// send device address
+		send_byte(device_addr_rw);
+		break;
+	}
+
+	inline void on_ack()
+	{
+		if(send_data_index < send_data_length)
+		{
+			// send data
+			send_byte(send_data[send_data_index]);
+			#ifdef I2C_DEBUG
+				UART::send_string("I2C: MT->SEND BYTE");
+				UART::send_byte_as_binary(send_data[send_data_index]);
+			#endif
+			send_data_index++;
+		}
+		else
+		{
+			#ifdef I2C_DEBUG
+				UART::send_string("I2C: MT->SEND STOP");
+			#endif
+			// transmit stop condition, enable SLA ACK
+			send_stop();
+			// set state
+			state = IDLE;
+		}
+	}
+
+	inline void on_slave_address_ack()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: MT->SLA_ACK");
+		#endif
+		on_ack();
+	}
+
+	inline void on_mt_data_ack()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: MT->DATA_ACK");
+		#endif
+		on_ack();
+	}
+
+	inline void on_nack()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: SEND STOP");
+		#endif
+		// transmit stop condition, enable SLA ACK
+		send_stop();
+		// set state
+		state = IDLE;
+	}
+
+	inline void on_mr_data_nack()
+	{
+		UART::send_string("I2C: MR->DATA_NACK");
+		// store final received data byte
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: MR->DATA_NACK: LAST RECEIVED BYTE:");
+		#endif
+		receive_data[receive_data_index++] = inb(TWDR);
+		#ifdef I2C_DEBUG
+			UART::send_byte_as_binary(receive_data[receive_data_index - 1]);
+		#endif
+		on_nack();
+	}
+
+	inline void on_mr_slave_address_nack()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: MR->SLA_NACK");
+		#endif
+		on_nack();
+	}
+
+	inline void on_mt_slave_address_nack()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: MT->SLA_NACK");
+		#endif
+		on_nack();
+	}
+
+	inline void on_mt_data_nack()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: MT->DATA_NACK");
+		#endif
+		on_nack();
+	}
+
+	inline void on_bus_arbitration_lost()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: MT->ARB_LOST");
+		#endif
+		// release bus
+		outb(TWCR, (inb(TWCR) & TWCR_CMD_MASK) | BV(TWINT));
+		// set state
+		state = IDLE;
+	}
+
+	inline void on_mr_ack()
+	{
+		if(receive_data_index < (receive_data_length - 1))
+		{	// data byte will be received, reply with ACK (more bytes in transfer)
+			receive_byte(TRUE);
+		}
+		else
+		{
+			// data byte will be received, reply with NACK (final byte in transfer)
+			receive_byte(FALSE);
+		}
+	}
+
+	inline void on_mr_data_ack()
+	{
+		// store received data byte
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: MR->DATA_ACK: RECEIVED BYTE: ");
+		#endif
+			receive_data[receive_data_index++] = inb(TWDR);
+		#ifdef I2C_DEBUG
+			UART::send_byte_as_binary(receive_data[receive_data_index - 1]);
+		#endif
+		on_mr_ack();
+	}
+
+	inline void on_mr_slave_address_ack()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: MR->SLA_ACK");
+		#endif
+		on_mr_ack();
+	}
+
+	inline void on_sr_ack()
+	{
+		// we are being addressed as slave for writing (data will be received from master)
+		// set state
+		state = SLAVE_RX;
+		// prepare buffer
+		receive_data_index = 0;
+		// receive data byte and return ACK
+		outb(TWCR, (inb(TWCR) & TWCR_CMD_MASK) | BV(TWINT) | BV(TWEA));
+	}
+
+	inline void on_sr_slave_ack()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: SR->SLA_ACK");
+		#endif
+		on_sr_ack();
+	}
+
+	inline void on_sr_arbitration_lost_slave_ack()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: SR->ARB_LOST_SLA_ACK");
+		#endif
+		on_sr_ack();
+	}
+
+	inline void on_sr_gcall_slave_ack()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: SR->GCALL_ACK");
+		#endif
+		on_sr_ack();
+	}
 };
 
 #endif

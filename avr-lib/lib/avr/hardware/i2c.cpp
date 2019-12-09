@@ -1,8 +1,8 @@
+#include "i2c.hpp"
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
-
-#include "i2c.h"
 
 // Standard I2C bit rates are:
 // 100KHz for slow speed
@@ -11,8 +11,8 @@
 void I2C::init()
 {
 	//set pull-up resistors on I2C bus pins
-	sbi(PORTC, PC5);	// i2c SCL on ATmega163,323,16,32,etc
-	sbi(PORTC, PC4);	// i2c SDA on ATmega163,323,16,32,etc
+	sbi(I2C_PORT, I2C_SCL);	// i2c SCL on ATmega163,323,16,32,etc
+	sbi(I2C_PORT, I2C_SDA);	// i2c SDA on ATmega163,323,16,32,etc
 	// clear SlaveReceive and SlaveTransmit handler to null
 	slave_handler = NULL;
 	// set i2c bit rate to 100KHz
@@ -108,6 +108,9 @@ inline uint8_t I2C::get_status()
 
 void I2C::master_send(uint8_t device_addr, uint8_t length, uint8_t* data)
 {
+	#ifdef I2C_DEBUG
+	UART::send_string("I2C: MASTER SEND");
+	#endif
 	uint8_t i;
 	// wait for interface to be ready
 	while(state);
@@ -127,6 +130,9 @@ void I2C::master_send(uint8_t device_addr, uint8_t length, uint8_t* data)
 
 void I2C::master_receive(uint8_t device_addr, uint8_t length, uint8_t* data)
 {
+	#ifdef I2C_DEBUG
+	UART::send_string("I2C: MASTER RECEIVE");
+	#endif
 	uint8_t i;
 	// wait for interface to be ready
 	while(state);
@@ -194,25 +200,15 @@ uint8_t I2C::master_send_ni(uint8_t device_addr, uint8_t length, uint8_t* data)
 
 uint8_t I2C::master_receive_ni(uint8_t device_addr, uint8_t length, uint8_t *data)
 {
-	cbi(PORTC, PC0);
-	cbi(PORTC, PC1);
-	cbi(PORTC, PC2);
-	cbi(PORTC, PC3);
-
-
 	uint8_t retval = I2C_OK;
 
 	// disable TWI interrupt
 	cbi(TWCR, TWIE);
 
 	// send start condition
-
-	sbi(PORTC, PC0);
-
 	send_start();
 	wait_for_complete();
 
-	sbi(PORTC, PC1);
 	// send device address with read
 	send_byte(device_addr | 0x01);
 	wait_for_complete();
@@ -238,7 +234,6 @@ uint8_t I2C::master_receive_ni(uint8_t device_addr, uint8_t length, uint8_t *dat
 	}
 	else
 	{
-		sbi(PORTC, PC4);
 		// device did not ACK it's address,
 		// data will not be transferred
 		// return error
@@ -270,73 +265,51 @@ void I2C::handle()
 	// Master General
 	case TW_START:						// 0x08: Sent start condition
 	case TW_REP_START:					// 0x10: Sent repeated start condition
-		// send device address
-		send_byte(device_addr_rw);
+		on_start();
 		break;
-
 	// Master Transmitter & Receiver status codes
 	case TW_MT_SLA_ACK:					// 0x18: Slave address acknowledged
+		on_slave_address_ack();
+		break;
 	case TW_MT_DATA_ACK:				// 0x28: Data acknowledged
-		if(send_data_index < send_data_length)
-		{
-			// send data
-			send_byte(send_data[send_data_index++]);
-		}
-		else
-		{
-			// transmit stop condition, enable SLA ACK
-			send_stop();
-			// set state
-			state = IDLE;
-		}
+		on_mt_data_ack();
 		break;
 	case TW_MR_DATA_NACK:				// 0x58: Data received, NACK reply issued
-		// store final received data byte
-		receive_data[receive_data_index++] = inb(TWDR);
-		// continue to transmit STOP condition
+		on_mr_data_nack();
+		break;
 	case TW_MR_SLA_NACK:				// 0x48: Slave address not acknowledged
+		on_mr_slave_address_nack();
+		break;
 	case TW_MT_SLA_NACK:				// 0x20: Slave address not acknowledged
+		on_mt_slave_address_nack();
+		break;
 	case TW_MT_DATA_NACK:				// 0x30: Data not acknowledged
-		// transmit stop condition, enable SLA ACK
-		send_stop();
-		// set state
-		state = IDLE;
+		on_mr_data_nack();
 		break;
 	case TW_MT_ARB_LOST:				// 0x38: Bus arbitration lost
-		// release bus
-		outb(TWCR, (inb(TWCR) & TWCR_CMD_MASK) | BV(TWINT));
-		// set state
-		state = IDLE;
+		on_bus_arbitration_lost();
 		break;
 	case TW_MR_DATA_ACK:				// 0x50: Data acknowledged
-		// store received data byte
-		receive_data[receive_data_index++] = inb(TWDR);
-		// fall-through to see if more bytes will be received
+		on_mr_data_ack();
+		break;
 	case TW_MR_SLA_ACK:					// 0x40: Slave address acknowledged
-		if(receive_data_index < (receive_data_length - 1))
-		{	// data byte will be received, reply with ACK (more bytes in transfer)
-			receive_byte(TRUE);
-		}
-		else
-		{
-			// data byte will be received, reply with NACK (final byte in transfer)
-			receive_byte(FALSE);
-		}
+		on_mr_slave_address_ack();
 		break;
 	// Slave Receiver status codes
 	case TW_SR_SLA_ACK:					// 0x60: own SLA+W has been received, ACK has been returned
+		on_sr_slave_ack();
+		break;
 	case TW_SR_ARB_LOST_SLA_ACK:		// 0x68: own SLA+W has been received, ACK has been returned
+		on_sr_arbitration_lost_slave_ack();
+		break;
 	case TW_SR_GCALL_ACK:				// 0x70:     GCA+W has been received, ACK has been returned
-		// we are being addressed as slave for writing (data will be received from master)
-		// set state
-		state = SLAVE_RX;
-		// prepare buffer
-		receive_data_index = 0;
-		// receive data byte and return ACK
-		outb(TWCR, (inb(TWCR) & TWCR_CMD_MASK) | BV(TWINT) | BV(TWEA));
+		on_sr_gcall_slave_ack();
 		break;
 	case TW_SR_DATA_ACK:				// 0x80: data byte has been received, ACK has been returned
 	case TW_SR_GCALL_DATA_ACK:			// 0x90: data byte has been received, ACK has been returned
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: SR->DATA_ACK");
+		#endif
 		// get previously received data byte
 		receive_data[receive_data_index++] = inb(TWDR);
 		// check receive buffer status
@@ -353,10 +326,16 @@ void I2C::handle()
 		break;
 	case TW_SR_DATA_NACK:				// 0x88: data byte has been received, NACK has been returned
 	case TW_SR_GCALL_DATA_NACK:			// 0x98: data byte has been received, NACK has been returned
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: SR->DATA_NACK");
+		#endif
 		// receive data byte and return NACK
 		receive_byte(FALSE);
 		break;
 	case TW_SR_STOP:					// 0xA0: STOP or REPEATED START has been received while addressed as slave
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: SR->STOP");
+		#endif
 		// switch to SR mode with SLA ACK
 		outb(TWCR, (inb(TWCR)&TWCR_CMD_MASK)|BV(TWINT)|BV(TWEA));
 		// i2c receive is complete, call i2cSlaveReceive
@@ -371,6 +350,9 @@ void I2C::handle()
 	// Slave Transmitter
 	case TW_ST_SLA_ACK:					// 0xA8: own SLA+R has been received, ACK has been returned
 	case TW_ST_ARB_LOST_SLA_ACK:		// 0xB0:     GCA+R has been received, ACK has been returned
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: ST->SLA_ACK");
+		#endif
 		// we are being addressed as slave for reading (data must be transmitted back to master)
 		// set state
 		state = SLAVE_TX;
@@ -383,6 +365,9 @@ void I2C::handle()
 		send_data_index = 0;
 		// fall-through to transmit first data byte
 	case TW_ST_DATA_ACK:				// 0xB8: data byte has been transmitted, ACK has been received
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: ST->DATA_ACK");
+		#endif
 		// transmit data byte
 		outb(TWDR, send_data[send_data_index++]);
 		if(send_data_index < send_data_length)
@@ -398,6 +383,9 @@ void I2C::handle()
 		break;
 	case TW_ST_DATA_NACK:				// 0xC0: data byte has been transmitted, NACK has been received
 	case TW_ST_LAST_DATA:				// 0xC8:
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: ST->DATA_NACK or LAST_DATA");
+		#endif
 		// all done
 		// switch to open slave
 		outb(TWCR, (inb(TWCR) & TWCR_CMD_MASK) | BV(TWINT) | BV(TWEA));
@@ -406,9 +394,15 @@ void I2C::handle()
 		break;
 	// Misc
 	case TW_NO_INFO:					// 0xF8: No relevant state information
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: NO_INFO");
+		#endif
 		// do nothing
 		break;
 	case TW_BUS_ERROR:					// 0x00: Bus error due to illegal start or stop condition
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: BUS_ERROR");
+		#endif
 		// reset internal hardware and release bus
 		outb(TWCR, (inb(TWCR) & TWCR_CMD_MASK) | BV(TWINT) | BV(TWSTO) | BV(TWEA));
 		// set state

@@ -155,9 +155,9 @@
                                 								
                                 <option id="de.innot.avreclipse.compiler.option.optimize.1590060907" name="Optimization Level" superClass="de.innot.avreclipse.compiler.option.optimize" value="de.innot.avreclipse.compiler.optimize.size" valueType="enumerated"/>
                                 								
-                                <option id="de.innot.avreclipse.compiler.option.optimize.shortenums.1564483478" superClass="de.innot.avreclipse.compiler.option.optimize.shortenums" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+                                <option id="de.innot.avreclipse.compiler.option.optimize.shortenums.1564483478" name="Short enums (-fshort-enums)" superClass="de.innot.avreclipse.compiler.option.optimize.shortenums" useByScannerDiscovery="false" value="false" valueType="boolean"/>
                                 								
-                                <option id="de.innot.avreclipse.compiler.option.optimize.packstruct.676554383" superClass="de.innot.avreclipse.compiler.option.optimize.packstruct" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+                                <option id="de.innot.avreclipse.compiler.option.optimize.packstruct.676554383" name="Pack structs (-fpack-struct)" superClass="de.innot.avreclipse.compiler.option.optimize.packstruct" useByScannerDiscovery="false" value="false" valueType="boolean"/>
                                 								
                                 <inputType id="de.innot.avreclipse.compiler.winavr.input.1779371960" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
                                 							
