@@ -27,7 +27,7 @@ public:
 		// 1/4s - f/1024 - 0x1313
 		// 1/16s - f/1024 - 0x4C5
 		// 1/32s - f/1024 - 262
-		UART::init(UART::BaudRate::B_9_600);
+//		UART::init(UART::BaudRate::B_9_600);
 		Timers::T1::start(0x4C4, Timers::F_1024, this);
 		sei();
 	}

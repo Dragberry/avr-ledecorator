@@ -15,6 +15,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include "i2cslavehandler.h"
 
 // TWSR values (not bits)
@@ -63,7 +64,7 @@
 #define I2C_SEND_DATA_BUFFER_SIZE 4
 #define I2C_RECEIVE_DATA_BUFFER_SIZE 4
 
-#define I2C_DEBUG
+//#define I2C_DEBUG
 
 #ifdef I2C_DEBUG
 #include "uart.hpp"
@@ -155,6 +156,12 @@ namespace I2C {
 	//! I2C (TWI) interrupt service routine
 	void handle();
 
+	inline void on_star_common()
+	{
+		// send device address
+		send_byte(device_addr_rw);
+	}
+
 	inline void on_start()
 	{
 		#ifdef I2C_DEBUG
@@ -162,10 +169,19 @@ namespace I2C {
 			UART::send_string("I2C: M->SEND ADDRESS");
 			UART::send_byte_as_binary(device_addr_rw);
 		#endif
-		// send device address
-		send_byte(device_addr_rw);
-		break;
+		on_star_common();
 	}
+
+	inline void on_repeated_start()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: M->REP_START");
+			UART::send_string("I2C: M->SEND ADDRESS");
+			UART::send_byte_as_binary(device_addr_rw);
+		#endif
+		on_star_common();
+	}
+
 
 	inline void on_ack()
 	{
@@ -220,9 +236,9 @@ namespace I2C {
 
 	inline void on_mr_data_nack()
 	{
-		UART::send_string("I2C: MR->DATA_NACK");
 		// store final received data byte
 		#ifdef I2C_DEBUG
+			UART::send_string("I2C: MR->DATA_NACK");
 			UART::send_string("I2C: MR->DATA_NACK: LAST RECEIVED BYTE:");
 		#endif
 		receive_data[receive_data_index++] = inb(TWDR);
@@ -334,6 +350,176 @@ namespace I2C {
 			UART::send_string("I2C: SR->GCALL_ACK");
 		#endif
 		on_sr_ack();
+	}
+
+	inline void on_sr_data_ack_common()
+	{
+		// get previously received data byte
+		receive_data[receive_data_index++] = inb(TWDR);
+		// check receive buffer status
+		if(receive_data_index < I2C_RECEIVE_DATA_BUFFER_SIZE)
+		{
+			// receive data byte and return ACK
+			receive_byte(TRUE);
+		}
+		else
+		{
+			// receive data byte and return NACK
+			receive_byte(FALSE);
+		}
+	}
+
+	inline void on_sr_data_ack()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: SR->DATA_ACK");
+		#endif
+		on_sr_data_ack_common();
+	}
+
+	inline void on_sr_gcall_data_ack()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: SR->GCALL_DATA_ACK");
+		#endif
+		on_sr_data_ack_common();
+	}
+
+	inline void on_sr_data_nack_common()
+	{
+		receive_byte(FALSE);
+	}
+
+	inline void on_sr_data_nack()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: SR->DATA_NACK");
+		#endif
+		on_sr_data_nack_common();
+	}
+
+	inline void on_sr_gcall_data_nack()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: SR->GCALL_DATA_NACK");
+		#endif
+		on_sr_data_nack_common();
+	}
+
+	inline void on_sr_stop()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: SR->STOP");
+		#endif
+		// switch to SR mode with SLA ACK
+		outb(TWCR, (inb(TWCR)&TWCR_CMD_MASK)|BV(TWINT)|BV(TWEA));
+		// i2c receive is complete, call i2cSlaveReceive
+		if (slave_handler != NULL)
+		{
+			slave_handler->handle_recieve(receive_data_index, receive_data);
+		}
+		// set state
+		state = IDLE;
+	}
+
+	inline void on_st_slave_data_ack_common()
+	{
+		// transmit data byte
+		outb(TWDR, send_data[send_data_index++]);
+		if(send_data_index < send_data_length)
+		{
+			// expect ACK to data byte
+			outb(TWCR, (inb(TWCR) & TWCR_CMD_MASK) | BV(TWINT) | BV(TWEA));
+		}
+		else
+		{
+			// expect NACK to data byte
+			outb(TWCR, (inb(TWCR) & TWCR_CMD_MASK) | BV(TWINT));
+		}
+	}
+
+	inline void on_st_slave_ack_common()
+	{
+		// we are being addressed as slave for reading (data must be transmitted back to master)
+		// set state
+		state = SLAVE_TX;
+		// request data from application
+		if(slave_handler != NULL)
+		{
+			send_data_length = slave_handler->handle_transmit(I2C_SEND_DATA_BUFFER_SIZE, send_data);
+		}
+		// reset data index
+		send_data_index = 0;
+		// fall-through to transmit first data byte
+		on_st_slave_data_ack_common();
+	}
+
+	inline void on_st_slave_ack()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: ST->SLA_ACK");
+		#endif
+		on_st_slave_ack_common();
+	}
+
+	inline void on_st_arbitration_lost_slave_ack()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: ST->ARB_LOST_SLA_ACK");
+		#endif
+		on_st_slave_ack_common();
+	}
+
+	inline void on_st_data_ack()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: ST->DATA_ACK");
+		#endif
+		on_st_slave_data_ack_common();
+	}
+
+	inline void on_st_data_nack_common()
+	{
+		// all done
+		// switch to open slave
+		outb(TWCR, (inb(TWCR) & TWCR_CMD_MASK) | BV(TWINT) | BV(TWEA));
+		// set state
+		state = IDLE;
+	}
+
+	inline void on_st_data_nack()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: ST->DATA_NACK");
+		#endif
+		on_st_data_nack_common();
+	}
+
+	inline void on_st_last_data()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: ST->LAST_DATA");
+		#endif
+		on_st_data_nack_common();
+	}
+
+	inline void on_no_info()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: NO_INFO");
+		#endif
+		// do nothing
+	}
+
+	inline void on_bus_error()
+	{
+		#ifdef I2C_DEBUG
+			UART::send_string("I2C: BUS_ERROR");
+		#endif
+		// reset internal hardware and release bus
+		outb(TWCR, (inb(TWCR) & TWCR_CMD_MASK) | BV(TWINT) | BV(TWSTO) | BV(TWEA));
+		// set state
+		state = IDLE;
 	}
 };
 

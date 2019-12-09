@@ -264,8 +264,10 @@ void I2C::handle()
 	{
 	// Master General
 	case TW_START:						// 0x08: Sent start condition
-	case TW_REP_START:					// 0x10: Sent repeated start condition
 		on_start();
+		break;
+	case TW_REP_START:					// 0x10: Sent repeated start condition
+		on_repeated_start();
 		break;
 	// Master Transmitter & Receiver status codes
 	case TW_MT_SLA_ACK:					// 0x18: Slave address acknowledged
@@ -306,107 +308,42 @@ void I2C::handle()
 		on_sr_gcall_slave_ack();
 		break;
 	case TW_SR_DATA_ACK:				// 0x80: data byte has been received, ACK has been returned
+		on_sr_data_ack();
+		break;
 	case TW_SR_GCALL_DATA_ACK:			// 0x90: data byte has been received, ACK has been returned
-		#ifdef I2C_DEBUG
-			UART::send_string("I2C: SR->DATA_ACK");
-		#endif
-		// get previously received data byte
-		receive_data[receive_data_index++] = inb(TWDR);
-		// check receive buffer status
-		if(receive_data_index < I2C_RECEIVE_DATA_BUFFER_SIZE)
-		{
-			// receive data byte and return ACK
-			receive_byte(TRUE);
-		}
-		else
-		{
-			// receive data byte and return NACK
-			receive_byte(FALSE);
-		}
+		on_sr_gcall_slave_ack();
 		break;
 	case TW_SR_DATA_NACK:				// 0x88: data byte has been received, NACK has been returned
+		on_sr_data_nack();
+		break;
 	case TW_SR_GCALL_DATA_NACK:			// 0x98: data byte has been received, NACK has been returned
-		#ifdef I2C_DEBUG
-			UART::send_string("I2C: SR->DATA_NACK");
-		#endif
-		// receive data byte and return NACK
-		receive_byte(FALSE);
+		on_sr_gcall_data_nack();
 		break;
 	case TW_SR_STOP:					// 0xA0: STOP or REPEATED START has been received while addressed as slave
-		#ifdef I2C_DEBUG
-			UART::send_string("I2C: SR->STOP");
-		#endif
-		// switch to SR mode with SLA ACK
-		outb(TWCR, (inb(TWCR)&TWCR_CMD_MASK)|BV(TWINT)|BV(TWEA));
-		// i2c receive is complete, call i2cSlaveReceive
-		if (slave_handler != NULL)
-		{
-			slave_handler->handle_recieve(receive_data_index, receive_data);
-		}
-		// set state
-		state = IDLE;
+		on_sr_stop();
 		break;
-
 	// Slave Transmitter
 	case TW_ST_SLA_ACK:					// 0xA8: own SLA+R has been received, ACK has been returned
+		on_st_slave_ack();
+		break;
 	case TW_ST_ARB_LOST_SLA_ACK:		// 0xB0:     GCA+R has been received, ACK has been returned
-		#ifdef I2C_DEBUG
-			UART::send_string("I2C: ST->SLA_ACK");
-		#endif
-		// we are being addressed as slave for reading (data must be transmitted back to master)
-		// set state
-		state = SLAVE_TX;
-		// request data from application
-		if(slave_handler != NULL)
-		{
-			send_data_length = slave_handler->handle_transmit(I2C_SEND_DATA_BUFFER_SIZE, send_data);
-		}
-		// reset data index
-		send_data_index = 0;
-		// fall-through to transmit first data byte
+		on_st_arbitration_lost_slave_ack();
+		break;
 	case TW_ST_DATA_ACK:				// 0xB8: data byte has been transmitted, ACK has been received
-		#ifdef I2C_DEBUG
-			UART::send_string("I2C: ST->DATA_ACK");
-		#endif
-		// transmit data byte
-		outb(TWDR, send_data[send_data_index++]);
-		if(send_data_index < send_data_length)
-		{
-			// expect ACK to data byte
-			outb(TWCR, (inb(TWCR) & TWCR_CMD_MASK) | BV(TWINT) | BV(TWEA));
-		}
-		else
-		{
-			// expect NACK to data byte
-			outb(TWCR, (inb(TWCR) & TWCR_CMD_MASK) | BV(TWINT));
-		}
+		on_st_data_ack();
 		break;
 	case TW_ST_DATA_NACK:				// 0xC0: data byte has been transmitted, NACK has been received
+		on_st_data_nack();
+		break;
 	case TW_ST_LAST_DATA:				// 0xC8:
-		#ifdef I2C_DEBUG
-			UART::send_string("I2C: ST->DATA_NACK or LAST_DATA");
-		#endif
-		// all done
-		// switch to open slave
-		outb(TWCR, (inb(TWCR) & TWCR_CMD_MASK) | BV(TWINT) | BV(TWEA));
-		// set state
-		state = IDLE;
+		on_st_last_data();
 		break;
 	// Misc
 	case TW_NO_INFO:					// 0xF8: No relevant state information
-		#ifdef I2C_DEBUG
-			UART::send_string("I2C: NO_INFO");
-		#endif
-		// do nothing
+		on_no_info();
 		break;
 	case TW_BUS_ERROR:					// 0x00: Bus error due to illegal start or stop condition
-		#ifdef I2C_DEBUG
-			UART::send_string("I2C: BUS_ERROR");
-		#endif
-		// reset internal hardware and release bus
-		outb(TWCR, (inb(TWCR) & TWCR_CMD_MASK) | BV(TWINT) | BV(TWSTO) | BV(TWEA));
-		// set state
-		state = IDLE;
+		on_bus_error();
 		break;
 	}
 }

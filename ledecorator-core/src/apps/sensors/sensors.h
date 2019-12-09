@@ -46,7 +46,7 @@ public:
 class TemperatureSensor : public SensorTemplate<2, 1, true>
 {
 private:
-	uint8_t value = 0;
+	float value = 0.0;
 
 public:
 	TemperatureSensor() : SensorTemplate(&IMG_TEMPERATURE) {}

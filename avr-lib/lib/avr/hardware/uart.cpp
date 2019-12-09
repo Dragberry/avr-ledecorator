@@ -60,7 +60,6 @@ void UART::send_byte_as_binary(const uint8_t byte)
 		send_byte((byte & (0b10000000 >> i++)) ? '1' : '0');
 	}
 	send_byte('\n');
-	send_byte('\r');
 }
 
 void UART::send_string(const char* string)
@@ -71,7 +70,6 @@ void UART::send_string(const char* string)
 		send_byte(string[index++]);
 	}
 	send_byte('\n');
-	send_byte('\r');
 }
 
 uint8_t UART::receive_byte_ack(uint8_t ack)

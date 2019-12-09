@@ -22,8 +22,8 @@ public:
 	uint8_t handle_transmit(uint8_t data_length, uint8_t* data)
 	{
 		UART::send_string("BYTE IS SENT:");
-		UART::send_byte_as_binary(value & 0b01010101);
-		data[0] = value & 0b01010101;
+		UART::send_byte_as_binary(value);
+		data[0] = value;
 		return 1;
 	}
 } i2c_handler;
