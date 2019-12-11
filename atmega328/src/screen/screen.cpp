@@ -1,12 +1,7 @@
 #include "screen.h"
 
-Screen::Screen(
-		const CoreInterface& core_interface,
-		const DataInterface& data_interface,
-		const DisplayInterface& display_interface)
-:
-		core_interface(core_interface),
-		display_interface(display_interface),
+Screen::Screen(DeviceInterface& device_interface) :
+		device_interface(device_interface),
 		buffer_1{},
 		buffer_2{},
 		active_buffer(buffer_1),
@@ -16,15 +11,15 @@ Screen::Screen(
 		is_being_read(0),
 		workers
 		{
-			new DefaultWorker(*this, data_interface),
-			new ByteTerminalWorker(*this, data_interface)
+			new DefaultWorker(*this, device_interface),
+			new ByteTerminalWorker(*this, device_interface)
 		},
-		worker(workers[0])
-{}
+		worker(workers[0]) { }
+
+Screen::~Screen() { }
 
 void Screen::launch()
 {
-	core_interface.launch();
 	while(1)
 	{
 		uint8_t result = worker->do_work();
@@ -37,10 +32,6 @@ void Screen::launch()
 			worker = workers[result < TOTAL_WORKERS ? result : CMD_DEFAULT];
 		}
 	}
-}
-
-void Screen::stop() {
-	core_interface.stop();
 }
 
 void Screen::switch_buffer()
@@ -135,52 +126,52 @@ void Screen::draw_row()
 		{
 			stop_reading();
 		}
-		display_interface.start_row();
-		display_interface.send_byte(rows_state);
+		device_interface.start_row();
+		device_interface.send_byte(rows_state);
 		for (uint8_t sectionIdx = 0; sectionIdx < SECTIONS; sectionIdx++)
 		{
 			Section section = current_row.sections[sectionIdx];
-			display_interface.send_byte(section.red.level0);
-			display_interface.send_byte(section.green.level0);
-			display_interface.send_byte(section.blue.level0);
+			device_interface.send_byte(section.red.level0);
+			device_interface.send_byte(section.green.level0);
+			device_interface.send_byte(section.blue.level0);
 		}
-		display_interface.complete_row();
+		device_interface.complete_row();
 	}
 	else
 	{
-		display_interface.start_row();
-		display_interface.send_byte(rows_state);
+		device_interface.start_row();
+		device_interface.send_byte(rows_state);
 		for (uint8_t sectionIdx = 0; sectionIdx < SECTIONS; sectionIdx++)
 		{
 			Section section = current_row.sections[sectionIdx];
 
 			if (current_row.brightness_step > 2)
 			{
-				display_interface.send_byte(section.red.level3);
-				display_interface.send_byte(section.green.level3);
-				display_interface.send_byte(section.blue.level3);
+				device_interface.send_byte(section.red.level3);
+				device_interface.send_byte(section.green.level3);
+				device_interface.send_byte(section.blue.level3);
 			}
 			else if (current_row.brightness_step > 0)
 			{
-				display_interface.send_byte(section.red.level2);
-				display_interface.send_byte(section.green.level2);
-				display_interface.send_byte(section.blue.level2);
+				device_interface.send_byte(section.red.level2);
+				device_interface.send_byte(section.green.level2);
+				device_interface.send_byte(section.blue.level2);
 			}
 			else if (current_row.brightness_step > 0)
 			{
-				display_interface.send_byte(section.red.level1);
-				display_interface.send_byte(section.green.level1);
-				display_interface.send_byte(section.blue.level1);
+				device_interface.send_byte(section.red.level1);
+				device_interface.send_byte(section.green.level1);
+				device_interface.send_byte(section.blue.level1);
 			}
 			else
 			{
-				display_interface.send_byte(section.red.level0);
-				display_interface.send_byte(section.green.level0);
-				display_interface.send_byte(section.blue.level0);
+				device_interface.send_byte(section.red.level0);
+				device_interface.send_byte(section.green.level0);
+				device_interface.send_byte(section.blue.level0);
 			}
 
 		}
-		display_interface.complete_row();
+		device_interface.complete_row();
 	}
 
 	if (++current_row.brightness_step == 4)

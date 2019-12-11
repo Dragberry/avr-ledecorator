@@ -5,18 +5,15 @@
 #include "lib/screen/colors.h"
 #include "lib/screen/commands.h"
 #include "lib/screen/definitions.h"
-#include "interfaces/coreinterface.h"
-#include "interfaces/datainterface.h"
-#include "interfaces/displayinterface.h"
+#include "interfaces/deviceinterface.hpp"
 #include "pixel.h"
 #include "row.h"
 #include "section.h"
 
-class Screen
+class Screen : public DeviceInterface::RowDrawer
 {
 private:
-	const CoreInterface& core_interface;
-	const DisplayInterface& display_interface;
+	DeviceInterface& device_interface;
 
 	uint8_t buffer_1[SCREEN_HEIGHT][SCREEN_WIDTH];
 	uint8_t buffer_2[SCREEN_HEIGHT][SCREEN_WIDTH];
@@ -28,14 +25,13 @@ private:
 
 	volatile uint8_t is_being_read;
 
-
 	class Worker
 	{
 	protected:
 		Screen& screen;
-		const DataInterface& data_interface;
+		DeviceInterface& device_interface;
 
-		Worker(Screen& screen, const DataInterface& data_interface) : screen(screen), data_interface(data_interface) {}
+		Worker(Screen& screen, DeviceInterface& device_interface) : screen(screen), device_interface(device_interface) {}
 
 	public:
 		virtual ~Worker() {}
@@ -47,7 +43,7 @@ private:
 	class DefaultWorker : public Worker
 	{
 	public:
-		DefaultWorker(Screen& screen, const DataInterface& data_interface) : Worker(screen, data_interface) {}
+		DefaultWorker(Screen& screen, DeviceInterface& device_interface) : Worker(screen, device_interface) {}
 
 		uint8_t do_work();
 	};
@@ -56,7 +52,7 @@ private:
 	class ByteTerminalWorker : public Worker
 	{
 	public:
-		ByteTerminalWorker(Screen& screen, const DataInterface& data_interface) : Worker(screen, data_interface) {}
+		ByteTerminalWorker(Screen& screen, DeviceInterface& device_interface) : Worker(screen, device_interface) {}
 
 		uint8_t do_work();
 	};
@@ -72,15 +68,11 @@ private:
 	void apply_colors(Section& section, const uint8_t color, const uint8_t offset);
 
 public:
-	Screen(
-			const CoreInterface& core_interface,
-			const DataInterface& data_interface,
-			const DisplayInterface& display_interface
-			);
+	Screen(DeviceInterface& device_interface);
+
+	~Screen();
 
 	void launch();
-
-	void stop();
 
 	inline void start_reading();
 

@@ -11,7 +11,7 @@ uint8_t Screen::ByteTerminalWorker::do_work()
 		uint8_t(*buffer)[SCREEN_WIDTH] = screen.buffer;
 		for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
 		{
-			uint8_t data = (cr && lf) ? BLACK : data_interface.get_data_byte();
+			uint8_t data = (cr && lf) ? BLACK : device_interface.get_data_byte();
 			if (data & 0b01000000)
 			{
 				uint8_t command = data & 0b00111111;

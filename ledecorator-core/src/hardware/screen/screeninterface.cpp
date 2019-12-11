@@ -8,7 +8,7 @@
 ScreenInterface::ScreenInterface()
 {
 	#ifndef SCRREN_DEBUG
-		UART::init(UART::BaudRate::B_500_000);
+		UART::init(UART::BaudRate::B_9_600);
 		UART::set_rx_handler(this);
 	#endif
 	Timers::T0::start(0, Timers::Prescaller::F_256, &screen_data_transmitter);
@@ -27,11 +27,11 @@ void ScreenInterface::handle_rx(uint8_t byte)
 
 void ScreenInterface::start_picture()
 {
-	is_image_being_transmitted = 1;
+	is_byte_being_transmitted = 1;
 	#ifndef SCRREN_DEBUG
-		is_byte_being_transmitted = 1;
 		UART::send_byte(COMMAND_MASK | CMD_DEFAULT);
 	#endif
+	is_image_being_transmitted = 1;
 }
 
 void ScreenInterface::send_next_byte()

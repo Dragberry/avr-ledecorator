@@ -33,6 +33,11 @@ bool Console::is_running()
 void Console::build_image(ScreenInterface& screen_interface) const
 {
 	screen_interface.clear_screen(state);
-	string_h.draw(screen_interface);
-	string_l.draw(screen_interface);
+
+	screen_interface.draw_area(0, 0, 8, 8, RED);
+
+	screen_interface.draw_area(8, 8, 8, 8, GREEN);
+
+	//	string_h.draw(screen_interface);
+//	string_l.draw(screen_interface);
 }
