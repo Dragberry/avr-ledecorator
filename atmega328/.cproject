@@ -65,6 +65,14 @@
                                 								
                                 <option id="de.innot.avreclipse.compiler.option.optimize.shortenums.1958658356" name="Short enums (-fshort-enums)" superClass="de.innot.avreclipse.compiler.option.optimize.shortenums" useByScannerDiscovery="false" value="false" valueType="boolean"/>
                                 								
+                                <option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="de.innot.avreclipse.compiler.option.incpath.339263479" name="Include Paths (-I)" superClass="de.innot.avreclipse.compiler.option.incpath" valueType="includePath">
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/avr-lib}&quot;"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/rgb-32x16-screen}&quot;"/>
+                                    								
+                                </option>
+                                								
                                 <inputType id="de.innot.avreclipse.compiler.winavr.input.1790341959" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
                                 							
                             </tool>
@@ -137,13 +145,13 @@
                         						
                         <entry excluding="snake|workers|common|interfaces|games|atmega328|life|apps|screen|src|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
                         						
-                        <entry excluding="common|apps|screen|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+                        <entry excluding="hardware|common|apps|screen|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+                        						
+                        <entry excluding="avr|avr/atmega328interface.hpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/avr"/>
                         						
                         <entry excluding="workers|interfaces|atmega328" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen"/>
-                        						
-                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen/atmega328"/>
-                        						
-                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen/interfaces"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen/workers"/>
                         					
@@ -269,13 +277,13 @@
                         						
                         <entry excluding="snake|workers|common|interfaces|games|atmega328|life|apps|screen|src|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
                         						
-                        <entry excluding="common|apps|screen|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+                        <entry excluding="hardware|common|apps|screen|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+                        						
+                        <entry excluding="avr|avr/atmega328interface.hpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/avr"/>
                         						
                         <entry excluding="workers|interfaces|atmega328" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen"/>
-                        						
-                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen/atmega328"/>
-                        						
-                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen/interfaces"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/screen/workers"/>
                         					

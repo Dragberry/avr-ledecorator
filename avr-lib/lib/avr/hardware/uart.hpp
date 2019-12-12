@@ -67,7 +67,7 @@ namespace UART
 	public:
 		virtual ~RxHandler();
 
-		virtual void handle_rx(const uint8_t byte) = 0;
+		virtual void on_uart_rx_event(const uint8_t byte) = 0;
 	};
 
 	static RxHandler* rx_handler = NULL;

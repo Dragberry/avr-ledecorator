@@ -20,7 +20,7 @@ ScreenInterface::~ScreenInterface()
 	Timers::T0::stop();
 }
 
-void ScreenInterface::handle_rx(uint8_t byte)
+void ScreenInterface::on_uart_rx_event(uint8_t byte)
 {
 	is_byte_being_transmitted = 0;
 }

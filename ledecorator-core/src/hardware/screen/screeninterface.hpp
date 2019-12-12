@@ -31,7 +31,7 @@ private:
 
 		ScreenDataTransmitter(ScreenInterface& screen_interace) : screen_interace(screen_interace) {}
 
-		void handle()
+		void on_timer_event()
 		{
 			if (screen_interace.is_image_being_transmitted)
 			{
@@ -56,7 +56,7 @@ public:
 
 	~ScreenInterface();
 
-	void handle_rx(const uint8_t byte);
+	void on_uart_rx_event(const uint8_t byte);
 
 	void start_picture();
 

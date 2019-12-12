@@ -1,30 +1,23 @@
 #include <stdint.h>
-#include "../screen.h"
+#include "../screeninterface.hpp"
 
-uint8_t Screen::DefaultWorker::do_work()
+uint8_t ScreenInterface::DefaultWorker::work_with_command(const uint8_t command)
 {
-	while (1)
+	y = 0;
+	x = 0;
+	return 0;
+}
+
+uint8_t ScreenInterface::DefaultWorker::work_with_byte(const uint8_t byte)
+{
+	screen_interface.buffer[y][x] = byte;
+	if (x++ == SCREEN_WIDTH)
 	{
-		uint8_t(*buffer)[SCREEN_WIDTH] = screen.buffer;
-		for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
+		x = 0;
+		if (y++ == SCREEN_HEIGHT)
 		{
-			for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
-			{
-				uint8_t data = device_interface.get_data_byte();
-				if (data & 0b01000000)
-				{
-					uint8_t command = data & 0b00111111;
-					if (command < TOTAL_WORKERS)
-					{
-						return command;
-					}
-				}
-				else
-				{
-					buffer[y][x] = data;
-				}
-			}
+			y = 0;
 		}
-		screen.switch_buffer();
 	}
+	return 0;
 }

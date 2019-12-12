@@ -1,58 +1,55 @@
-#include "screen.h"
+#include "screeninterface.hpp"
 
-Screen::Screen(DeviceInterface& device_interface) :
-		device_interface(device_interface),
-		buffer_1{},
-		buffer_2{},
-		active_buffer(buffer_1),
-		buffer(buffer_2),
-		current_row(),
-		rows_state(0xFF),
-		is_being_read(0),
-		workers
-		{
-			new DefaultWorker(*this, device_interface),
-			new ByteTerminalWorker(*this, device_interface)
-		},
-		worker(workers[0]) { }
-
-Screen::~Screen() { }
-
-void Screen::launch()
-{
-	while(1)
+ScreenInterface::ScreenInterface(DeviceInterface& device) :
+	device_interface(device),
+	buffer_1{},
+	buffer_2{},
+	default_worker(DefaultWorker(*this)),
+	byte_terminal_worker(ByteTerminalWorker(*this)),
+	workers
 	{
-		uint8_t result = worker->do_work();
-		if (result == CMD_STOP)
+		&default_worker,
+		&byte_terminal_worker,
+	},
+	worker(workers[0])
+{
+	active_buffer = buffer_1;
+	buffer = buffer_2;
+
+	rows_state = 0;
+
+	device_interface.register_timer_interface(this);
+	device_interface.register_data_interface(this);
+}
+
+void ScreenInterface::handle_byte(const uint8_t byte)
+{
+	if (byte & 0b01000000)
+	{
+		uint8_t command = byte & 0b00111111;
+		if (command < TOTAL_WORKERS)
 		{
-			return;
+			worker = workers[command];
 		}
-		else
-		{
-			worker = workers[result < TOTAL_WORKERS ? result : CMD_DEFAULT];
-		}
+		worker->work_with_command(command);
+	}
+	else
+	{
+		worker->work_with_byte(byte);
 	}
 }
 
-void Screen::switch_buffer()
+void ScreenInterface::start_reading()
 {
-	while (is_being_read);
-	uint8_t (*temp)[SCREEN_WIDTH] = active_buffer;
-	active_buffer = buffer;
-	buffer = temp;
+//	is_being_read = 1;
 }
 
-inline void Screen::start_reading()
+void ScreenInterface::stop_reading()
 {
-	is_being_read = 1;
+//	is_being_read = 0;
 }
 
-inline void Screen::stop_reading()
-{
-	is_being_read = 0;
-}
-
-void Screen::apply_colors(Pixel& pixel, const uint8_t color, const uint8_t currentBit)
+void ScreenInterface::apply_colors(Pixel& pixel, const uint8_t color, const uint8_t currentBit)
 {
 	if (color > 0b00)
 	{
@@ -69,7 +66,7 @@ void Screen::apply_colors(Pixel& pixel, const uint8_t color, const uint8_t curre
 	}
 }
 
-void Screen::apply_colors(Section& section, const uint8_t color, const uint8_t offset)
+void ScreenInterface::apply_colors(Section& section, const uint8_t color, const uint8_t offset)
 {
 	uint8_t currentBit = (1<<offset);
 	apply_colors(section.red, (color & RED), currentBit);
@@ -77,7 +74,7 @@ void Screen::apply_colors(Section& section, const uint8_t color, const uint8_t o
 	apply_colors(section.blue, (color & BLUE) >> 4, currentBit);
 }
 
-void Screen::draw_row()
+void ScreenInterface::on_timer_event()
 {
 	if (current_row.brightness_step == 0)
 	{

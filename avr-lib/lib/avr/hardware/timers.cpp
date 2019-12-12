@@ -2,7 +2,7 @@
 #include <avr/interrupt.h>
 #include "timers.hpp"
 
-Timers::Handler::~Handler() {}
+Timers::Handler::~Handler() { }
 
 #if defined (__AVR_ATmega16__)
 void Timers::T0::start(uint8_t counter, Prescaller prescaller, Handler* handler)
@@ -62,7 +62,7 @@ void Timers::T0::stop()
 
 ISR(TIMER0_COMP_vect)
 {
-	Timers::T0::comp_a_handler->handle();
+	Timers::T0::comp_a_handler->on_timer_event();
 }
 
 void Timers::T1::start(uint16_t counter, Prescaller prescaller, Handler* handler)
@@ -127,7 +127,7 @@ void Timers::T1::stop()
 
 ISR(TIMER1_COMPA_vect)
 {
-	Timers::T1::comp_a_handler->handle();
+	Timers::T1::comp_a_handler->on_timer_event();
 }
 
 #elif defined (__AVR_ATmega328P__)
@@ -191,7 +191,7 @@ void Timers::T0::stop()
 
 ISR(TIMER0_COMPA_vect)
 {
-	Timers::T0::comp_a_handler->handle();
+	Timers::T0::comp_a_handler->on_timer_event();
 }
 
 void Timers::T1::start(uint16_t counter, Prescaller prescaller, Handler* handler)
@@ -256,7 +256,7 @@ void Timers::T1::stop()
 
 ISR(TIMER1_COMPA_vect)
 {
-	Timers::T1::comp_a_handler->handle();
+	Timers::T1::comp_a_handler->on_timer_event();
 }
 
 #endif

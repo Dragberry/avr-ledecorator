@@ -82,6 +82,6 @@ uint8_t UART::receive_byte_ack(uint8_t ack)
 
 ISR(USART_RX_vect)
 {
-	UART::rx_handler->handle_rx(UART_UDR);
+	UART::rx_handler->on_uart_rx_event(UART_UDR);
 }
 

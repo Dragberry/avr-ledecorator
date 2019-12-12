@@ -31,7 +31,7 @@ public:
 class Timer : public Timers::Handler
 {
 public:
-	void handle()
+	void on_timer_event()
 	{
 
 	}

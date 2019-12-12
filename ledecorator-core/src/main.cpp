@@ -49,7 +49,7 @@ public:
 		}
 	}
 
-	void handle()
+	void on_timer_event()
 	{
 		sei();
 		++(*app);

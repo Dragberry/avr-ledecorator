@@ -1,12 +1,12 @@
-#include "screen/atmega328/atmega328interface.h"
-#include "screen/screen.h"
+#include "hardware/avr/atmega328device.hpp"
+#include "screen/screeninterface.hpp"
 
-Atmega328Interface m328 = Atmega328Interface();
+Atmega328Device m328 = Atmega328Device();
 
-Screen screen = Screen(m328);
+ScreenInterface screen = ScreenInterface(m328);
 
 int main()
 {
-	m328.launch(&screen);
-	screen.launch();
+	m328.init();
+	while(1);
 }

@@ -20,7 +20,7 @@ namespace Timers
 	public:
 		virtual ~Handler();
 
-		virtual void handle() = 0;
+		virtual void on_timer_event() = 0;
 	};
 
 	namespace T0

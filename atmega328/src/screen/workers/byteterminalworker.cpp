@@ -1,61 +1,49 @@
 #include <stdint.h>
 #include "lib/screen/commands.h"
-#include "../screen.h"
+#include "../screeninterface.hpp"
 
-uint8_t Screen::ByteTerminalWorker::do_work()
+uint8_t ScreenInterface::ByteTerminalWorker::work_with_command(const uint8_t command)
 {
-	while (1)
+	x = 0;
+	return 0;
+}
+
+uint8_t ScreenInterface::ByteTerminalWorker::work_with_byte(const uint8_t byte)
+{
+
+	screen_interface.buffer[7][x] = byte & (1<<0) ? byte : BLACK;
+	screen_interface.buffer[6][x] = byte & (1<<1) ? byte : BLACK;
+	screen_interface.buffer[5][x] = byte & (1<<2) ? byte : BLACK;
+	screen_interface.buffer[4][x] = byte & (1<<3) ? byte : BLACK;
+	screen_interface.buffer[3][x] = byte & (1<<4) ? byte : BLACK;
+	screen_interface.buffer[2][x] = byte & (1<<5) ? byte : BLACK;
+	screen_interface.buffer[1][x] = byte & (1<<6) ? byte : BLACK;
+	screen_interface.buffer[0][x] = byte & (1<<7) ? byte : BLACK;
+
+	if (!lf)
 	{
-		uint8_t cr = 0;
-		uint8_t lf = 0;
-		uint8_t(*buffer)[SCREEN_WIDTH] = screen.buffer;
+		if (byte == CR)
+		{
+			cr = byte;
+		}
+		else if (byte == LF && cr)
+		{
+			lf = byte;
+		}
+		else
+		{
+			cr = 0;
+		}
+	}
+	for (uint8_t y = 8; y < SCREEN_HEIGHT; y++)
+	{
+		uint8_t* row = screen_interface.buffer[y];
 		for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
 		{
-			uint8_t data = (cr && lf) ? BLACK : device_interface.get_data_byte();
-			if (data & 0b01000000)
-			{
-				uint8_t command = data & 0b00111111;
-				if (command < TOTAL_WORKERS)
-				{
-					return command;
-				}
-			}
-			buffer[7][x] = data & (1<<0) ? data : BLACK;
-			buffer[6][x] = data & (1<<1) ? data : BLACK;
-			buffer[5][x] = data & (1<<2) ? data : BLACK;
-			buffer[4][x] = data & (1<<3) ? data : BLACK;
-			buffer[3][x] = data & (1<<4) ? data : BLACK;
-			buffer[2][x] = data & (1<<5) ? data : BLACK;
-			buffer[1][x] = data & (1<<6) ? data : BLACK;
-			buffer[0][x] = data & (1<<7) ? data : BLACK;
-
-			if (!lf)
-			{
-				if (data == CR)
-				{
-					cr = data;
-				}
-				else if (data == LF && cr)
-				{
-					lf = data;
-				}
-				else
-				{
-					cr = 0;
-				}
-			}
+			row[x] = BLACK;
 		}
-
-
-		for (uint8_t y = 8; y < SCREEN_HEIGHT; y++)
-		{
-			uint8_t* row = buffer[y];
-			for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
-			{
-				row[x] = BLACK;
-			}
-		}
-		screen.switch_buffer();
 	}
+//	screen_interface.switch_buffer();
+	return 0;
 }
 
