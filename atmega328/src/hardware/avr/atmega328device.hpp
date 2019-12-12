@@ -9,6 +9,8 @@
 
 #include "../deviceinterface.hpp"
 
+#include "../../screen/screeninterface.hpp"
+
 class Atmega328Device :
 		public DeviceInterface,
 		public Timers::Handler,
@@ -22,6 +24,7 @@ public:
 	void init()
 	{
 		SPI::init();
+		UART::init(UART::BaudRate::B_1_250_000);
 		UART::set_rx_handler(this);
 		Timers::T1::start(4, Timers::Prescaller::F_1024, this);
 		sei();
@@ -57,6 +60,7 @@ public:
 
 	void on_uart_rx_event(const uint8_t byte)
 	{
+		UART::send_byte('A');
 		data_interface->handle_byte(byte);
 	}
 

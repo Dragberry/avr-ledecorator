@@ -22,8 +22,14 @@ private:
 
 	uint8_t buffer_1[SCREEN_HEIGHT][SCREEN_WIDTH];
 	uint8_t buffer_2[SCREEN_HEIGHT][SCREEN_WIDTH];
-	uint8_t(*active_buffer)[SCREEN_WIDTH];
+	uint8_t buffer_3[SCREEN_HEIGHT][SCREEN_WIDTH];
+
+
+	uint8_t(*accumulator)[SCREEN_WIDTH];
 	uint8_t(*buffer)[SCREEN_WIDTH];
+	uint8_t(*active_buffer)[SCREEN_WIDTH];
+
+	volatile bool is_buffer_ready;
 
 	Row current_row;
 	uint8_t rows_state;
@@ -41,9 +47,9 @@ public:
 
 	void on_timer_event();
 
-	inline void start_reading();
+	void switch_accumulator();
 
-	inline void stop_reading();
+	void activate_buffer();
 
 private:
 	class Worker

@@ -4,6 +4,7 @@ ScreenInterface::ScreenInterface(DeviceInterface& device) :
 	device_interface(device),
 	buffer_1{},
 	buffer_2{},
+	buffer_3{},
 	default_worker(DefaultWorker(*this)),
 	byte_terminal_worker(ByteTerminalWorker(*this)),
 	workers
@@ -13,8 +14,11 @@ ScreenInterface::ScreenInterface(DeviceInterface& device) :
 	},
 	worker(workers[0])
 {
-	active_buffer = buffer_1;
+	accumulator = buffer_1;
 	buffer = buffer_2;
+	active_buffer = buffer_3;
+
+	is_buffer_ready = false;
 
 	rows_state = 0;
 
@@ -37,16 +41,6 @@ void ScreenInterface::handle_byte(const uint8_t byte)
 	{
 		worker->work_with_byte(byte);
 	}
-}
-
-void ScreenInterface::start_reading()
-{
-//	is_being_read = 1;
-}
-
-void ScreenInterface::stop_reading()
-{
-//	is_being_read = 0;
 }
 
 void ScreenInterface::apply_colors(Pixel& pixel, const uint8_t color, const uint8_t currentBit)
@@ -78,10 +72,6 @@ void ScreenInterface::on_timer_event()
 {
 	if (current_row.brightness_step == 0)
 	{
-		if (current_row.index == 0)
-		{
-			start_reading();
-		}
 		current_row.reset();
 		for (uint8_t sectionIdx = 0; sectionIdx < SECTIONS; sectionIdx++)
 		{
@@ -119,10 +109,6 @@ void ScreenInterface::on_timer_event()
 
 		}
 		rows_state = ~(1<<current_row.index);
-		if (current_row.index == ROWS - 1)
-		{
-			stop_reading();
-		}
 		device_interface.start_row();
 		device_interface.send_byte(rows_state);
 		for (uint8_t sectionIdx = 0; sectionIdx < SECTIONS; sectionIdx++)
@@ -177,6 +163,26 @@ void ScreenInterface::on_timer_event()
 		if (++current_row.index == ROWS)
 		{
 			current_row.index = 0;
+			if (is_buffer_ready)
+			{
+				activate_buffer();
+				is_buffer_ready = false;
+			}
 		}
 	}
+}
+
+void ScreenInterface::switch_accumulator()
+{
+	uint8_t(*temp)[SCREEN_WIDTH] = accumulator;
+	accumulator = buffer;
+	buffer = temp;
+	is_buffer_ready = true;
+}
+
+void ScreenInterface::activate_buffer()
+{
+	uint8_t(*temp)[SCREEN_WIDTH] = active_buffer;
+	active_buffer = buffer;
+	buffer = temp;
 }

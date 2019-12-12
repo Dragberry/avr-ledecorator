@@ -8,10 +8,10 @@
 ScreenInterface::ScreenInterface()
 {
 	#ifndef SCRREN_DEBUG
-		UART::init(UART::BaudRate::B_9_600);
+		UART::init(UART::BaudRate::B_1_250_000);
 		UART::set_rx_handler(this);
 	#endif
-	Timers::T0::start(0, Timers::Prescaller::F_256, &screen_data_transmitter);
+	Timers::T0::start(2, Timers::Prescaller::F_256, &screen_data_transmitter);
 }
 
 ScreenInterface::~ScreenInterface()

@@ -10,18 +10,24 @@
 class DeviceInterface
 {
 protected:
-	DataInterface* data_interface;
+	DataInterface* data_interface = NULL;
 
-	TimerInterface* timer_interface;
+	TimerInterface* timer_interface = NULL;
 
 public:
-	DeviceInterface();
+	DeviceInterface() { }
 
-	virtual ~DeviceInterface();
+	virtual ~DeviceInterface() { }
 
-	void register_data_interface(DataInterface* data_interface);
+	void register_timer_interface(TimerInterface* timer_interface)
+	{
+		this->timer_interface = timer_interface;
+	}
 
-	void register_timer_interface(TimerInterface* timer_interface);
+	void register_data_interface(DataInterface* data_interface)
+	{
+		this->data_interface = data_interface;
+	}
 
 	virtual void init() = 0;
 
