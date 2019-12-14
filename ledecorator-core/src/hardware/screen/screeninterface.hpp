@@ -22,20 +22,21 @@ private:
 	uint8_t y = 0;
 	uint8_t x = 0;
 
-	volatile uint8_t is_byte_being_transmitted = 0;
+	volatile bool is_byte_being_transmitted = false;
 
 	class ScreenDataTransmitter : public Timers::Handler
 	{
 	public:
-		ScreenInterface& screen_interace;
+		ScreenInterface& screen_interface;
 
-		ScreenDataTransmitter(ScreenInterface& screen_interace) : screen_interace(screen_interace) {}
+		ScreenDataTransmitter(ScreenInterface& screen_interface) :
+			screen_interface(screen_interface) {}
 
 		void on_timer_event()
 		{
-			if (screen_interace.is_image_being_transmitted)
+			if (screen_interface.is_image_being_transmitted)
 			{
-				screen_interace.send_next_byte();
+				screen_interface.send_next_byte();
 			}
 		}
 
@@ -47,7 +48,7 @@ public:
 		LEFT, RIGHT
 	};
 
-	volatile uint8_t is_image_being_transmitted = 0;
+	volatile bool is_image_being_transmitted = false;
 
 	uint8_t(*active_buffer)[SCREEN_WIDTH] = buffer_1;
 	uint8_t(*buffer)[SCREEN_WIDTH] = buffer_2;

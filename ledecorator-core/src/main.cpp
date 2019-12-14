@@ -42,7 +42,7 @@ public:
 	{
 		while(1)
 		{
-			app = new Console();
+			app = new SensorsApp();
 			screen_interface.start_picture();
 			while(app->is_running());
 			delete app;

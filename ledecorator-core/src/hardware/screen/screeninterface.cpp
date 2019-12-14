@@ -22,16 +22,16 @@ ScreenInterface::~ScreenInterface()
 
 void ScreenInterface::on_uart_rx_event(uint8_t byte)
 {
-	is_byte_being_transmitted = 0;
+	is_byte_being_transmitted = false;
 }
 
 void ScreenInterface::start_picture()
 {
-	is_byte_being_transmitted = 1;
+	is_byte_being_transmitted = true;
 	#ifndef SCRREN_DEBUG
-		UART::send_byte(COMMAND_MASK | CMD_DEFAULT);
+		UART::send_byte(mask_command(CMD_DEFAULT));
 	#endif
-	is_image_being_transmitted = 1;
+	is_image_being_transmitted = true;
 }
 
 void ScreenInterface::send_next_byte()
@@ -40,7 +40,7 @@ void ScreenInterface::send_next_byte()
 	{
 		return;
 	}
-	is_byte_being_transmitted = 1;
+	is_byte_being_transmitted = true;
 	#ifndef SCRREN_DEBUG
 	UART::send_byte(active_buffer[y][x]);
 	#endif
@@ -64,7 +64,7 @@ void ScreenInterface::switch_buffer()
 
 inline void ScreenInterface::complete_picture()
 {
-	is_image_being_transmitted = 0;
+	is_image_being_transmitted = false;
 }
 
 void ScreenInterface::clear_screen(const Color color)

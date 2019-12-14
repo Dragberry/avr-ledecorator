@@ -10,6 +10,4 @@
 #define SCREEN_HEIGHT (H_SECTION * SECTIONS_PER_COLUMN)
 #define ROWS 8
 
-#define TOTAL_WORKERS 2
-
 #endif

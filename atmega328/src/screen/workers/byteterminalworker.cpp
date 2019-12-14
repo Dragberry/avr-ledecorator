@@ -2,13 +2,12 @@
 #include "lib/screen/commands.h"
 #include "../screeninterface.hpp"
 
-uint8_t ScreenInterface::ByteTerminalWorker::work_with_command(const uint8_t command)
+void ScreenInterface::ByteTerminalWorker::work_with_command(const uint8_t command)
 {
 	x = 0;
-	return 0;
 }
 
-uint8_t ScreenInterface::ByteTerminalWorker::work_with_byte(const uint8_t byte)
+void ScreenInterface::ByteTerminalWorker::work_with_byte(const uint8_t byte)
 {
 
 	screen_interface.buffer[7][x] = byte & (1<<0) ? byte : BLACK;
@@ -44,6 +43,5 @@ uint8_t ScreenInterface::ByteTerminalWorker::work_with_byte(const uint8_t byte)
 		}
 	}
 //	screen_interface.switch_buffer();
-	return 0;
 }
 

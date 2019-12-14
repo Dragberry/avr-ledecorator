@@ -63,9 +63,9 @@ private:
 	public:
 		virtual ~Worker() { }
 
-		virtual uint8_t work_with_command(const uint8_t command) = 0;
+		virtual void work_with_command(const uint8_t command) = 0;
 
-		virtual uint8_t work_with_byte(const uint8_t byte) = 0;
+		virtual void work_with_byte(const uint8_t byte) = 0;
 	};
 
 	class DefaultWorker : public Worker
@@ -80,9 +80,9 @@ private:
 
 		~DefaultWorker() { }
 
-		uint8_t work_with_command(const uint8_t command);
+		void work_with_command(const uint8_t command);
 
-		uint8_t work_with_byte(const uint8_t byte);
+		void work_with_byte(const uint8_t byte);
 	} default_worker;
 
 	class ByteTerminalWorker : public Worker
@@ -98,12 +98,12 @@ private:
 
 		~ByteTerminalWorker() { }
 
-		uint8_t work_with_command(const uint8_t command);
+		void work_with_command(const uint8_t command);
 
-		uint8_t work_with_byte(const uint8_t byte);
+		void work_with_byte(const uint8_t byte);
 	} byte_terminal_worker;
 
-	Worker* workers[2];
+	Worker* workers[TOTAL_WORKERS];
 	Worker* worker;
 };
 

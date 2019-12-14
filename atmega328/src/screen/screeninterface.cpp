@@ -28,10 +28,10 @@ ScreenInterface::ScreenInterface(DeviceInterface& device) :
 
 void ScreenInterface::handle_byte(const uint8_t byte)
 {
-	if (byte & 0b01000000)
+	if (is_command(byte))
 	{
-		uint8_t command = byte & 0b00111111;
-		if (command < TOTAL_WORKERS)
+		uint8_t command = extract_command(byte);
+		if (is_worker_command(command))
 		{
 			worker = workers[command];
 		}
