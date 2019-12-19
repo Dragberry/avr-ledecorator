@@ -9,7 +9,7 @@ UART::RxHandler::~RxHandler() {}
 void UART::set_rx_handler(RxHandler* handler)
 {
 	rx_handler = handler;
-	if (handler != NULL)
+	if (handler != nullptr)
 	{
 		sbi(UART_UCSRB, UART_RXCIE);
 	}
@@ -46,8 +46,8 @@ void UART::stop()
 {
 	cbi(UART_UCSRB, UART_RXEN);
 	cbi(UART_UCSRB, UART_TXEN);
-	set_rx_handler(NULL);
-	set_tx_handler(NULL);
+	set_rx_handler(nullptr);
+	set_tx_handler(nullptr);
 }
 
 void UART::send_byte_as_binary(const uint8_t byte)

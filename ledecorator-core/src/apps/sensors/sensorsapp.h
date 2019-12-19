@@ -2,7 +2,7 @@
 #define SENSORSAPP_H_
 
 #include "../application.h"
-#include "../../hardware/screen/drawablestring.h"
+#include "../../hardware/screen/drawablestring.hpp"
 #include "sensors.h"
 
 

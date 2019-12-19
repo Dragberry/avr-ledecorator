@@ -1,5 +1,5 @@
-#ifndef DRAWABLESTRING_H_
-#define DRAWABLESTRING_H_
+#ifndef DRAWABLESTRING_HPP_
+#define DRAWABLESTRING_HPP_
 
 #include <stdint.h>
 #include "lib/screen/colors.h"
@@ -36,7 +36,7 @@ public:
 			const int8_t width,
 			const int8_t height);
 
-	void increment();
+	void update();
 
 	void set_string(const char* new_string, const uint8_t length);
 

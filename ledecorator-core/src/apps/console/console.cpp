@@ -18,10 +18,10 @@ Console::~Console() {}
 
 void Console::increment()
 {
-	string_h.increment();
+	string_h.update();
 	if (time >= 32)
 	{
-		string_l.increment();
+		string_l.update();
 	}
 }
 

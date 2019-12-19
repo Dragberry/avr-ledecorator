@@ -15,17 +15,17 @@ namespace Timers
 		F_1024	// 101
 	};
 
-	class Handler
-	{
-	public:
-		virtual ~Handler();
-
-		virtual void on_timer_event() = 0;
-	};
-
 	namespace T0
 	{
-		static Handler* comp_a_handler = NULL;
+		class Handler
+		{
+		public:
+			virtual ~Handler();
+
+			virtual void on_timer0_event() = 0;
+		};
+
+		static Handler* comp_a_handler = nullptr;
 
 		void start(uint8_t counter, Prescaller prescaller, Handler* handler);
 
@@ -34,7 +34,15 @@ namespace Timers
 
 	namespace T1
 	{
-		static Handler* comp_a_handler = NULL;
+		class Handler
+		{
+		public:
+			virtual ~Handler();
+
+			virtual void on_timer1_event() = 0;
+		};
+
+		static Handler* comp_a_handler = nullptr;
 
 		void start(uint16_t counter, Prescaller prescaller, Handler* handler);
 

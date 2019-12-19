@@ -20,6 +20,15 @@ ScreenInterface::~ScreenInterface()
 	Timers::T0::stop();
 }
 
+void ScreenInterface::update()
+{
+	if (!is_image_being_transmitted)
+	{
+		switch_buffer();
+		start_picture();
+	}
+}
+
 void ScreenInterface::on_uart_rx_event(uint8_t byte)
 {
 	is_byte_being_transmitted = false;

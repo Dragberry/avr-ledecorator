@@ -2,7 +2,9 @@
 #include <avr/interrupt.h>
 #include "timers.hpp"
 
-Timers::Handler::~Handler() { }
+Timers::T1::Handler::~Handler() { }
+
+Timers::T0::Handler::~Handler() { }
 
 #if defined (__AVR_ATmega16__)
 void Timers::T0::start(uint8_t counter, Prescaller prescaller, Handler* handler)
@@ -57,7 +59,7 @@ void Timers::T0::stop()
 	cbi(TCCR0, WGM01);
 	cbi(TCCR0, WGM00);
 
-	comp_a_handler = NULL;
+	comp_a_handler = nullptr;
 }
 
 ISR(TIMER0_COMP_vect)
@@ -121,7 +123,7 @@ void Timers::T1::stop()
 	cbi(TCCR1A, WGM11);
 	cbi(TCCR1A, WGM10);
 
-	comp_a_handler = NULL;
+	comp_a_handler = nullptr;
 }
 
 
@@ -186,12 +188,12 @@ void Timers::T0::stop()
 	cbi(TCCR0A, WGM01);
 	cbi(TCCR0A, WGM00);
 
-	comp_a_handler = NULL;
+	comp_a_handler = nullptr;
 }
 
 ISR(TIMER0_COMPA_vect)
 {
-	Timers::T0::comp_a_handler->on_timer_event();
+	Timers::T0::comp_a_handler->on_timer0_event();
 }
 
 void Timers::T1::start(uint16_t counter, Prescaller prescaller, Handler* handler)
@@ -250,13 +252,13 @@ void Timers::T1::stop()
 	cbi(TCCR1A, WGM11);
 	cbi(TCCR1A, WGM10);
 
-	comp_a_handler = NULL;
+	comp_a_handler = nullptr;
 }
 
 
 ISR(TIMER1_COMPA_vect)
 {
-	Timers::T1::comp_a_handler->on_timer_event();
+	Timers::T1::comp_a_handler->on_timer1_event();
 }
 
 #endif

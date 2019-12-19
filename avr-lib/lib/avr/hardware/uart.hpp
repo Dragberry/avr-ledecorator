@@ -70,7 +70,7 @@ namespace UART
 		virtual void on_uart_rx_event(const uint8_t byte) = 0;
 	};
 
-	static RxHandler* rx_handler = NULL;
+	static RxHandler* rx_handler = nullptr;
 
 	void set_rx_handler(RxHandler* rx_handler);
 
@@ -82,7 +82,7 @@ namespace UART
 		virtual void handle_tx() = 0;
 	};
 
-	static TxHandler* tx_handler = NULL;
+	static TxHandler* tx_handler = nullptr;
 
 	void set_tx_handler(TxHandler* tx_handler);
 

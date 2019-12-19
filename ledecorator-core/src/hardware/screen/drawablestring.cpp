@@ -1,4 +1,4 @@
-#include "drawablestring.h"
+#include "drawablestring.hpp"
 
 DrawableString::DrawableString(
 		const uint8_t start_x,
@@ -10,7 +10,7 @@ DrawableString::DrawableString(
 	  width(width),
 	  height(height) {}
 
-void DrawableString::increment()
+void DrawableString::update()
 {
 	if (is_big)
 	{

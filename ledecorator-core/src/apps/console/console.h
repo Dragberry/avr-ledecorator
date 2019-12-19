@@ -2,8 +2,9 @@
 #define CONSOLE_H_
 
 #include <stdlib.h>
+
+#include "../../hardware/screen/drawablestring.hpp"
 #include "../application.h"
-#include "../../hardware/screen/drawablestring.h"
 
 class Console : public Application
 {

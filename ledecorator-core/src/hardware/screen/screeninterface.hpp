@@ -24,7 +24,7 @@ private:
 
 	volatile bool is_byte_being_transmitted = false;
 
-	class ScreenDataTransmitter : public Timers::Handler
+	class ScreenDataTransmitter : public Timers::T0::Handler
 	{
 	public:
 		ScreenInterface& screen_interface;
@@ -32,7 +32,7 @@ private:
 		ScreenDataTransmitter(ScreenInterface& screen_interface) :
 			screen_interface(screen_interface) {}
 
-		void on_timer_event()
+		void on_timer0_event()
 		{
 			if (screen_interface.is_image_being_transmitted)
 			{
@@ -56,6 +56,8 @@ public:
 	ScreenInterface();
 
 	~ScreenInterface();
+
+	void update();
 
 	void on_uart_rx_event(const uint8_t byte);
 
@@ -152,8 +154,6 @@ public:
 			}
 		}
 	}
-
-
 };
 
 #endif
