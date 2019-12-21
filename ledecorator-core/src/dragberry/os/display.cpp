@@ -69,7 +69,7 @@ void display::update()
 	}
 }
 
-inline void display::set_pixel(uint8_t y, uint8_t x, Color color)
+void display::set_pixel(uint8_t y, uint8_t x, Color color)
 {
 	buffers.buffer[y][x] = color;
 }

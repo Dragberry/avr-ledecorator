@@ -4,10 +4,11 @@
 
 LifeGame::LifeGame()
 {
-	this->color_life = dragberry::io::read();
-	this->color_dead = dragberry::io::read();;
-	this->alive_indicator = ALIVE_INDICATOR_01;
+	color_life = dragberry::io::read();
+	color_dead = dragberry::io::read();;
+	alive_indicator = ALIVE_INDICATOR_01;
 	place_ship(0, 4, alive_indicator);
+//	place_entity(1, 1, alive_indicator);
 	Timers::T1::start(0x4c4, Timers::Prescaller::F_1024, this);
 
 }
@@ -78,13 +79,13 @@ void LifeGame::on_timer1_event()
 	{
 		for (uint8_t cell = 0; cell < SCREEN_WIDTH; cell++)
 		{
-			display::set_pixel(row, cell,
-					field[row][cell] & alive_indicator ? color_life : color_dead);
+			Color color = field[row][cell] & alive_indicator ? color_life : color_dead;
+			dragberry::os::display::set_pixel(row, cell, color);
 
 		}
 	}
 
-	display().update();
+	dragberry::os::display::update();
 }
 
 void LifeGame::run()

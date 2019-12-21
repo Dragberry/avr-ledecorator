@@ -10,10 +10,8 @@
 #define ALIVE_INDICATOR_01 0b00000001
 #define ALIVE_INDICATOR_10 0b00000010
 
-using namespace dragberry::os;
-
 class LifeGame :
-		public Program,
+		public dragberry::os::Program,
 		public Timers::T1::Handler
 {
 private:

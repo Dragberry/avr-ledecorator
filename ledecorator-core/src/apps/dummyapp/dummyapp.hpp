@@ -19,6 +19,8 @@ private:
 
 	volatile uint8_t timer = 0;
 
+	uint8_t field[16][32];
+
 public:
 	DummyApp()
 	{
