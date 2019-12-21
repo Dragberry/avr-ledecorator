@@ -49,7 +49,7 @@ void SnakeGame::placeFood()
 
 void SnakeGame::increment()
 {
-	if (time % (rand() % 5 == 0)  == 0)
+	if ((rand() % 5 == 0)  == 0)
 	{
 		if (rand() % 2 == 0)
 		{
@@ -72,24 +72,24 @@ void SnakeGame::increment()
 	}
 }
 
-void SnakeGame::build_image(uint8_t(*image)[SCREEN_WIDTH])
+void SnakeGame::build_image()
 {
-	for (uint8_t row = 0; row < height; row++)
-	{
-		for (uint8_t cell = 0; cell < width; cell++)
-		{
-			if (snake->isHere(row, cell))
-			{
-				image[row][cell] = color_snake;
-			}
-			else if (food->isHere(row, cell))
-			{
-				image[row][cell] = color_food;
-			}
-			else
-			{
-				image[row][cell] = color_field;
-			}
-		}
-	}
+//	for (uint8_t row = 0; row < height; row++)
+//	{
+//		for (uint8_t cell = 0; cell < width; cell++)
+//		{
+//			if (snake->isHere(row, cell))
+//			{
+//				image[row][cell] = color_snake;
+//			}
+//			else if (food->isHere(row, cell))
+//			{
+//				image[row][cell] = color_food;
+//			}
+//			else
+//			{
+//				image[row][cell] = color_field;
+//			}
+//		}
+//	}
 }

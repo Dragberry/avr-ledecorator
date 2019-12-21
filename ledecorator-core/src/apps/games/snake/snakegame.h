@@ -3,9 +3,8 @@
 
 #include "food.h"
 #include "snake.h"
-#include "../../application.h"
 
-class SnakeGame : public Application
+class SnakeGame
 {
 private:
 	uint8_t height;
@@ -38,7 +37,7 @@ public:
 
 	bool is_running();
 
-	void build_image(uint8_t(*image)[SCREEN_WIDTH]);
+	void build_image();
 };
 
 #endif

@@ -1,14 +1,18 @@
+#include "display.hpp"
 #include "drawablestring.hpp"
+
+using namespace dragberry::os;
 
 DrawableString::DrawableString(
 		const uint8_t start_x,
 		const uint8_t start_y,
 		const int8_t width,
 		const int8_t height)
-	: start_x(start_x),
-	  start_y(start_y),
-	  width(width),
-	  height(height) {}
+:
+		start_x(start_x),
+		start_y(start_y),
+		width(width),
+		height(height) { }
 
 void DrawableString::update()
 {
@@ -62,7 +66,7 @@ void DrawableString::set_string(const char* new_string, const uint8_t length)
 	}
 }
 
-void DrawableString::draw(ScreenInterface& screen_interface) const
+void DrawableString::draw() const
 {
 	uint8_t x = start_x;
 	int16_t passed_width = offset_x;
@@ -72,7 +76,7 @@ void DrawableString::draw(ScreenInterface& screen_interface) const
 	}
 	if (passed_width > 0)
 	{
-		screen_interface.draw_area(x, start_y, passed_width, height, bg_color);
+		display::draw_area(x, start_y, passed_width, height, bg_color);
 		if (passed_width >= width)
 		{
 			return;
@@ -98,7 +102,7 @@ void DrawableString::draw(ScreenInterface& screen_interface) const
 			{
 				char_offset_x = 0;
 			}
-			screen_interface.draw_image(x, start_y, char_offset_x, 0, img, color, bg_color);
+			display::draw_image(x, start_y, char_offset_x, 0, img, color, bg_color);
 			x += (img_width  + char_offset_x);
 		}
 		if (passed_width >= width)
@@ -116,11 +120,11 @@ void DrawableString::draw(ScreenInterface& screen_interface) const
 		}
 		else
 		{
-			screen_interface.draw_line_vertical(x++, start_y, height, bg_color);
+			display::draw_line_vertical(x++, start_y, height, bg_color);
 		}
 	}
 	if (passed_width < width)
 	{
-		screen_interface.draw_area(x, start_y, width - passed_width, height, bg_color);
+		display::draw_area(x, start_y, width - passed_width, height, bg_color);
 	}
 }

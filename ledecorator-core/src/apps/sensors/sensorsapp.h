@@ -1,20 +1,18 @@
 #ifndef SENSORSAPP_H_
 #define SENSORSAPP_H_
 
-#include "../application.h"
-#include "../../hardware/screen/drawablestring.hpp"
 #include "sensors.h"
 
 
 #define SENSORS 2
 
-class SensorsApp : public Application
+class SensorsApp
 {
 private:
     const uint8_t refresh_period = 64;
     const uint16_t display_period = 128;
 
-    DrawableString value_string = DrawableString(8, 0, 24, 8);
+//    DrawableString value_string = DrawableString(8, 0, 24, 8);
 
     TemperatureSensor temperature_sensor;
     PressureSensor pressure_sensor;
@@ -39,7 +37,7 @@ public:
 
 	bool is_running();
 
-	void build_image(ScreenInterface& screen_interface) const;
+	void build_image() const;
 };
 
 #endif

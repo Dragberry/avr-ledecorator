@@ -139,8 +139,6 @@
                         						
                         <entry excluding="sensors|games|dummyapp|console" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
                         						
-                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/console"/>
-                        						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/dummyapp"/>
                         						
                         <entry excluding="snake|life" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games"/>
@@ -155,13 +153,13 @@
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/data"/>
                         						
-                        <entry excluding="programs2" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/dragberry"/>
+                        <entry excluding="os|programs2" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/dragberry"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/dragberry/os"/>
                         						
                         <entry excluding="atmega328|i2c|bmp280|uart|screen" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/bmp280"/>
-                        						
-                        <entry excluding="interfaces" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/screen"/>
                         					
                     </sourceEntries>
                     				
@@ -301,8 +299,6 @@
                         						
                         <entry excluding="sensors|games|dummyapp|console" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
                         						
-                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/console"/>
-                        						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/dummyapp"/>
                         						
                         <entry excluding="snake|life" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/games"/>
@@ -317,13 +313,13 @@
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/data"/>
                         						
-                        <entry excluding="programs2" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/dragberry"/>
+                        <entry excluding="os|programs2" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/dragberry"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/dragberry/os"/>
                         						
                         <entry excluding="atmega328|i2c|bmp280|uart|screen" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/bmp280"/>
-                        						
-                        <entry excluding="interfaces" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/screen"/>
                         					
                     </sourceEntries>
                     				

@@ -9,10 +9,8 @@
 #include "lib/avr/hardware/uart.hpp"
 #include "lib/screen/colors.h"
 #include "lib/screen/definitions.h"
-#include "apps/application.h"
-#include "apps/console/console.h"
 #include "apps/dummyapp/dummyapp.hpp"
-#include "apps/games/life/lifegame.h"
+//#include "apps/games/life/lifegame.h"
 #include "apps/games/snake/snakegame.h"
 #include "apps/sensors/sensorsapp.h"
 
@@ -26,7 +24,7 @@ using namespace dragberry::os;
 
 Program* (*programms[])() =
 {
-	[]() -> Program* { return new DummyApp(); },
+//	[]() -> Program* { return new LifeGame(); },
 	[]() -> Program* { return new DummyApp(); }
 };
 
@@ -36,6 +34,6 @@ int main()
 	uint8_t command = 0;
 	while (true)
 	{
-		run(programms[command++ % 2]);
+		run(programms[command % 2]);
 	}
 }

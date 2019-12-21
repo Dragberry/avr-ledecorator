@@ -2,9 +2,12 @@
 #define DUMMYAPP_HPP_
 
 #include "lib/avr/hardware/timers.hpp"
-
 #include "../../dragberry/os.hpp"
-#include "../../hardware/screen/drawablestring.hpp"
+#include "../../dragberry/os/display.hpp"
+#include "../../dragberry/os/drawablestring.hpp"
+#include "../../dragberry/os/io.hpp"
+
+using namespace dragberry::os;
 
 class DummyApp :
 		public dragberry::os::Program,
@@ -38,9 +41,9 @@ public:
 		timer++;
 		string_h.update();
 		string_l.update();
-		string_h.draw(dragberry::os::screen_interface);
-		string_l.draw(dragberry::os::screen_interface);
-		dragberry::os::screen_interface.update();
+		string_h.draw();
+		string_l.draw();
+		dragberry::os::display::update();
 	}
 
 	void run()

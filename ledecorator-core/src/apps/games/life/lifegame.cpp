@@ -1,21 +1,23 @@
-#include "lifegame.h"
 #include <stdlib.h>
 #include "lib/screen/definitions.h"
+#include "lifegame.h"
 
-LifeGame::LifeGame(uint8_t color_life, uint8_t color_dead)
+LifeGame::LifeGame()
 {
-	this->color_life = color_life;
-	this->color_dead = color_dead;
+	this->color_life = dragberry::io::read();
+	this->color_dead = dragberry::io::read();;
 	this->alive_indicator = ALIVE_INDICATOR_01;
 	place_ship(0, 4, alive_indicator);
+	Timers::T1::start(0x4c4, Timers::Prescaller::F_1024, this);
+
 }
 
-bool LifeGame::is_running()
+LifeGame::~LifeGame()
 {
-	return time < 80;
+	Timers::T1::stop();
 }
 
-void LifeGame::increment()
+void LifeGame::on_timer1_event()
 {
 	uint8_t next_alive_indicator = alive_indicator ==
 			ALIVE_INDICATOR_01 ? ALIVE_INDICATOR_10 : ALIVE_INDICATOR_01;
@@ -71,22 +73,206 @@ void LifeGame::increment()
 		}
 	}
 	alive_indicator = next_alive_indicator;
-//	if (time % 8)
-//	{
-//		place_entity(8, 8, alive_indicator);
-//	}
 
-}
-
-void LifeGame::build_image(ScreenInterface& screen_interface) const
-{
 	for (uint8_t row = 0; row < SCREEN_HEIGHT; row++)
 	{
 		for (uint8_t cell = 0; cell < SCREEN_WIDTH; cell++)
 		{
-			screen_interface.buffer[row][cell] =
-					field[row][cell] & alive_indicator ? color_life : color_dead;
-		}
+			display::set_pixel(row, cell,
+					field[row][cell] & alive_indicator ? color_life : color_dead);
 
+		}
+	}
+
+	display().update();
+}
+
+void LifeGame::run()
+{
+	while (true);
+}
+
+
+void LifeGame::place_ship(const uint8_t start_x, const uint8_t start_y, const uint8_t next_alive)
+{
+	uint8_t x = start_x;
+	field[start_y][x] = 0;
+	field[start_y + 1][x] = next_alive;
+	field[start_y + 2][x] = next_alive;
+	field[start_y + 3][x] = 0;
+	field[start_y + 4][x] = 0;
+	field[start_y + 5][x] = next_alive;
+	field[start_y + 6][x] = next_alive;
+	field[start_y + 7][x] = 0;
+	x++;
+	field[start_y + 0][x] = 0;
+	field[start_y + 1][x] = 0;
+	field[start_y + 2][x] = 0;
+	field[start_y + 3][x] = next_alive;
+	field[start_y + 4][x] = next_alive;
+	field[start_y + 5][x] = 0;
+	field[start_y + 6][x] = 0;
+	field[start_y + 7][x] = 0;
+	x++;
+	field[start_y + 0][x] = 0;
+	field[start_y + 1][x] = 0;
+	field[start_y + 2][x] = 0;
+	field[start_y + 3][x] = next_alive;
+	field[start_y + 4][x] = next_alive;
+	field[start_y + 5][x] = 0;
+	field[start_y + 6][x] = 0;
+	field[start_y + 7][x] = 0;
+	x++;
+	field[start_y + 0][x] = next_alive;
+	field[start_y + 1][x] = 0;
+	field[start_y + 2][x] = next_alive;
+	field[start_y + 3][x] = 0;
+	field[start_y + 4][x] = 0;
+	field[start_y + 5][x] = next_alive;
+	field[start_y + 6][x] = 0;
+	field[start_y + 7][x] = next_alive;
+	x++;
+	field[start_y + 0][x] = next_alive;
+	field[start_y + 1][x] = 0;
+	field[start_y + 2][x] = 0;
+	field[start_y + 3][x] = 0;
+	field[start_y + 4][x] = 0;
+	field[start_y + 5][x] = 0;
+	field[start_y + 6][x] = 0;
+	field[start_y + 7][x] = next_alive;
+	x++;
+	field[start_y + 0][x] = 0;
+	field[start_y + 1][x] = 0;
+	field[start_y + 2][x] = 0;
+	field[start_y + 3][x] = 0;
+	field[start_y + 4][x] = 0;
+	field[start_y + 5][x] = 0;
+	field[start_y + 6][x] = 0;
+	field[start_y + 7][x] = 0;
+	x++;
+	field[start_y + 0][x] = next_alive;
+	field[start_y + 1][x] = 0;
+	field[start_y + 2][x] = 0;
+	field[start_y + 3][x] = 0;
+	field[start_y + 4][x] = 0;
+	field[start_y + 5][x] = 0;
+	field[start_y + 6][x] = 0;
+	field[start_y + 7][x] = next_alive;
+	x++;
+	field[start_y + 0][x] = 0;
+	field[start_y + 1][x] = next_alive;
+	field[start_y + 2][x] = next_alive;
+	field[start_y + 3][x] = 0;
+	field[start_y + 4][x] = 0;
+	field[start_y + 5][x] = next_alive;
+	field[start_y + 6][x] = next_alive;
+	field[start_y + 7][x] = 0;
+	x++;
+	field[start_y + 0][x] = 0;
+	field[start_y + 1][x] = 0;
+	field[start_y + 2][x] = next_alive;
+	field[start_y + 3][x] = next_alive;
+	field[start_y + 4][x] = next_alive;
+	field[start_y + 5][x] = next_alive;
+	field[start_y + 6][x] = 0;
+	field[start_y + 7][x] = 0;
+	x++;
+	field[start_y + 0][x] = 0;
+	field[start_y + 1][x] = 0;
+	field[start_y + 2][x] = 0;
+	field[start_y + 3][x] = 0;
+	field[start_y + 4][x] = 0;
+	field[start_y + 5][x] = 0;
+	field[start_y + 6][x] = 0;
+	field[start_y + 7][x] = 0;
+	x++;
+	field[start_y + 0][x] = 0;
+	field[start_y + 1][x] = 0;
+	field[start_y + 2][x] = 0;
+	field[start_y + 3][x] = next_alive;
+	field[start_y + 4][x] = next_alive;
+	field[start_y + 5][x] = 0;
+	field[start_y + 6][x] = 0;
+	field[start_y + 7][x] = 0;
+	x++;
+	field[start_y + 0][x] = 0;
+	field[start_y + 1][x] = 0;
+	field[start_y + 2][x] = 0;
+	field[start_y + 3][x] = next_alive;
+	field[start_y + 4][x] = next_alive;
+	field[start_y + 5][x] = 0;
+	field[start_y + 6][x] = 0;
+	field[start_y + 7][x] = 0;
+}
+
+void LifeGame::place_entity(const uint8_t start_x, const uint8_t start_y, const uint8_t next_alive)
+{
+	uint8_t direction = rand() % 4;
+	switch (direction)
+	{
+	case 0:
+		// 010
+		// 001
+		// 111
+		field[start_y][start_x] = 0;
+		field[start_y][start_x + 1] = next_alive;
+		field[start_y][start_x + 2] = 0;
+
+		field[start_y + 1][start_x] = 0;
+		field[start_y + 1][start_x + 1] = 0;
+		field[start_y + 1][start_x + 2] = next_alive;
+
+		field[start_y + 2][start_x] = next_alive;
+		field[start_y + 2][start_x + 1] = next_alive;
+		field[start_y + 2][start_x + 2] = next_alive;
+		break;
+	case 1:
+		// 100
+		// 101
+		// 110
+		field[start_y][start_x] = next_alive;
+		field[start_y][start_x + 1] = 0;
+		field[start_y][start_x + 2] = 0;
+
+		field[start_y + 1][start_x] = next_alive;
+		field[start_y + 1][start_x + 1] = 0;
+		field[start_y + 1][start_x + 2] = next_alive;
+
+		field[start_y + 2][start_x] = next_alive;
+		field[start_y + 2][start_x + 1] = next_alive;
+		field[start_y + 2][start_x + 2] = 0;
+		break;
+	case 2:
+		// 111
+		// 100
+		// 010
+		field[start_y][start_x] = next_alive;
+		field[start_y][start_x + 1] = next_alive;
+		field[start_y][start_x + 2] = next_alive;
+
+		field[start_y + 1][start_x] = next_alive;
+		field[start_y + 1][start_x + 1] = 0;
+		field[start_y + 1][start_x + 2] = 0;
+
+		field[start_y + 2][start_x] = 0;
+		field[start_y + 2][start_x + 1] = next_alive;
+		field[start_y + 2][start_x + 2] = 0;
+		break;
+	case 3:
+		// 011
+		// 101
+		// 001
+		field[start_y][start_x] = 0;
+		field[start_y][start_x + 1] = next_alive;
+		field[start_y][start_x + 2] = next_alive;
+
+		field[start_y + 1][start_x] = next_alive;
+		field[start_y + 1][start_x + 1] = 0;
+		field[start_y + 1][start_x + 2] = next_alive;
+
+		field[start_y + 2][start_x] = 0;
+		field[start_y + 2][start_x + 1] = 0;
+		field[start_y + 2][start_x + 2] = next_alive;
+		break;
 	}
 }
