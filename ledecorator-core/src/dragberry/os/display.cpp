@@ -19,7 +19,7 @@ display::Transmitter::Transmitter()
 		UART::init(UART::BaudRate::B_1_250_000);
 		UART::set_rx_handler(this);
 	#endif
-	Timers::T0::start(2, Timers::Prescaller::F_256, this);
+	Timers::T0::start(0, Timers::Prescaller::F_256, this);
 }
 
 void display::Transmitter::on_timer0_event()
@@ -56,18 +56,31 @@ void display::Transmitter::on_uart_rx_event(const uint8_t byte)
 	is_byte_being_transmitted = false;
 }
 
+
+inline void display::update_and_start()
+{
+	buffers.swap();
+	transmitter.is_byte_being_transmitted = true;
+	#ifndef DISPLAY_DEBUG
+		UART::send_byte(mask_command(CMD_DEFAULT));
+	#endif
+	transmitter.is_image_being_transmitted = true;
+}
+
 void display::update()
 {
 	if (!transmitter.is_image_being_transmitted)
 	{
-		buffers.swap();
-		transmitter.is_byte_being_transmitted = true;
-		#ifndef DISPLAY_DEBUG
-			UART::send_byte(mask_command(CMD_DEFAULT));
-		#endif
-		transmitter.is_image_being_transmitted = true;
+		update_and_start();
 	}
 }
+
+void display::update_pending()
+{
+	while (transmitter.is_image_being_transmitted);
+	update_and_start();
+}
+
 
 void display::set_pixel(uint8_t y, uint8_t x, Color color)
 {

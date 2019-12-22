@@ -56,8 +56,13 @@ namespace dragberry
 
 			};
 
+		private:
+			static void update_and_start();
+
 		public:
 			static void update();
+
+			static void update_pending();
 
 			static void set_pixel(uint8_t y, uint8_t x, Color color);
 
