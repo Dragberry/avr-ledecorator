@@ -21,12 +21,14 @@ SensorsApp::~SensorsApp()
 void SensorsApp::runner()
 {
 	SensorsApp app;
+	dragberry::os::display::connect();
 	app.run();
+	dragberry::os::display::disconnect();
 }
 
 void SensorsApp::on_timer1_event()
 {
-	if (time++ % 5 == 0)
+	if (time++ % 3 == 0)
 	{
 		is_update_required = true;
 	}
@@ -34,7 +36,7 @@ void SensorsApp::on_timer1_event()
 
 void SensorsApp::run()
 {
-	while (time < 25)
+	while (time < 6)
 	{
 		if (is_update_required)
 		{
@@ -50,7 +52,7 @@ void SensorsApp::run()
 			dragberry::os::display::clear_screen(BLACK);
 			dragberry::os::display::draw_image(0, 0, active_sensor->pictogram, BLACK);
 			value_string.draw();
-			dragberry::os::display::update_pending();
+			dragberry::os::display::update_assured();
 			is_update_required = false;
 		}
 	}

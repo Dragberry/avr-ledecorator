@@ -45,7 +45,7 @@ public:
 		string_l.update();
 		string_h.draw();
 		string_l.draw();
-		dragberry::os::display::update();
+		dragberry::os::display::update_requsted();
 	}
 
 	void run()

@@ -26,13 +26,19 @@ public:
 
 	~LifeGame();
 
+private:
+	void clear_field();
+
+	void build_scene();
+
+	void step_up();
+
+public:
 	static void runner();
 
 	void run();
 
 	void on_timer1_event();
-
-	void clear_field();
 
 	void place_ship(const uint8_t start_x, const uint8_t start_y, const uint8_t next_alive);
 

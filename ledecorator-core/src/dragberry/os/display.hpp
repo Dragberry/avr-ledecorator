@@ -40,11 +40,17 @@ namespace dragberry
 				uint8_t x = 0;
 
 			public:
+				volatile bool is_connected = false;
 				volatile bool is_byte_being_transmitted = false;
 				volatile bool is_image_being_transmitted = false;
 
 			public:
 				Transmitter();
+
+			public:
+				void reset();
+
+				void new_picture();
 
 			public:
 				void on_timer0_event();
@@ -56,13 +62,14 @@ namespace dragberry
 
 			};
 
-		private:
-			static void update_and_start();
-
 		public:
-			static void update();
+			static void connect();
 
-			static void update_pending();
+			static void disconnect();
+
+			static void update_requsted();
+
+			static void update_assured();
 
 			static void set_pixel(uint8_t y, uint8_t x, Color color);
 

@@ -1,4 +1,5 @@
 #include "display.hpp"
+#include <avr/interrupt.h>
 
 using namespace dragberry::os;
 
@@ -15,16 +16,27 @@ inline void display::Buffers::swap()
 
 display::Transmitter::Transmitter()
 {
-	#ifndef DISPLAY_DEBUG
-		UART::init(UART::BaudRate::B_1_250_000);
-		UART::set_rx_handler(this);
-	#endif
+	UART::init(UART::BaudRate::B_1_250_000);
+	UART::set_rx_handler(this);
 	Timers::T0::start(0, Timers::Prescaller::F_256, this);
+}
+
+inline void display::Transmitter::reset()
+{
+	x = 0;
+	y = 0;
+}
+
+void display::Transmitter::new_picture()
+{
+	is_byte_being_transmitted = true;
+	UART::send_byte(mask_command(CMD_DEFAULT));
+	is_image_being_transmitted = true;
 }
 
 void display::Transmitter::on_timer0_event()
 {
-	if (is_image_being_transmitted)
+	if (is_connected && is_image_being_transmitted)
 	{
 		send_next_byte();
 	}
@@ -37,9 +49,7 @@ inline void display::Transmitter::send_next_byte()
 		return;
 	}
 	is_byte_being_transmitted = true;
-	#ifndef DISPLAY_DEBUG
-		UART::send_byte(buffers.active_buffer[y][x]);
-	#endif
+	UART::send_byte(buffers.active_buffer[y][x]);
 	if (++x == SCREEN_WIDTH)
 	{
 		x = 0;
@@ -56,29 +66,34 @@ void display::Transmitter::on_uart_rx_event(const uint8_t byte)
 	is_byte_being_transmitted = false;
 }
 
-
-inline void display::update_and_start()
+void display::connect()
 {
-	buffers.swap();
-	transmitter.is_byte_being_transmitted = true;
-	#ifndef DISPLAY_DEBUG
-		UART::send_byte(mask_command(CMD_DEFAULT));
-	#endif
-	transmitter.is_image_being_transmitted = true;
+	transmitter.reset();
+	transmitter.is_connected = true;
+//	sbi(TIMSK0, OCIE0A);
 }
 
-void display::update()
+void display::disconnect()
+{
+//	cbi(TIMSK0, OCIE0A);
+	transmitter.is_connected = false;
+	transmitter.is_image_being_transmitted = false;
+}
+
+void display::update_requsted()
 {
 	if (!transmitter.is_image_being_transmitted)
 	{
-		update_and_start();
+		buffers.swap();
+		transmitter.new_picture();
 	}
 }
 
-void display::update_pending()
+void display::update_assured()
 {
 	while (transmitter.is_image_being_transmitted);
-	update_and_start();
+	buffers.swap();
+	transmitter.new_picture();
 }
 
 
