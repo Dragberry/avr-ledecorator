@@ -1,16 +1,17 @@
+#include "lifegame.hpp"
+
 #include <stdlib.h>
 #include "lib/screen/definitions.h"
-#include "lifegame.h"
 
 LifeGame::LifeGame()
 {
+	clear_field();
 	color_life = dragberry::io::read();
 	color_dead = dragberry::io::read();;
 	alive_indicator = ALIVE_INDICATOR_01;
 	place_ship(0, 4, alive_indicator);
-//	place_entity(1, 1, alive_indicator);
-	Timers::T1::start(0x4c4, Timers::Prescaller::F_1024, this);
-
+	// 0.1 second
+	Timers::T1::start(0x4C5, Timers::Prescaller::F_1024, this);
 }
 
 LifeGame::~LifeGame()
@@ -18,14 +19,20 @@ LifeGame::~LifeGame()
 	Timers::T1::stop();
 }
 
+void LifeGame::runner()
+{
+	LifeGame app;
+	app.run();
+}
+
 void LifeGame::on_timer1_event()
 {
-
+	time++;
 }
 
 void LifeGame::run()
 {
-	while (true)
+	while (time < 255)
 	{
 		uint8_t next_alive_indicator = alive_indicator ==
 				ALIVE_INDICATOR_01 ? ALIVE_INDICATOR_10 : ALIVE_INDICATOR_01;
@@ -93,6 +100,17 @@ void LifeGame::run()
 		}
 
 		dragberry::os::display::update_pending();
+	}
+}
+
+void LifeGame::clear_field()
+{
+	for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
+	{
+		for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
+		{
+			field[y][x] = 0;
+		}
 	}
 }
 

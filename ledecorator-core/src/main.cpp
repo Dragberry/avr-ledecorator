@@ -10,9 +10,9 @@
 #include "lib/screen/colors.h"
 #include "lib/screen/definitions.h"
 #include "apps/dummyapp/dummyapp.hpp"
-#include "apps/games/life/lifegame.h"
+#include "apps/games/life/lifegame.hpp"
 #include "apps/games/snake/snakegame.h"
-#include "apps/sensors/sensorsapp.h"
+#include "apps/sensors/sensorsapp.hpp"
 
 // 10s - f/1024 - 0x2faf0
 // 1s - f/1024 - 0x4C4B
@@ -22,13 +22,18 @@
 
 using namespace dragberry::os;
 
-Program* (*programms[])() =
+void (*programms[])() =
 {
-	[]() -> Program* { return new LifeGame(); },
-//	[]() -> Program* { return new DummyApp(); }
+		SensorsApp::runner,
+		LifeGame::runner
 };
 
-LifeGame g;
+
+//Program* (*programms1[])() =
+//{
+//	[]() -> Program* { return new LifeGame(); },
+//	[]() -> Program* { return new SensorsApp(); }
+//};
 
 int main()
 {
@@ -36,6 +41,10 @@ int main()
 	uint8_t command = 0;
 	while (true)
 	{
-		g.run();
+		dragberry::os::run(programms[command++]);
+		 if (command >= 2)
+		 {
+			 command = 0;
+		 }
 	}
 }

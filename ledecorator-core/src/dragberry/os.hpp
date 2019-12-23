@@ -1,6 +1,8 @@
 #ifndef DRAGBERRY_OS_HPP_
 #define DRAGBERRY_OS_HPP_
 
+#include "os/display.hpp"
+
 namespace dragberry
 {
 	namespace os
@@ -13,12 +15,10 @@ namespace dragberry
 			virtual void run() = 0;
 		};
 
-		template <typename ProgramLoader>
-		static void run(ProgramLoader&& loader)
+		template <typename Execution>
+		static void run(Execution&& execution)
 		{
-			Program* process = loader();
-			process->run();
-			delete process;
+			execution();
 		}
 	}
 }
