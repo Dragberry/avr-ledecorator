@@ -18,82 +18,122 @@ display::Transmitter::Transmitter()
 {
 	UART::init(UART::BaudRate::B_1_250_000);
 	UART::set_rx_handler(this);
-	Timers::T0::start(0, Timers::Prescaller::F_256, this);
+	Timers::T0::start(1, Timers::Prescaller::F_256, this);
 }
 
-inline void display::Transmitter::reset()
+inline void display::Transmitter::enable()
 {
-	x = 0;
-	y = 0;
+	sbi(TIMSK0, OCIE0A);
 }
 
-void display::Transmitter::new_picture()
+inline void display::Transmitter::disable()
 {
-	is_byte_being_transmitted = true;
-	UART::send_byte(mask_command(CMD_DEFAULT));
-	is_image_being_transmitted = true;
+	cbi(TIMSK0, OCIE0A);
+}
+
+void display::Transmitter::start_new_frame()
+{
+	state = FRAME_START;
+	enable();
 }
 
 void display::Transmitter::on_timer0_event()
 {
-	if (is_connected && is_image_being_transmitted)
-	{
-		send_next_byte();
-	}
-}
-
-inline void display::Transmitter::send_next_byte()
-{
-	if (is_byte_being_transmitted)
+	if (is_busy)
 	{
 		return;
 	}
-	is_byte_being_transmitted = true;
-	UART::send_byte(buffers.active_buffer[y][x]);
+	switch (state)
+	{
+	case TRANSMIT:
+		send_byte(buffers.active_buffer[y][x]);
+		break;
+	 case FRAME_START:
+		send_byte(mask_command(CMD_DEFAULT_FRAME_START));
+		break;
+	case FRAME_END:
+		send_byte(mask_command(CMD_DEFAULT_FRAME_END));
+		break;
+	default:
+		break;
+	}
+}
+
+inline void display::Transmitter::send_byte(const uint8_t byte)
+{
+	is_busy = true;
+	UART::send_byte(byte);
+}
+
+inline display::Transmitter::State display::Transmitter::send_next_byte()
+{
+	send_byte(buffers.active_buffer[y][x]);
 	if (++x == SCREEN_WIDTH)
 	{
 		x = 0;
 		if (++y == SCREEN_HEIGHT)
 		{
-			y = 0;
-			is_image_being_transmitted = false;
+			return FRAME_END;
 		}
 	}
+	return TRANSMIT;
 }
 
 void display::Transmitter::on_uart_rx_event(const uint8_t byte)
 {
-	is_byte_being_transmitted = false;
+	switch (state)
+	{
+	case TRANSMIT:
+		if (++x == SCREEN_WIDTH)
+		{
+			x = 0;
+			if (++y == SCREEN_HEIGHT)
+			{
+				state = FRAME_END;
+			}
+		}
+		break;
+	case FRAME_START:
+		x = 0;
+		y = 0;
+		state = TRANSMIT;
+		break;
+	case FRAME_END:
+		disable();
+		state = IDLE;
+		break;
+	default:
+		break;
+	}
+	is_busy = false;
 }
 
 void display::connect()
 {
-	transmitter.reset();
+	while (transmitter.state != Transmitter::IDLE);
 	transmitter.is_connected = true;
-//	sbi(TIMSK0, OCIE0A);
 }
 
 void display::disconnect()
 {
-//	cbi(TIMSK0, OCIE0A);
+	while (transmitter.state != Transmitter::IDLE);
 	transmitter.is_connected = false;
-	transmitter.is_image_being_transmitted = false;
 }
 
 void display::update_requsted()
 {
-	if (!transmitter.is_image_being_transmitted)
+	if (transmitter.is_connected && transmitter.state == Transmitter::IDLE)
 	{
 		buffers.swap();
-		transmitter.new_picture();
+		transmitter.start_new_frame();
 	}
 }
 
 void display::update_assured()
 {
-	while (transmitter.is_image_being_transmitted);
+	while (!transmitter.is_connected || transmitter.state != Transmitter::IDLE);
 	buffers.swap();
-	transmitter.new_picture();
+	transmitter.start_new_frame();
 }
 
 

@@ -10,6 +10,7 @@ LifeGame::LifeGame()
 	color_dead = dragberry::io::read();;
 	alive_indicator = ALIVE_INDICATOR_01;
 	place_ship(0, 4, alive_indicator);
+	dragberry::os::display::connect();
 	// 0.1 second
 	Timers::T1::start(0x4C5B, Timers::Prescaller::F_1024, this);
 }
@@ -17,6 +18,7 @@ LifeGame::LifeGame()
 LifeGame::~LifeGame()
 {
 	Timers::T1::stop();
+	dragberry::os::display::disconnect();
 }
 
 void LifeGame::clear_field()
@@ -104,9 +106,7 @@ void LifeGame::step_up()
 void LifeGame::runner()
 {
 	LifeGame app;
-	dragberry::os::display::connect();
 	app.run();
-	dragberry::os::display::disconnect();
 }
 
 void LifeGame::on_timer1_event()

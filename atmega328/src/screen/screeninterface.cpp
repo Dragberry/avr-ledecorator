@@ -35,7 +35,10 @@ void ScreenInterface::handle_byte(const uint8_t byte)
 		{
 			worker = workers[command];
 		}
-		worker->work_with_command(command);
+		else
+		{
+			worker->work_with_command(command);
+		}
 	}
 	else
 	{

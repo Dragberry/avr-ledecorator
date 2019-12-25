@@ -13,7 +13,7 @@
 
 class Atmega328Device :
 		public DeviceInterface,
-		public Timers::Handler,
+		public Timers::T1::Handler,
 		public UART::RxHandler
 {
 public:
@@ -33,7 +33,7 @@ public:
 	void stop()
 	{
 		cli();
-		Timers::T0::stop();
+		Timers::T1::stop();
 		UART::stop();
 		SPI::stop();
 	}
@@ -53,7 +53,7 @@ public:
 		SPI::latch();
 	}
 
-	void on_timer_event()
+	void on_timer1_event()
 	{
 		timer_interface->on_timer_event();
 	}

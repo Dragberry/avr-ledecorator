@@ -10,20 +10,20 @@ SensorsApp::SensorsApp()
 	I2C::init();
 	I2C::set_bitrate(100);
 	// 1 second
+	dragberry::os::display::connect();
 	Timers::T1::start(0x4C4B, Timers::Prescaller::F_1024, this);
 }
 
 SensorsApp::~SensorsApp()
 {
 	Timers::T1::stop();
+	dragberry::os::display::disconnect();
 }
 
 void SensorsApp::runner()
 {
 	SensorsApp app;
-	dragberry::os::display::connect();
 	app.run();
-	dragberry::os::display::disconnect();
 }
 
 void SensorsApp::on_timer1_event()

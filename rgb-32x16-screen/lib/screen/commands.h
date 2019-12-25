@@ -13,8 +13,10 @@
 
 #define CR '\r'
 #define LF '\n'
-#define CMD_DEFAULT 	0b00000000	// @
-#define CMD_FILL_SCREEN 0b00000001	// 1
-#define CMD_INIT_SCREEN 0b00111111	// 63
+#define CMD_DEFAULT 			0b00000000	// @
+#define CMD_DEFAULT_FRAME_START 0b00001000	//
+#define CMD_DEFAULT_FRAME_END	0b00010000	//
+#define CMD_FILL_SCREEN 		0b00000001	// 1
+#define CMD_INIT_SCREEN 		0b00111111	// 63
 
 #endif

@@ -22,18 +22,14 @@
 
 using namespace dragberry::os;
 
+const uint8_t PROGRAMMS = 1;
+
 void (*programms[])() =
 {
-		SensorsApp::runner,
-		LifeGame::runner
+//		SensorsApp::runner,
+		DummyApp::runner,
+//		LifeGame::runner
 };
-
-
-//Program* (*programms1[])() =
-//{
-//	[]() -> Program* { return new LifeGame(); },
-//	[]() -> Program* { return new SensorsApp(); }
-//};
 
 int main()
 {
@@ -42,7 +38,7 @@ int main()
 	while (true)
 	{
 		dragberry::os::run(programms[command++]);
-		 if (command >= 2)
+		 if (command >= PROGRAMMS)
 		 {
 			 command = 0;
 		 }

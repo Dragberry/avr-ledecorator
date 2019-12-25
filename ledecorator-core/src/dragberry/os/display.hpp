@@ -41,21 +41,32 @@ namespace dragberry
 
 			public:
 				volatile bool is_connected = false;
-				volatile bool is_byte_being_transmitted = false;
-				volatile bool is_image_being_transmitted = false;
+				volatile bool is_busy = false;
+
+				volatile enum State
+				{
+					IDLE,
+					FRAME_START,
+					TRANSMIT,
+					FRAME_END
+				} state = IDLE;
 
 			public:
 				Transmitter();
 
 			public:
-				void reset();
+				void enable();
 
-				void new_picture();
+				void disable();
+
+				void start_new_frame();
 
 			public:
 				void on_timer0_event();
 			private:
-				void send_next_byte();
+				void send_byte(const uint8_t byte);
+
+				State send_next_byte();
 
 			public:
 				void on_uart_rx_event(const uint8_t byte);

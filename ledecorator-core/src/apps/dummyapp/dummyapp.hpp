@@ -9,9 +9,7 @@
 
 using namespace dragberry::os;
 
-class DummyApp :
-		public dragberry::os::Program,
-		public Timers::T1::Handler
+class DummyApp : public Timers::T1::Handler
 {
 private:
 	DrawableString string_h = DrawableString(0, 0, 32, 8);
@@ -30,12 +28,15 @@ public:
 		string_l.set_string("SVINUSHKA", 9);
 		string_l.align = DrawableString::Align::LEFT;
 		string_l.color = 0b00111111 & dragberry::io::read();
-		Timers::T1::start(0x4c4, Timers::Prescaller::F_1024, this);
+		dragberry::os::display::connect();
+		// 0.1 second
+		Timers::T1::start(0x4C4, Timers::Prescaller::F_1024, this);
 	}
 
 	~DummyApp()
 	{
 		Timers::T1::stop();
+		dragberry::os::display::disconnect();
 	}
 
 	void on_timer1_event()
@@ -51,6 +52,12 @@ public:
 	void run()
 	{
 		while(timer < 64);
+	}
+
+	static void runner()
+	{
+		DummyApp app;
+		app.run();
 	}
 
 };

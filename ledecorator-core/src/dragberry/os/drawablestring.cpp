@@ -114,7 +114,7 @@ void DrawableString::draw() const
 		{
 			continue;
 		}
-		else if (passed_width >= width)
+		else if (passed_width > width)
 		{
 			break;
 		}
