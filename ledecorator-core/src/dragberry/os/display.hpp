@@ -36,8 +36,8 @@ namespace dragberry
 					public UART::RxHandler
 			{
 			private:
-				uint8_t y = 0;
-				uint8_t x = 0;
+				volatile uint8_t y = 0;
+				volatile uint8_t x = 0;
 
 			public:
 				volatile bool is_connected = false;
@@ -65,8 +65,6 @@ namespace dragberry
 				void on_timer0_event();
 			private:
 				void send_byte(const uint8_t byte);
-
-				State send_next_byte();
 
 			public:
 				void on_uart_rx_event(const uint8_t byte);

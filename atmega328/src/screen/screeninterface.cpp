@@ -26,8 +26,9 @@ ScreenInterface::ScreenInterface(DeviceInterface& device) :
 	device_interface.register_data_interface(this);
 }
 
-void ScreenInterface::handle_byte(const uint8_t byte)
+void ScreenInterface::handle_byte(const uint8_t byte, void (*callback)(const uint8_t byte))
 {
+	callback(byte);
 	if (is_command(byte))
 	{
 		uint8_t command = extract_command(byte);

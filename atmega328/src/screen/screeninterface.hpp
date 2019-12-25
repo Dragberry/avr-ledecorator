@@ -43,7 +43,7 @@ public:
 
 	~ScreenInterface() { }
 
-	void handle_byte(const uint8_t byte);
+	void handle_byte(const uint8_t byte, void (*callback)(const uint8_t byte));
 
 	void on_timer_event();
 

@@ -22,13 +22,13 @@
 
 using namespace dragberry::os;
 
-const uint8_t PROGRAMMS = 1;
+const uint8_t PROGRAMMS = 3;
 
 void (*programms[])() =
 {
-//		SensorsApp::runner,
+		SensorsApp::runner,
 		DummyApp::runner,
-//		LifeGame::runner
+		LifeGame::runner
 };
 
 int main()

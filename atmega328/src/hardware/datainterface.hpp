@@ -8,7 +8,7 @@ class DataInterface
 public:
 	virtual ~DataInterface() { }
 
-	virtual void handle_byte(const uint8_t byte);
+	virtual void handle_byte(const uint8_t byte, void (*callback)(const uint8_t byte));
 };
 
 #endif

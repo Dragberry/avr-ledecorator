@@ -16,9 +16,9 @@ inline void display::Buffers::swap()
 
 display::Transmitter::Transmitter()
 {
-	UART::init(UART::BaudRate::B_1_250_000);
+	UART::init(UART::BaudRate::B_2_500_000);
 	UART::set_rx_handler(this);
-	Timers::T0::start(1, Timers::Prescaller::F_256, this);
+	Timers::T0::start(0, Timers::Prescaller::F_256, this);
 }
 
 inline void display::Transmitter::enable()
@@ -63,20 +63,6 @@ inline void display::Transmitter::send_byte(const uint8_t byte)
 {
 	is_busy = true;
 	UART::send_byte(byte);
-}
-
-inline display::Transmitter::State display::Transmitter::send_next_byte()
-{
-	send_byte(buffers.active_buffer[y][x]);
-	if (++x == SCREEN_WIDTH)
-	{
-		x = 0;
-		if (++y == SCREEN_HEIGHT)
-		{
-			return FRAME_END;
-		}
-	}
-	return TRANSMIT;
 }
 
 void display::Transmitter::on_uart_rx_event(const uint8_t byte)
