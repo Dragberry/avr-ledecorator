@@ -100,7 +100,15 @@ void LifeGame::step_up()
 					cell | next_alive_indicator : cell & next_dead_indicator;
 		}
 	}
+
+
+	if (time > 10 && time % 5 == 0)
+	{
+		place_entity(0, 0, next_alive_indicator);
+	}
+
 	alive_indicator = next_alive_indicator;
+
 }
 
 void LifeGame::runner()
@@ -122,7 +130,7 @@ void LifeGame::run()
 	{
 		build_scene();
 		step_up();
-	} while (time < 5);
+	} while (time < 60);
 }
 
 void LifeGame::place_ship(const uint8_t start_x, const uint8_t start_y, const uint8_t next_alive)

@@ -1,9 +1,24 @@
 #include "io.hpp"
+#include "lib/screen/colors.h"
 
-uint8_t b = 0;
+uint8_t byte_index = 0;
+
+uint8_t colors[] = {
+		BLUE,
+		WHITE,
+		GREEN,
+		RED,
+		CYAN,
+		MAGENTA,
+		YELLOW,
+};
 
 uint8_t dragberry::io::read()
 {
-	return b++ % 2 ? 0b00111100 : 0b00000011;
+	if (byte_index == 7)
+	{
+		byte_index = 0;
+	}
+	return colors[byte_index++];
 }
 

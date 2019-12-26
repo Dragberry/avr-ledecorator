@@ -1,11 +1,12 @@
 #include "sensorsapp.hpp"
 #include <lib/avr/hardware/i2c.hpp>
+#include "../../dragberry/os/io.hpp"
 #include "../../common/datatypeutils.h"
 
 SensorsApp::SensorsApp()
 {
 	value_string.bg_color = BLACK;
-	value_string.color = RED;
+	value_string.color = dragberry::io::read();
 	value_string.align = dragberry::os::DrawableString::Align::RIGHT;
 	I2C::init();
 	I2C::set_bitrate(100);
