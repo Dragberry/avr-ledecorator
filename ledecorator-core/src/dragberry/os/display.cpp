@@ -1,5 +1,10 @@
-#include "display.hpp"
 #include <avr/interrupt.h>
+#include "display.hpp"
+
+#ifdef FPS_DEBUG
+#include "fps.hpp"
+#endif
+
 
 using namespace dragberry::os;
 
@@ -33,6 +38,9 @@ inline void display::Transmitter::disable()
 
 void display::Transmitter::start_new_frame()
 {
+	#ifdef FPS_DEBUG
+		dragberry::os::fps::start();
+	#endif
 	state = FRAME_START;
 	enable();
 }
@@ -87,6 +95,9 @@ void display::Transmitter::on_uart_rx_event(const uint8_t byte)
 	case FRAME_END:
 		disable();
 		state = IDLE;
+		#ifdef FPS_DEBUG
+			fps::count();
+		#endif
 		break;
 	default:
 		break;
@@ -97,12 +108,20 @@ void display::Transmitter::on_uart_rx_event(const uint8_t byte)
 void display::connect()
 {
 	while (transmitter.state != Transmitter::IDLE);
+	#ifdef FPS_DEBUG
+		fps::init();
+		fps::start();
+	#endif
 	transmitter.is_connected = true;
 }
 
 void display::disconnect()
 {
 	while (transmitter.state != Transmitter::IDLE);
+	#ifdef FPS_DEBUG
+		fps::show();
+		fps::stop();
+	#endif
 	transmitter.is_connected = false;
 }
 

@@ -10,6 +10,8 @@
 #include "../../data/image.h"
 #include "../../data/imagemono8x8.h"
 
+#define FPS_DEBUG
+
 namespace dragberry
 {
 	namespace os
