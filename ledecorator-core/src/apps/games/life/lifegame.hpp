@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include "livingthing.hpp"
 #include "../../../dragberry/os/display.hpp"
 #include "../../../dragberry/os/io.hpp"
+#include "livingthings.hpp"
 
 #define ALIVE_INDICATOR_01 0b00000001
 #define ALIVE_INDICATOR_10 0b00000010
@@ -21,6 +21,7 @@ private:
 	uint8_t field[SCREEN_HEIGHT][SCREEN_WIDTH];
 
 	volatile uint8_t time;
+	volatile bool is_step_required;
 
 public:
 	LifeGame();

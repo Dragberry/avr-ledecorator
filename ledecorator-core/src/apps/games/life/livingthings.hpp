@@ -1,34 +1,9 @@
-#ifndef LIVINGTHING_HPP_
-#define LIVINGTHING_HPP_
+#ifndef LIVINGTHINGS_HPP_
+#define LIVINGTHINGS_HPP_
 
 #include <avr/pgmspace.h>
 #include <stdint.h>
-
-struct BitMap
-{
-	const uint8_t width;
-	const uint8_t height;
-	const uint8_t* const data;
-
-	inline const uint8_t get_width() const
-	{
-		 return pgm_read_byte(&width);
-	}
-
-	inline const uint8_t get_height() const
-	{
-		 return pgm_read_byte(&height);
-	}
-
-	const uint8_t get_pixel(const uint8_t x, const uint8_t y) const
-	{
-		const uint16_t flat_index = y * get_width() + x;
-		const uint8_t byte_index = flat_index / 8;
-		const uint8_t bit_index = flat_index % 8;
-		const uint8_t* real_data = (uint8_t*) pgm_read_ptr(&data);
-		return (0b10000000 >> bit_index) & pgm_read_byte(&(real_data[byte_index]));
-	}
-};
+#include "../../../data/bitmap.hpp"
 
 const uint8_t GLIDER_DATA[2] PROGMEM =
 {
@@ -93,5 +68,33 @@ const uint8_t SHIP_LARGE_DATA[5] PROGMEM =
 
 const BitMap SHIP_LARGE PROGMEM = { 7, 5, SHIP_LARGE_DATA };
 
+const uint8_t COPPERHEAD_DATA[12] PROGMEM =
+{
+		/*
+		 * 000001011000
+		 * 000010000001
+		 * 000110001001
+		 * 110100000110
+		 * 110100000110
+		 * 000110001001
+		 * 000010000001
+		 * 000001011000
+		 */
+		0b00000101,
+		0b10000000,
+		0b10000001,
+		0b00011000,
+		0b10011101,
+		0b00000110,
+		0b11010000,
+		0b01100001,
+		0b10001001,
+		0b00001000,
+		0b00010000,
+		0b01011000,
+
+};
+
+const BitMap COPPERHEAD PROGMEM = { 12, 8, COPPERHEAD_DATA };
 
 #endif
