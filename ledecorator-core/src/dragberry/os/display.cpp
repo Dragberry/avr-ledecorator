@@ -5,7 +5,6 @@
 #include "fps.hpp"
 #endif
 
-
 using namespace dragberry::os;
 
 static display::Buffers buffers;
@@ -23,17 +22,6 @@ display::Transmitter::Transmitter()
 {
 	UART::init(UART::BaudRate::B_2_500_000);
 	UART::set_rx_handler(this);
-	Timers::T0::start(0, Timers::Prescaller::F_256, this);
-}
-
-inline void display::Transmitter::enable()
-{
-	sbi(TIMSK0, OCIE0A);
-}
-
-inline void display::Transmitter::disable()
-{
-	cbi(TIMSK0, OCIE0A);
 }
 
 void display::Transmitter::start_new_frame()
@@ -42,35 +30,7 @@ void display::Transmitter::start_new_frame()
 		dragberry::os::fps::start();
 	#endif
 	state = FRAME_START;
-	enable();
-}
-
-void display::Transmitter::on_timer0_event()
-{
-	if (is_busy)
-	{
-		return;
-	}
-	switch (state)
-	{
-	case TRANSMIT:
-		send_byte(buffers.active_buffer[y][x]);
-		break;
-	 case FRAME_START:
-		send_byte(mask_command(CMD_DEFAULT_FRAME_START));
-		break;
-	case FRAME_END:
-		send_byte(mask_command(CMD_DEFAULT_FRAME_END));
-		break;
-	default:
-		break;
-	}
-}
-
-inline void display::Transmitter::send_byte(const uint8_t byte)
-{
-	is_busy = true;
-	UART::send_byte(byte);
+	UART::send_byte(mask_command(CMD_DEFAULT_FRAME_START));
 }
 
 void display::Transmitter::on_uart_rx_event(const uint8_t byte)
@@ -84,25 +44,27 @@ void display::Transmitter::on_uart_rx_event(const uint8_t byte)
 			if (++y == SCREEN_HEIGHT)
 			{
 				state = FRAME_END;
+				UART::send_byte(mask_command(CMD_DEFAULT_FRAME_END));
+				return;
 			}
 		}
-		break;
+		UART::send_byte(buffers.active_buffer[y][x]);
+		return;
 	case FRAME_START:
-		x = 0;
 		y = 0;
+		x = 0;
+		UART::send_byte(buffers.active_buffer[0][0]);
 		state = TRANSMIT;
-		break;
+		return;
 	case FRAME_END:
-		disable();
 		state = IDLE;
 		#ifdef FPS_DEBUG
 			fps::count();
 		#endif
-		break;
+		return;
 	default:
-		break;
+		return;
 	}
-	is_busy = false;
 }
 
 void display::connect()
@@ -112,7 +74,6 @@ void display::connect()
 		fps::init();
 		fps::start();
 	#endif
-	transmitter.is_connected = true;
 }
 
 void display::disconnect()
@@ -122,12 +83,11 @@ void display::disconnect()
 		fps::show();
 		fps::stop();
 	#endif
-	transmitter.is_connected = false;
 }
 
 void display::update_requsted()
 {
-	if (transmitter.is_connected && transmitter.state == Transmitter::IDLE)
+	if (transmitter.state == Transmitter::IDLE)
 	{
 		buffers.swap();
 		transmitter.start_new_frame();
@@ -136,7 +96,7 @@ void display::update_requsted()
 
 void display::update_assured()
 {
-	while (!transmitter.is_connected || transmitter.state != Transmitter::IDLE);
+	while (transmitter.state != Transmitter::IDLE);
 	buffers.swap();
 	transmitter.start_new_frame();
 }

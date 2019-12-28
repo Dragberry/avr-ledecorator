@@ -9,7 +9,10 @@ LifeGame::LifeGame()
 	color_life = dragberry::io::read();
 	color_dead = dragberry::io::read();;
 	alive_indicator = ALIVE_INDICATOR_01;
-	place_ship(0, 4, alive_indicator);
+	place_entity(0, 3, &SHIP_LIGHT, alive_indicator);
+	place_entity(10, 3, &SHIP_MEDIUM, alive_indicator);
+	place_entity(20, 3, &SHIP_LARGE, alive_indicator);
+//	place_ship(0, 4, alive_indicator);
 	dragberry::os::display::connect();
 	// 0.1 second
 	Timers::T1::start(0x4C5B, Timers::Prescaller::F_1024, this);
@@ -104,7 +107,7 @@ void LifeGame::step_up()
 
 	if (time > 10 && time % 5 == 0)
 	{
-		place_entity(0, 0, next_alive_indicator);
+		place_entity(0, 12 , &GLIDER, next_alive_indicator);
 	}
 
 	alive_indicator = next_alive_indicator;
@@ -129,8 +132,39 @@ void LifeGame::run()
 	do
 	{
 		build_scene();
+//		while(true);
 		step_up();
-	} while (time < 60);
+	} while (time < 40);
+}
+
+
+void LifeGame::place_entity(
+		const uint8_t start_x,
+		const uint8_t start_y,
+		const BitMap* data,
+		const uint8_t next_alive
+		)
+{
+	uint8_t width = data->get_width();
+	uint8_t height = data->get_height();
+	for (uint8_t y = 0; y < height; y++)
+	{
+		for (uint8_t x = 0; x < width; x++)
+		{
+			uint8_t state = data->get_pixel(x, y) ? next_alive : 0;
+			uint8_t real_y = start_y + y;
+			if (real_y > SCREEN_HEIGHT)
+			{
+				real_y -=SCREEN_HEIGHT;
+			}
+			uint8_t real_x = start_x + x;
+			if (real_x > SCREEN_WIDTH)
+			{
+				real_x -=SCREEN_WIDTH;
+			}
+			field[real_y][real_x] = state;
+		}
+	}
 }
 
 void LifeGame::place_ship(const uint8_t start_x, const uint8_t start_y, const uint8_t next_alive)

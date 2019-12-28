@@ -14,7 +14,7 @@ volatile uint16_t frames = 0;
 
 DrawableString lbl_section = DrawableString(0, 0, 32, 8);
 DrawableString fps_section = DrawableString(0, 8, 32, 8);
-char fps_string[4];
+char fps_string[5];
 
 void fps::init()
 {
@@ -33,7 +33,7 @@ void fps::init()
 	lbl_section.set_string("FPS", 3);
 	fps_section.bg_color = BLACK;
 	fps_section.color = WHITE;
-	fps_section.set_string(fps_string, 4);
+	fps_section.set_string(fps_string, 5);
 }
 
 void fps::start()
@@ -59,8 +59,8 @@ void fps::count()
 void fps::show()
 {
 	display::clear_screen(BLACK);
-	float_to_string(fps_string, ((float) frames * 100) / time, 2, 1, false);
-	fps_section.set_string(fps_string, 4);
+	float_to_string(fps_string, frames * 100.0 / time, 3, 1, false);
+	fps_section.set_string(fps_string, 5);
 	fps_section.draw();
 	lbl_section.draw();
 	display::update_assured();

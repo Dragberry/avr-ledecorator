@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include "livingthing.hpp"
 #include "../../../dragberry/os/display.hpp"
 #include "../../../dragberry/os/io.hpp"
 
@@ -39,6 +40,13 @@ public:
 	void run();
 
 	void on_timer1_event();
+
+	void place_entity(
+			const uint8_t start_x,
+			const uint8_t start_y,
+			const BitMap* data,
+			const uint8_t next_alive
+			);
 
 	void place_ship(const uint8_t start_x, const uint8_t start_y, const uint8_t next_alive);
 

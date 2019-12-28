@@ -10,7 +10,7 @@
 #include "../../data/image.h"
 #include "../../data/imagemono8x8.h"
 
-#define FPS_DEBUG
+//#define FPS_DEBUG
 
 namespace dragberry
 {
@@ -33,18 +33,13 @@ namespace dragberry
 			};
 
 		public:
-			class Transmitter :
-					public Timers::T0::Handler,
-					public UART::RxHandler
+			class Transmitter : public UART::RxHandler
 			{
 			private:
-				volatile uint8_t y = 0;
-				volatile uint8_t x = 0;
+				uint8_t y = 0;
+				uint8_t x = 0;
 
 			public:
-				volatile bool is_connected = false;
-				volatile bool is_busy = false;
-
 				volatile enum State
 				{
 					IDLE,
@@ -57,20 +52,9 @@ namespace dragberry
 				Transmitter();
 
 			public:
-				void enable();
-
-				void disable();
-
 				void start_new_frame();
 
-			public:
-				void on_timer0_event();
-			private:
-				void send_byte(const uint8_t byte);
-
-			public:
 				void on_uart_rx_event(const uint8_t byte);
-
 			};
 
 		public:
