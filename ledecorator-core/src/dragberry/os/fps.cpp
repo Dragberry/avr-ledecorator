@@ -1,6 +1,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include "lib/avr/software/operators.hpp"
 #include "display.hpp"
 #include "drawablestring.hpp"
@@ -9,12 +10,12 @@
 
 using namespace dragberry::os;
 
-volatile uint16_t time = 0;
-volatile uint16_t frames = 0;
+volatile uint32_t time = 0;
+volatile uint32_t frames = 0;
 
 DrawableString lbl_section = DrawableString(0, 0, 32, 8);
 DrawableString fps_section = DrawableString(0, 8, 32, 8);
-char fps_string[5];
+char fps_string[7];
 
 void fps::init()
 {
@@ -59,7 +60,17 @@ void fps::count()
 void fps::show()
 {
 	display::clear_screen(BLACK);
-	float_to_string(fps_string, frames * 100.0 / time, 3, 1, false);
+
+	int32_t full_fps = frames * 100 * 100 / time;
+	itoa(full_fps / 100, fps_string, 10);
+	uint8_t offset = 0;
+	while (fps_string[offset] != '\0')
+	{
+	    offset++;
+	}
+	fps_string[offset++] = '.';
+	itoa(full_fps % 100, fps_string + offset, 10);
+
 	fps_section.set_string(fps_string, 5);
 	fps_section.draw();
 	lbl_section.draw();

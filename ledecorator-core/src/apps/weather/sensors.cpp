@@ -34,24 +34,21 @@ TemperatureSensor::TemperatureSensor() :
 
 void TemperatureSensor::process_value()
 {
-   char* string_pointer = string_value;
+   uint8_t offset = 0;
    if (int_value > 0)
    {
-       string_pointer[0] = '+';
-       string_pointer++;
+       string_value[offset++] = '+';
    }
    else if (int_value < 0)
    {
-       string_pointer[0] = '-';
-       string_pointer++;
+       string_value[offset++] = '-';
    }
 
    int abs_value = abs(int_value);
-   itoa(abs_value / 100, string_pointer, 10);
-   string_pointer += (abs_value > 10 ? 2 : 1);
-   string_pointer[0] = '.';
-   string_pointer++;
-   itoa((int_value % 100) / 10, string_pointer, 10);
+   itoa(abs_value / 100, string_value + offset, 10);
+   offset += (abs_value > 10 ? 2 : 1);
+   string_value[offset++] = '.';
+   itoa((int_value % 100) / 10, string_value + offset, 10);
 }
 
 PressureSensor::PressureSensor() :

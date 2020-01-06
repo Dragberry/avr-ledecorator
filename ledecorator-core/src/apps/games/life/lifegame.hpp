@@ -20,7 +20,7 @@ private:
 
 	uint8_t field[SCREEN_HEIGHT][SCREEN_WIDTH];
 
-	volatile uint8_t time;
+	volatile uint16_t time;
 	volatile bool is_step_required;
 
 public:
