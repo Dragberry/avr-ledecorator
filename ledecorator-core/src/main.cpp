@@ -1,14 +1,8 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdint.h>
-#include <stdlib.h>
-#include <util/delay.h>
 
 #include "dragberry/os.hpp"
-#include "lib/avr/hardware/timers.hpp"
-#include "lib/avr/hardware/uart.hpp"
-#include "lib/screen/colors.h"
-#include "lib/screen/definitions.h"
 #include "apps/dummyapp/dummyapp.hpp"
 #include "apps/games/life/lifegame.hpp"
 #include "apps/games/snake/snakegame.h"
@@ -22,14 +16,12 @@
 
 using namespace dragberry::os;
 
-const uint8_t PROGRAMMS = 1;
+const uint8_t PROGRAMMS = 2;
 
 void (*programms[])() =
 {
+		LifeGame::runner,
 		WeatherApp::runner,
-//		SensorsApp::runner,
-//		DummyApp::runner,
-//		LifeGame::runner
 };
 
 int main()

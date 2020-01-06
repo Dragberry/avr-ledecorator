@@ -12,7 +12,7 @@ WeatherApp::WeatherApp() :
 {
     I2C::init();
     I2C::set_bitrate(400);
-
+    time = 0;
 }
 
 WeatherApp::~WeatherApp()
@@ -34,11 +34,11 @@ void WeatherApp::run()
         device.read_sensor_data(BME280_ALL, [&](BME280::Data& data) -> void
         {
             temperature_sensor.set_value(data.temperature);
-            pressure_sensor.set_value(data.pressure / 133);
+            pressure_sensor.set_value(data.pressure);
         });
         active_sensor->draw();
         dragberry::os::display::update_assured();
-        delay_ms(80);
+        delay_ms(70);
     }
 }
 
@@ -50,7 +50,7 @@ void WeatherApp::init()
         settings.osr_p = BME280_OVERSAMPLING_16X;
         settings.osr_t = BME280_OVERSAMPLING_2X;
         settings.filter = BME280_FILTER_COEFF_16;
-        settings.standby_time = BME280_STANDBY_TIME_125_MS;
+        settings.standby_time = BME280_STANDBY_TIME_62_5_MS;
     });
     device.set_sensor_settings(
             BME280_OSR_PRESS_SEL |
@@ -59,7 +59,7 @@ void WeatherApp::init()
             BME280_STANDBY_SEL
     );
     device.set_sensor_mode(BME280_NORMAL_MODE);
-    Timers::T1::start(0xFFFF, Timers::Prescaller::F_1024, this);
+    Timers::T1::start(0x7A1, Timers::Prescaller::F_1024, this);
 }
 
 void WeatherApp::on_timer1_event()

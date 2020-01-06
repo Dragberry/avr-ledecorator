@@ -4,13 +4,13 @@
 uint8_t byte_index = 0;
 
 uint8_t colors[] = {
-		BLUE,
+        YELLOW,
+        BLUE,
+        RED,
+        CYAN,
 		WHITE,
 		GREEN,
-		RED,
-		CYAN,
-		MAGENTA,
-		YELLOW,
+        MAGENTA,
 };
 
 uint8_t dragberry::io::read()

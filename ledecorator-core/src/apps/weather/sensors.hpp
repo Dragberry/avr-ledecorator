@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include "../../data/image.h"
-#include "../../dragberry/os/display.hpp"
 #include "../../dragberry/os/drawablestring.hpp"
 
 using namespace dragberry::os;
@@ -20,45 +19,37 @@ protected:
     DrawableString value_string = DrawableString(8, 0, 24, 8);
 
 public:
-    Sensor(const Image* pictogram) :
-        pictogram(pictogram)
+    Sensor(const Image* pictogram);
+
+    virtual ~Sensor();
+
+protected:
+    virtual void process_value()
     {
     }
 
-    virtual ~Sensor()
-    {
-    }
+public:
+    void set_value(int32_t int_value);
 
-    void set_value(int32_t int_value)
-    {
-        this->int_value = int_value;
-    }
-
-    void draw()
-    {
-        display::clear_screen(BLACK);
-        display::draw_image(0, 0, pictogram, BLACK);
-        value_string.draw();
-    }
+    void draw();
 };
 
 class TemperatureSensor : public Sensor
 {
 public:
-    TemperatureSensor() :
-        Sensor(&IMG_TEMPERATURE)
-    {
-    }
+    TemperatureSensor();
 
+protected:
+    void process_value();
 };
 
 class PressureSensor : public Sensor
 {
 public:
-    PressureSensor() :
-        Sensor(&IMG_PRESSURE)
-    {
-    }
+    PressureSensor();
+
+protected:
+    void process_value();
 };
 
 #endif

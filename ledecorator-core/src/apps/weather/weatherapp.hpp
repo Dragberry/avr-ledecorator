@@ -21,7 +21,8 @@ private:
     TemperatureSensor temperature_sensor;
     PressureSensor pressure_sensor;
 
-    Sensor* sensors[2] = {
+    Sensor* sensors[2] =
+    {
         &temperature_sensor,
         &pressure_sensor
     };

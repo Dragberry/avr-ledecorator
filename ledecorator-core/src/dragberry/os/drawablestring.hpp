@@ -41,6 +41,8 @@ namespace dragberry
 
 			void update();
 
+			void set_string(const char* new_string);
+
 			void set_string(const char* new_string, const uint8_t length);
 
 			void draw() const;

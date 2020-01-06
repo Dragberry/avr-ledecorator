@@ -44,6 +44,16 @@ void DrawableString::update()
 	}
 }
 
+void DrawableString::set_string(const char* new_string)
+{
+    uint8_t length = 0;
+    while (new_string[length] != '\0')
+    {
+        length++;
+    }
+    set_string(new_string, length);
+}
+
 void DrawableString::set_string(const char* new_string, const uint8_t length)
 {
 	string = new_string;

@@ -317,7 +317,7 @@ void BME280::Device::soft_reset()
     }
 }
 
-void BME280::Device::read_sensor_data(const uint8_t sensor_data, Data& data)
+void BME280::Device::read_sensor_data(const uint8_t sensor_data, Data& comp_data)
 {
     #ifdef BME280_DEBUG
         UART::send_string("BME280: READ SENSOR DATA");
@@ -326,7 +326,6 @@ void BME280::Device::read_sensor_data(const uint8_t sensor_data, Data& data)
      * the sensor
      */
     uint8_t reg_data[BME280_P_T_H_DATA_LEN] = { 0 };
-    Data comp_data = { 0 };
     Data uncomp_data = { 0 };
 
     /* Check for null pointer in the device */

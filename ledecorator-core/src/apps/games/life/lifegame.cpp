@@ -15,6 +15,8 @@ LifeGame::LifeGame()
 	place_entity(20, 0, &SHIP_LARGE, alive_indicator);
 	dragberry::os::display::connect();
 	// 0.1 second
+	is_step_required = 0;
+	time = 0;
 	Timers::T1::start(0xF42, Timers::Prescaller::F_1024, this);
 }
 
