@@ -3,7 +3,7 @@
 
 void int_to_string(
 			char* data,
-			int number,
+			int32_t number,
 			const uint8_t pr_int)
 {
 	for (uint8_t i = 0; i < pr_int; i++)
@@ -38,7 +38,7 @@ void float_to_string(
 	{
 		number = -number;
 	}
-	uint16_t ipart = (uint16_t) number;
+	int32_t ipart = (int32_t) number;
 	int_to_string(data, ipart, pr_int);
 	data[pr_int] = '.';
 	float fpart = number - (float) ipart;

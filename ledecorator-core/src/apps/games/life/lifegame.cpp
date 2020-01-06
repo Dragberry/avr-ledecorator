@@ -9,13 +9,13 @@ LifeGame::LifeGame()
 	color_life = dragberry::io::read();
 	color_dead = dragberry::io::read();;
 	alive_indicator = ALIVE_INDICATOR_01;
-//	place_entity(0, 0, &SHIP_LIGHT, alive_indicator);
-	place_entity(4, 4, &COPPERHEAD, alive_indicator);
-//	place_entity(20, 0, &SHIP_LARGE, alive_indicator);
-//	place_ship(0, 4, alive_indicator);
+//	place_entity(4, 4, &COPPERHEAD, alive_indicator);
+	place_entity(0, 0, &SHIP_LIGHT, alive_indicator);
+	place_entity(10, 0, &SHIP_MEDIUM, alive_indicator);
+	place_entity(20, 0, &SHIP_LARGE, alive_indicator);
 	dragberry::os::display::connect();
 	// 0.1 second
-	Timers::T1::start(0x4C5B, Timers::Prescaller::F_1024, this);
+	Timers::T1::start(0xF42, Timers::Prescaller::F_1024, this);
 }
 
 LifeGame::~LifeGame()
@@ -105,10 +105,10 @@ void LifeGame::step_up()
 	}
 
 
-	if (time % 16 == 0)
+	if (time >= 16 && time % 16 == 0)
 	{
-		place_entity(0, 12, &GLIDER, next_alive_indicator);
-		place_entity(15, 12, &GLIDER, next_alive_indicator);
+//		place_entity(0, 12, &GLIDER, next_alive_indicator);
+		place_entity(15, 11, &GLIDER, next_alive_indicator);
 	}
 
 	alive_indicator = next_alive_indicator;

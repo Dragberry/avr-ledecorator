@@ -65,8 +65,9 @@
 #define I2C_RECEIVE_DATA_BUFFER_SIZE 4
 
 //#define I2C_DEBUG
+//#define I2C_DEBUG_INT
 
-#ifdef I2C_DEBUG
+#if defined(I2C_DEBUG ) || defined(I2C_DEBUG_INT)
 #include "uart.hpp"
 #endif
 
@@ -164,7 +165,7 @@ namespace I2C {
 
 	inline void on_start()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: M->START");
 			UART::send_string("I2C: M->SEND ADDRESS");
 			UART::send_byte_as_binary(device_addr_rw);
@@ -174,7 +175,7 @@ namespace I2C {
 
 	inline void on_repeated_start()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: M->REP_START");
 			UART::send_string("I2C: M->SEND ADDRESS");
 			UART::send_byte_as_binary(device_addr_rw);
@@ -189,7 +190,7 @@ namespace I2C {
 		{
 			// send data
 			send_byte(send_data[send_data_index]);
-			#ifdef I2C_DEBUG
+			#ifdef I2C_DEBUG_INT
 				UART::send_string("I2C: MT->SEND BYTE");
 				UART::send_byte_as_binary(send_data[send_data_index]);
 			#endif
@@ -197,7 +198,7 @@ namespace I2C {
 		}
 		else
 		{
-			#ifdef I2C_DEBUG
+			#ifdef I2C_DEBUG_INT
 				UART::send_string("I2C: MT->SEND STOP");
 			#endif
 			// transmit stop condition, enable SLA ACK
@@ -209,7 +210,7 @@ namespace I2C {
 
 	inline void on_slave_address_ack()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: MT->SLA_ACK");
 		#endif
 		on_ack();
@@ -217,7 +218,7 @@ namespace I2C {
 
 	inline void on_mt_data_ack()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: MT->DATA_ACK");
 		#endif
 		on_ack();
@@ -225,7 +226,7 @@ namespace I2C {
 
 	inline void on_nack()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: SEND STOP");
 		#endif
 		// transmit stop condition, enable SLA ACK
@@ -237,12 +238,12 @@ namespace I2C {
 	inline void on_mr_data_nack()
 	{
 		// store final received data byte
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: MR->DATA_NACK");
 			UART::send_string("I2C: MR->DATA_NACK: LAST RECEIVED BYTE:");
 		#endif
 		receive_data[receive_data_index++] = inb(TWDR);
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_byte_as_binary(receive_data[receive_data_index - 1]);
 		#endif
 		on_nack();
@@ -250,7 +251,7 @@ namespace I2C {
 
 	inline void on_mr_slave_address_nack()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: MR->SLA_NACK");
 		#endif
 		on_nack();
@@ -258,7 +259,7 @@ namespace I2C {
 
 	inline void on_mt_slave_address_nack()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: MT->SLA_NACK");
 		#endif
 		on_nack();
@@ -266,7 +267,7 @@ namespace I2C {
 
 	inline void on_mt_data_nack()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: MT->DATA_NACK");
 		#endif
 		on_nack();
@@ -274,7 +275,7 @@ namespace I2C {
 
 	inline void on_bus_arbitration_lost()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: MT->ARB_LOST");
 		#endif
 		// release bus
@@ -299,11 +300,11 @@ namespace I2C {
 	inline void on_mr_data_ack()
 	{
 		// store received data byte
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: MR->DATA_ACK: RECEIVED BYTE: ");
 		#endif
 			receive_data[receive_data_index++] = inb(TWDR);
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_byte_as_binary(receive_data[receive_data_index - 1]);
 		#endif
 		on_mr_ack();
@@ -311,7 +312,7 @@ namespace I2C {
 
 	inline void on_mr_slave_address_ack()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: MR->SLA_ACK");
 		#endif
 		on_mr_ack();
@@ -330,7 +331,7 @@ namespace I2C {
 
 	inline void on_sr_slave_ack()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: SR->SLA_ACK");
 		#endif
 		on_sr_ack();
@@ -338,7 +339,7 @@ namespace I2C {
 
 	inline void on_sr_arbitration_lost_slave_ack()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: SR->ARB_LOST_SLA_ACK");
 		#endif
 		on_sr_ack();
@@ -346,7 +347,7 @@ namespace I2C {
 
 	inline void on_sr_gcall_slave_ack()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: SR->GCALL_ACK");
 		#endif
 		on_sr_ack();
@@ -371,7 +372,7 @@ namespace I2C {
 
 	inline void on_sr_data_ack()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: SR->DATA_ACK");
 		#endif
 		on_sr_data_ack_common();
@@ -379,7 +380,7 @@ namespace I2C {
 
 	inline void on_sr_gcall_data_ack()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: SR->GCALL_DATA_ACK");
 		#endif
 		on_sr_data_ack_common();
@@ -392,7 +393,7 @@ namespace I2C {
 
 	inline void on_sr_data_nack()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: SR->DATA_NACK");
 		#endif
 		on_sr_data_nack_common();
@@ -400,7 +401,7 @@ namespace I2C {
 
 	inline void on_sr_gcall_data_nack()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: SR->GCALL_DATA_NACK");
 		#endif
 		on_sr_data_nack_common();
@@ -408,7 +409,7 @@ namespace I2C {
 
 	inline void on_sr_stop()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: SR->STOP");
 		#endif
 		// switch to SR mode with SLA ACK
@@ -456,7 +457,7 @@ namespace I2C {
 
 	inline void on_st_slave_ack()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: ST->SLA_ACK");
 		#endif
 		on_st_slave_ack_common();
@@ -464,7 +465,7 @@ namespace I2C {
 
 	inline void on_st_arbitration_lost_slave_ack()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: ST->ARB_LOST_SLA_ACK");
 		#endif
 		on_st_slave_ack_common();
@@ -472,7 +473,7 @@ namespace I2C {
 
 	inline void on_st_data_ack()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: ST->DATA_ACK");
 		#endif
 		on_st_slave_data_ack_common();
@@ -489,7 +490,7 @@ namespace I2C {
 
 	inline void on_st_data_nack()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: ST->DATA_NACK");
 		#endif
 		on_st_data_nack_common();
@@ -497,7 +498,7 @@ namespace I2C {
 
 	inline void on_st_last_data()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: ST->LAST_DATA");
 		#endif
 		on_st_data_nack_common();
@@ -505,7 +506,7 @@ namespace I2C {
 
 	inline void on_no_info()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: NO_INFO");
 		#endif
 		// do nothing
@@ -513,7 +514,7 @@ namespace I2C {
 
 	inline void on_bus_error()
 	{
-		#ifdef I2C_DEBUG
+		#ifdef I2C_DEBUG_INT
 			UART::send_string("I2C: BUS_ERROR");
 		#endif
 		// reset internal hardware and release bus

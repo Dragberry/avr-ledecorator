@@ -5,7 +5,7 @@
 
 void int_to_string(
 			char* data,
-			int number,
+			int32_t number,
 			const uint8_t pr_int);
 
 void float_to_string(

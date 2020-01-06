@@ -1,5 +1,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/pgmspace.h>
 #include <stdlib.h>
 #include "uart.hpp"
 #include "../software/operators.hpp"
@@ -60,6 +61,21 @@ void UART::send_byte_as_binary(const uint8_t byte)
 		send_byte((byte & (0b10000000 >> i++)) ? '1' : '0');
 	}
 	send_byte('\n');
+}
+
+const char HEX_VALUES[16] PROGMEM =
+{
+        '0', '1', '2', '3', '4', '5', '6', '7',
+        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
+};
+
+void UART::send_byte_as_hex(const uint8_t byte)
+{
+    send_byte('0');
+    send_byte('x');
+    send_byte(pgm_read_byte(&HEX_VALUES[byte >> 4]));
+    send_byte(pgm_read_byte(&HEX_VALUES[byte & 0x0F]));
+    send_byte('\n');
 }
 
 void UART::send_string(const char* string)

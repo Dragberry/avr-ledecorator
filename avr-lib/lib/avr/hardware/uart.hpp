@@ -98,6 +98,8 @@ namespace UART
 
 	void send_byte_as_binary(const uint8_t byte);
 
+	void send_byte_as_hex(const uint8_t byte);
+
 	void send_string(const char* string);
 
 	inline uint8_t receive_byte()

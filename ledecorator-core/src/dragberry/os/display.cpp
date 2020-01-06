@@ -20,8 +20,8 @@ inline void display::Buffers::swap()
 
 display::Transmitter::Transmitter()
 {
-	UART::init(UART::BaudRate::B_2_500_000);
-	UART::set_rx_handler(this);
+//	UART::init(UART::BaudRate::B_2_500_000);
+//	UART::set_rx_handler(this);
 }
 
 void display::Transmitter::start_new_frame()

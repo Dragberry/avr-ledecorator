@@ -3,6 +3,7 @@
 	<name>atmega16</name>
 	<comment></comment>
 	<projects>
+		<project>avr-lib</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

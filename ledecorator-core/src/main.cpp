@@ -12,7 +12,7 @@
 #include "apps/dummyapp/dummyapp.hpp"
 #include "apps/games/life/lifegame.hpp"
 #include "apps/games/snake/snakegame.h"
-#include "apps/sensors/sensorsapp.hpp"
+#include "apps/weather/weatherapp.hpp"
 
 // 10s - f/1024 - 0x2faf0
 // 1s - f/1024 - 0x4C4B
@@ -22,13 +22,14 @@
 
 using namespace dragberry::os;
 
-const uint8_t PROGRAMMS = 3;
+const uint8_t PROGRAMMS = 1;
 
 void (*programms[])() =
 {
-		SensorsApp::runner,
-		DummyApp::runner,
-		LifeGame::runner
+		WeatherApp::runner,
+//		SensorsApp::runner,
+//		DummyApp::runner,
+//		LifeGame::runner
 };
 
 int main()

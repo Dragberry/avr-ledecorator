@@ -64,7 +64,7 @@ void Timers::T0::stop()
 
 ISR(TIMER0_COMP_vect)
 {
-	Timers::T0::comp_a_handler->on_timer_event();
+	Timers::T0::comp_a_handler->on_timer0_event();
 }
 
 void Timers::T1::start(uint16_t counter, Prescaller prescaller, Handler* handler)
@@ -129,7 +129,7 @@ void Timers::T1::stop()
 
 ISR(TIMER1_COMPA_vect)
 {
-	Timers::T1::comp_a_handler->on_timer_event();
+	Timers::T1::comp_a_handler->on_timer1_event();
 }
 
 #elif defined (__AVR_ATmega328P__)
