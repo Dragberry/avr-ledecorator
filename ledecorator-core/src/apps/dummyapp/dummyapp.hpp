@@ -20,20 +20,18 @@ private:
 
 public:
     DummyApp() {
-        string_h.set_string("DOBROE UTRO", 11);
+        string_h.set_string("SVINUSHKA-KRISTINSHKA");
         string_h.align = DrawableString::Align::LEFT;
         string_h.color = dragberry::io::read();
-        string_l.set_string("SVINUSHKA", 9);
+        string_l.set_string("VREDNAYA KAKASHKA");
         string_l.align = DrawableString::Align::LEFT;
         string_l.color = dragberry::io::read();
-        dragberry::os::display::connect();
         // 0.1 second
         Timers::T1::start(0x4C5, Timers::Prescaller::F_1024, this);
     }
 
     ~DummyApp() {
         Timers::T1::stop();
-        dragberry::os::display::disconnect();
     }
 
     void on_timer1_event() {
@@ -41,7 +39,7 @@ public:
     }
 
     void run() {
-        while (time < 64) {
+        while (time < 100) {
 
             string_h.update();
             string_l.update();

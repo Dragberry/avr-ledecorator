@@ -24,12 +24,27 @@ void Sensor::draw()
 {
     display::clear_screen(BLACK);
     display::draw_image(0, 0, pictogram, BLACK);
+    display::draw_histogram(
+            8, 8,
+            24, 8,
+            1, 0,
+            previous_values, 6,
+            2, 4,
+            GREEN,
+            BLACK
+    );
     value_string.draw();
 }
 
 TemperatureSensor::TemperatureSensor() :
         Sensor(&IMG_TEMPERATURE)
 {
+    previous_values[0] = 2522;
+    previous_values[1] = 2596;
+    previous_values[2] = 2563;
+    previous_values[3] = 2501;
+    previous_values[4] = 2433;
+    previous_values[5] = 2372;
 }
 
 void TemperatureSensor::process_value()
@@ -54,6 +69,12 @@ void TemperatureSensor::process_value()
 PressureSensor::PressureSensor() :
         Sensor(&IMG_PRESSURE)
 {
+    previous_values[0] = 742;
+    previous_values[1] = 742;
+    previous_values[2] = 742;
+    previous_values[3] = 743;
+    previous_values[4] = 743;
+    previous_values[5] = 742;
 }
 
 void PressureSensor::process_value()

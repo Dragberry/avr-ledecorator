@@ -13,6 +13,7 @@ protected:
     const Image* pictogram;
 
     int32_t int_value = 0;
+    int32_t previous_values[6];
 
     char string_value[6];
 

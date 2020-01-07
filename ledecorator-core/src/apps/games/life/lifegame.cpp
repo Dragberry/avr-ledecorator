@@ -12,7 +12,6 @@ LifeGame::LifeGame()
 	place_entity(0, 0, &SHIP_LIGHT, alive_indicator);
 	place_entity(10, 0, &SHIP_MEDIUM, alive_indicator);
 	place_entity(20, 0, &SHIP_LARGE, alive_indicator);
-	dragberry::os::display::connect();
 	is_step_required = 0;
 	time = 0;
 	Timers::T1::start(0x7A1, Timers::Prescaller::F_1024, this);
@@ -21,7 +20,6 @@ LifeGame::LifeGame()
 LifeGame::~LifeGame()
 {
 	Timers::T1::stop();
-	dragberry::os::display::disconnect();
 }
 
 void LifeGame::clear_field()

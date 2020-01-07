@@ -13,13 +13,11 @@ WeatherApp::WeatherApp() :
     I2C::init();
     I2C::set_bitrate(400);
     time = 0;
-    dragberry::os::display::connect();
 }
 
 WeatherApp::~WeatherApp()
 {
     Timers::T1::stop();
-    dragberry::os::display::disconnect();
 }
 
 void WeatherApp::runner()

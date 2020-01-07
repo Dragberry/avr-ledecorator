@@ -18,7 +18,9 @@ namespace dragberry
 		template <typename Execution>
 		static void run(Execution&& execution)
 		{
+		    dragberry::os::display::connect();
 			execution();
+			dragberry::os::display::disconnect();
 		}
 	}
 }

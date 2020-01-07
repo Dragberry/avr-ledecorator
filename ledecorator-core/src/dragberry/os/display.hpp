@@ -104,6 +104,20 @@ namespace dragberry
 					const Color color,
 					const Color bg_color);
 
+			static void draw_histogram(
+			            uint8_t start_x,
+			            uint8_t start_y,
+			            const uint8_t width,
+			            const uint8_t height,
+			            const int8_t offset_x,
+                        const int8_t offset_y,
+			            const int32_t* data_set,
+			            const uint8_t data_set_size,
+			            const uint8_t line_width,
+			            const uint8_t section_width,
+			            const Color color,
+			            const Color bg_color);
+
 			template<typename PixelProvider>
 			static void draw(
 					int8_t start_x,
@@ -146,71 +160,5 @@ namespace dragberry
 		};
 	}
 }
-
-//void ScreenInterface::draw_histogram(
-//			uint8_t start_x,
-//			uint8_t start_y,
-//			const uint8_t width,
-//			const uint8_t height,
-//			const int16_t* data_set,
-//			const uint8_t data_set_size,
-//			const Color color,
-//			const Color bg_color)
-//{
-//	// 720, 744, 761, 738, 739, 741
-//	int16_t max = INT16_MIN; // 761
-//	int16_t min = INT16_MAX; // 720
-//	uint8_t i = 0;
-////	while (i < data_set_size)
-////	{
-////		int16_t current = data_set[i];
-////		if (current > max)
-////		{
-////			max = current;
-////		}
-////		if (current < min)
-////		{
-////			min = current;
-////		}
-////	}
-////	int16_t difference = max - min; 	// 41
-////	int16_t step = difference / height;	// 41 / 8 = 5
-////	i = 0;
-////	uint8_t values[data_set_size];
-////	while (i < data_set_size)
-////	{
-////		int16_t temp = data_set[i] - min;
-////		// 720 - 720 = 0
-////		// 720 - 744 = 24
-////		// 720 - 761 = 31
-////		uint8_t value = (temp / step) + 1;
-////		// 0 / 5 + 1= 0
-////		// 24 / 5 + 1 = 5
-////		// 31 / 5 = 7
-////		values[i++] = value;
-////	}
-//	uint8_t values[6] = {0,1,2,3,4,5};
-//	i = 0;
-//	draw_area(start_x, start_y, 1, height, bg_color);
-//	while ()
-//	{
-//
-//	}
-//
-//	start_x++;
-//	while (i < data_set_size)
-//	{
-//		for (uint8_t y = 0; y < height; y++)
-//		{
-//			if (values[i] > (height - y - 1))
-//			{
-//				buffer[start_y + y][start_x] = RED;
-//				buffer[start_y + y][start_x + 1] = RED;
-//			}
-//		}
-//		start_x += 4;
-//		i++;
-//	}
-//}
 
 #endif
