@@ -1,9 +1,11 @@
 #ifndef SENSORS_HPP_
 #define SENSORS_HPP_
 
+#include <avr/eeprom.h>
 #include <stdint.h>
 #include "../../data/image.h"
 #include "../../dragberry/os/drawablestring.hpp"
+#include "../../util/circularbuffer.hpp"
 
 using namespace dragberry::os;
 
@@ -13,14 +15,17 @@ protected:
     const Image* pictogram;
 
     int32_t int_value = 0;
-    int32_t previous_values[6];
+
+    const CircularBuffer<int16_t, 6>* database;
+
+    CircularBuffer<int16_t, 6> previous_values;
 
     char string_value[6];
 
     DrawableString value_string = DrawableString(8, 0, 24, 8);
 
 public:
-    Sensor(const Image* pictogram);
+    Sensor(const Image* pictogram, const CircularBuffer<int16_t, 6>* database);
 
     virtual ~Sensor();
 
@@ -37,8 +42,13 @@ public:
 
 class TemperatureSensor : public Sensor
 {
+private:
+    static CircularBuffer<int16_t, 6> EEMEM TEMPERATURE_DB;
+
 public:
     TemperatureSensor();
+
+    void save();
 
 protected:
     void process_value();
@@ -46,8 +56,13 @@ protected:
 
 class PressureSensor : public Sensor
 {
+private:
+    static CircularBuffer<int16_t, 6> EEMEM PRESSURE_DB;
+
 public:
     PressureSensor();
+
+    void save();
 
 protected:
     void process_value();

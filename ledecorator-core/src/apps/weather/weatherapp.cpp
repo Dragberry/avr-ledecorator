@@ -40,6 +40,8 @@ void WeatherApp::run()
         dragberry::os::display::update_assured();
         delay_ms(70);
     }
+    temperature_sensor.save();
+    pressure_sensor.save();
 }
 
 void WeatherApp::init()

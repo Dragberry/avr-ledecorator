@@ -16,12 +16,12 @@
 
 using namespace dragberry::os;
 
-const uint8_t PROGRAMMS = 3;
+const uint8_t PROGRAMMS = 1;
 
 void (*programms[])() =
 {
-        DummyApp::runner,
-		LifeGame::runner,
+//        DummyApp::runner,
+//		LifeGame::runner,
 		WeatherApp::runner,
 };
 

@@ -282,7 +282,7 @@ void display::draw_histogram(
         width, height,
         [&](const uint8_t x, const uint8_t y) -> Color
         {
-            if (x % 4 < line_width && x <= chart_width &&
+            if (x % 4 < line_width && x < chart_width &&
                 normalized_data_set[x / section_width] >= height - y)
             {
                 return color;
