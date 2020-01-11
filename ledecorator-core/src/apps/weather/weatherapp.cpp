@@ -4,7 +4,7 @@
 #include "weatherapp.hpp"
 #include "../../dragberry/os.hpp"
 
-#define WEATHER_APP_TIME 100 // x0.1 second
+#define WEATHER_APP_TIME 200 // x0.1 second
 
 WeatherApp::WeatherApp() :
         BME280::Interface(BME280::InterfaceType::I2C)
@@ -21,7 +21,6 @@ WeatherApp::~WeatherApp()
 
 void WeatherApp::runner()
 {
-//    UART::init(UART::BaudRate::B_500_000);
     WeatherApp app;
     app.run();
 }
@@ -69,13 +68,20 @@ void WeatherApp::init()
 void WeatherApp::on_timer1_event()
 {
     time++;
-    if (time % 50 == 0)
+    uint16_t sensor_up_time = time % 100;
+    if (sensor_up_time == 0)
     {
         if (++active_sensor_index == 2)
         {
             active_sensor_index = 0;
         }
         active_sensor = sensors[active_sensor_index];
+    }
+    else
+    {
+        active_sensor->display_mode = sensor_up_time < 60 ?
+                Sensor::DisplayMode::VALUE :
+                Sensor::DisplayMode::CHART;
     }
 }
 

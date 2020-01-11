@@ -2,10 +2,13 @@
 #define SENSORS_HPP_
 
 #include <avr/eeprom.h>
+#include <avr/pgmspace.h>
 #include <stdint.h>
 #include "../../data/image.h"
 #include "../../dragberry/os/drawablestring.hpp"
+#include "../../util/charts.hpp"
 #include "../../util/ringbuffer.hpp"
+#include "../../data/bitmap.hpp"
 
 using namespace dragberry::os;
 
@@ -24,9 +27,20 @@ protected:
 
     DrawableString value_string = DrawableString(8, 0, 24, 8);
 
+    DrawableString unit_string = DrawableString(8, 8, 24, 8);
+
     char step_string_value[5];
 
-    DrawableString step_string = DrawableString(8, 8, 24, 8);
+    DrawableString step_string = DrawableString(8, 0, 24, 8);
+
+    Histogram<int16_t, 6> chart = Histogram<int16_t, 6>(24, 8);
+
+public:
+    enum DisplayMode
+    {
+        VALUE,
+        CHART
+    } display_mode = VALUE;
 
 public:
     Sensor(const Image* pictogram, const RingBuffer<int16_t, 6>* database);
@@ -56,6 +70,8 @@ private:
 public:
     TemperatureSensor();
 
+    void load();
+
     void save();
 
 protected:
@@ -70,10 +86,31 @@ private:
 public:
     PressureSensor();
 
+    void load();
+
     void save();
 
 protected:
     void process_value();
 };
+
+const uint8_t DIFFERENCE_ICON_DATA[3] PROGMEM =
+{
+        /*
+         * 010
+         * 111
+         * 010
+         * 010
+         * 010
+         * 010
+         * 111
+         * 010
+         */
+        0b01011101,
+        0b00100100,
+        0b10111010
+};
+
+const BitMap DIFFERENCE_ICON PROGMEM = { 3, 8, DIFFERENCE_ICON_DATA };
 
 #endif

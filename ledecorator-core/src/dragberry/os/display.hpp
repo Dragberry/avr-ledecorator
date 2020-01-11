@@ -7,6 +7,7 @@
 #include "lib/screen/colors.h"
 #include "lib/screen/commands.h"
 #include "lib/screen/definitions.h"
+#include "../../data/bitmap.hpp"
 #include "../../data/image.h"
 #include "../../data/imagemono8x8.h"
 
@@ -105,19 +106,14 @@ namespace dragberry
 					const Color color,
 					const Color bg_color);
 
-			static int32_t draw_histogram(
-			            uint8_t start_x,
-			            uint8_t start_y,
-			            const uint8_t width,
-			            const uint8_t height,
-			            const int8_t offset_x,
-                        const int8_t offset_y,
-			            const int32_t* data_set,
-			            const uint8_t data_set_size,
-			            const uint8_t line_width,
-			            const uint8_t section_width,
-			            const Color color,
-			            const Color bg_color);
+			static void draw_image(
+                    uint8_t start_x,
+                    uint8_t start_y,
+                    const int8_t offset_x,
+                    const int8_t offset_y,
+                    const BitMap* img,
+                    const Color color,
+                    const Color bg_color);
 
 			template<typename PixelProvider>
 			static void draw(

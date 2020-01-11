@@ -162,7 +162,7 @@ void LifeGame::place_entity(
 	{
 		for (uint8_t x = 0; x < width; x++)
 		{
-			uint8_t state = data->get_pixel(x, y) ? next_alive : 0;
+			uint8_t state = data->get_bit(x, y) ? next_alive : 0;
 			uint8_t real_y = start_y + y;
 			if (real_y > SCREEN_HEIGHT)
 			{

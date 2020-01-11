@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "sensors.hpp"
 #include "../../dragberry/os/display.hpp"
+#include "../../util/charts.hpp"
 
 Sensor::Sensor(const Image* pictogram, const RingBuffer<int16_t, 6>* database) :
         pictogram(pictogram),
@@ -11,6 +12,9 @@ Sensor::Sensor(const Image* pictogram, const RingBuffer<int16_t, 6>* database) :
 
     step_string.color = WHITE;
     step_string.align = DrawableString::Align::RIGHT;
+
+    unit_string.color = GREEN;
+    unit_string.align = DrawableString::Align::RIGHT;
 }
 
 Sensor::~Sensor()
@@ -25,12 +29,16 @@ void Sensor::load()
             sizeof(previous_values)
             );
     previous_values.reset();
-//    previous_values.print("Load");
+    int16_t values[previous_values.get_size()];
+    previous_values.iterate([&](const int16_t& item, const uint8_t index) -> void
+    {
+        values[index] = item;
+    });
+    chart.build(values, previous_values.get_size());
 }
 
 void Sensor::save()
 {
-//    previous_values.print("Save");
     eeprom_update_block(
            (const void*) &previous_values,
            (void*) database,
@@ -49,40 +57,25 @@ void Sensor::draw()
 {
     display::clear_screen(BLACK);
     display::draw_image(0, 0, pictogram, BLACK);
-
-    if (previous_values.get_size() != 0)
+    switch (display_mode)
     {
-//        char string[10];
-
-        int32_t values[previous_values.get_size()];
-        previous_values.iterate([&](const int16_t& item, const uint8_t index) -> void
-        {
-//
-//            char string[10];
-//            itoa(item, string, 10);
-//            UART::send_string(string);
-            values[index] = item;
-        });
-
-        int32_t step = display::draw_histogram(
-                8, 8,
-                24, 8,
-                1, 0,
-                values, previous_values.get_size(),
-                2, 4,
-                GREEN,
-                BLACK
-        );
-//        UART::send_string("Step");
-//        itoa(step, string, 10);
-//        UART::send_string(string);
-
-//        itoa(step, step_string_value, 10);
-//        step_string.set_string(step_string_value);
-//        step_string.draw();
+    case VALUE:
+        value_string.draw();
+        unit_string.draw();
+        break;
+    case CHART:
+        step_string.draw();
+        display::draw_image(
+                8, 0,
+                0, 0,
+                &DIFFERENCE_ICON,
+                GREEN, BLACK
+                );
+        chart.draw(8, 8, 1, 0);
+        break;
+    default:
+        break;
     }
-
-    value_string.draw();
 }
 
 RingBuffer<int16_t, 6> EEMEM TemperatureSensor::TEMPERATURE_DB = RingBuffer<int16_t, 6>();
@@ -90,12 +83,21 @@ RingBuffer<int16_t, 6> EEMEM TemperatureSensor::TEMPERATURE_DB = RingBuffer<int1
 TemperatureSensor::TemperatureSensor() :
         Sensor(&IMG_TEMPERATURE, &TEMPERATURE_DB)
 {
-//    previous_values.add(2522);
-//    previous_values.add(2596);
-//    previous_values.add(2563);
-//    previous_values.add(2501);
-//    previous_values.add(2433);
-//    previous_values.add(2372);
+    unit_string.set_string("C");
+}
+
+void TemperatureSensor::load()
+{
+    Sensor::load();
+
+    int16_t step = chart.get_step();
+    uint8_t offset = 0;
+    itoa(step / 10, step_string_value, 10);
+    offset += (step > 10 ? 2 : 1);
+    step_string_value[offset++] = '.';
+    itoa(step % 10, step_string_value + offset, 10);
+
+    step_string.set_string(step_string_value);
 }
 
 void TemperatureSensor::process_value()
@@ -128,12 +130,14 @@ RingBuffer<int16_t, 6> EEMEM PressureSensor::PRESSURE_DB = RingBuffer<int16_t, 6
 PressureSensor::PressureSensor() :
         Sensor(&IMG_PRESSURE, &PRESSURE_DB)
 {
-//    previous_values.add(742);
-//    previous_values.add(743);
-//    previous_values.add(744);
-//    previous_values.add(745);
-//    previous_values.add(746);
-//    previous_values.add(747);
+    unit_string.set_string("MM");
+}
+
+void PressureSensor::load()
+{
+    Sensor::load();
+    itoa(chart.get_step(), step_string_value, 10);
+    step_string.set_string(step_string_value);
 }
 
 void PressureSensor::process_value()

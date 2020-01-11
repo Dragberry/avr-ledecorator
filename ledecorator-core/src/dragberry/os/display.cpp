@@ -236,68 +236,21 @@ void display::draw_image(
 			});
 }
 
-int32_t display::draw_histogram(
+void display::draw_image(
         uint8_t start_x,
         uint8_t start_y,
-        const uint8_t width,
-        const uint8_t height,
         const int8_t offset_x,
         const int8_t offset_y,
-        const int32_t* data_set,
-        const uint8_t data_set_size,
-        const uint8_t line_width,
-        const uint8_t section_width,
+        const BitMap* img,
         const Color color,
         const Color bg_color)
 {
-    int32_t min = data_set[0];
-    int32_t max = data_set[0];
-    uint8_t index = 1;
-    while (index < data_set_size)
-    {
-        int32_t value = data_set[index++];
-        if (value > max)
-        {
-            max = value;
-        }
-        if (value < min)
-        {
-            min = value;
-        }
-    }
-
-    uint8_t base = 1;
-    int32_t amplitude = max - min;
-    int32_t step = amplitude / height;
-    if (step == 0)
-    {
-        step = 1;
-        base = height - amplitude;
-    }
-    uint8_t normalized_data_set[data_set_size];
-    index = 0;
-    while (index < data_set_size)
-    {
-        normalized_data_set[index] = base + ((data_set[index] - min) / step);
-        index++;
-    }
-
-    const uint8_t chart_width = section_width * data_set_size;
-
     draw(
-        start_x, start_y,
-        offset_x, offset_y,
-        width, height,
-        [&](const uint8_t x, const uint8_t y) -> Color
-        {
-            if (x % 4 < line_width && x < chart_width &&
-                normalized_data_set[x / section_width] >= height - y)
+            start_x, start_y,
+            offset_x, offset_y,
+            img->get_width(), img->get_height(),
+            [&](const uint8_t x, const uint8_t y) -> Color
             {
-                return color;
-
-            }
-            return bg_color;
-        }
-    );
-    return step;
+                return img->get_bit(x, y) ? color : bg_color;
+            });
 }
