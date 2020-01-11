@@ -20,8 +20,10 @@ inline void display::Buffers::swap()
 
 display::Transmitter::Transmitter()
 {
-	UART::init(UART::BaudRate::B_2_500_000);
-	UART::set_rx_handler(this);
+    #ifndef DISPLAY_DEBUG
+	    UART::init(UART::BaudRate::B_2_500_000);
+	    UART::set_rx_handler(this);
+    #endif
 }
 
 void display::Transmitter::start_new_frame()
@@ -29,8 +31,10 @@ void display::Transmitter::start_new_frame()
 	#ifdef FPS_DEBUG
 		dragberry::os::fps::start();
 	#endif
-	state = FRAME_START;
-	UART::send_byte(mask_command(CMD_DEFAULT_FRAME_START));
+    #ifndef DISPLAY_DEBUG
+		state = FRAME_START;
+	    UART::send_byte(mask_command(CMD_DEFAULT_FRAME_START));
+    #endif
 }
 
 void display::Transmitter::on_uart_rx_event(const uint8_t byte)
@@ -87,18 +91,22 @@ void display::disconnect()
 
 void display::update_requsted()
 {
-	if (transmitter.state == Transmitter::IDLE)
-	{
-		buffers.swap();
-		transmitter.start_new_frame();
-	}
+    #ifndef DISPLAY_DEBUG
+	    if (transmitter.state == Transmitter::IDLE)
+	    {
+		    buffers.swap();
+		    transmitter.start_new_frame();
+	    }
+    #endif
 }
 
 void display::update_assured()
 {
-	while (transmitter.state != Transmitter::IDLE);
-	buffers.swap();
-	transmitter.start_new_frame();
+    #ifndef DISPLAY_DEBUG
+	    while (transmitter.state != Transmitter::IDLE);
+	    buffers.swap();
+	    transmitter.start_new_frame();
+    #endif
 }
 
 
@@ -228,7 +236,7 @@ void display::draw_image(
 			});
 }
 
-void display::draw_histogram(
+int32_t display::draw_histogram(
         uint8_t start_x,
         uint8_t start_y,
         const uint8_t width,
@@ -291,4 +299,5 @@ void display::draw_histogram(
             return bg_color;
         }
     );
+    return step;
 }

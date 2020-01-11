@@ -3,9 +3,8 @@
 #include "lib/avr/hardware/i2c.hpp"
 #include "weatherapp.hpp"
 #include "../../dragberry/os.hpp"
-#include "../../dragberry/os/display.hpp"
 
-#define WEATHER_APP_TIME 300 // x0.1 second
+#define WEATHER_APP_TIME 100 // x0.1 second
 
 WeatherApp::WeatherApp() :
         BME280::Interface(BME280::InterfaceType::I2C)
@@ -22,6 +21,7 @@ WeatherApp::~WeatherApp()
 
 void WeatherApp::runner()
 {
+//    UART::init(UART::BaudRate::B_500_000);
     WeatherApp app;
     app.run();
 }
@@ -46,6 +46,8 @@ void WeatherApp::run()
 
 void WeatherApp::init()
 {
+    temperature_sensor.load();
+    pressure_sensor.load();
     device.init([](BME280::Settings &settings) -> void
     {
         /* Recommended mode of operation: Indoor navigation */

@@ -2,28 +2,40 @@
 #include "sensors.hpp"
 #include "../../dragberry/os/display.hpp"
 
-Sensor::Sensor(const Image* pictogram, const CircularBuffer<int16_t, 6>* database) :
+Sensor::Sensor(const Image* pictogram, const RingBuffer<int16_t, 6>* database) :
         pictogram(pictogram),
         database(database)
 {
     value_string.color = WHITE;
     value_string.align = DrawableString::Align::RIGHT;
+
+    step_string.color = WHITE;
+    step_string.align = DrawableString::Align::RIGHT;
+}
+
+Sensor::~Sensor()
+{
+}
+
+void Sensor::load()
+{
     eeprom_read_block(
             (void*) &previous_values,
             (const void*) database,
             sizeof(previous_values)
             );
     previous_values.reset();
-
+//    previous_values.print("Load");
 }
 
-Sensor::~Sensor()
+void Sensor::save()
 {
+//    previous_values.print("Save");
     eeprom_update_block(
-            (const void*) &previous_values,
-            (void*) database,
-            sizeof(previous_values)
-            );
+           (const void*) &previous_values,
+           (void*) database,
+           sizeof(previous_values)
+           );
 }
 
 void Sensor::set_value(int32_t new_int_value)
@@ -40,13 +52,19 @@ void Sensor::draw()
 
     if (previous_values.get_size() != 0)
     {
+//        char string[10];
+
         int32_t values[previous_values.get_size()];
-        previous_values.iterate([&](int16_t& element, uint8_t index) -> void
+        previous_values.iterate([&](const int16_t& item, const uint8_t index) -> void
         {
-            values[index] = element;
+//
+//            char string[10];
+//            itoa(item, string, 10);
+//            UART::send_string(string);
+            values[index] = item;
         });
 
-        display::draw_histogram(
+        int32_t step = display::draw_histogram(
                 8, 8,
                 24, 8,
                 1, 0,
@@ -55,12 +73,19 @@ void Sensor::draw()
                 GREEN,
                 BLACK
         );
+//        UART::send_string("Step");
+//        itoa(step, string, 10);
+//        UART::send_string(string);
+
+//        itoa(step, step_string_value, 10);
+//        step_string.set_string(step_string_value);
+//        step_string.draw();
     }
 
     value_string.draw();
 }
 
-EEMEM CircularBuffer<int16_t, 6> TemperatureSensor::TEMPERATURE_DB = CircularBuffer<int16_t, 6>();
+RingBuffer<int16_t, 6> EEMEM TemperatureSensor::TEMPERATURE_DB = RingBuffer<int16_t, 6>();
 
 TemperatureSensor::TemperatureSensor() :
         Sensor(&IMG_TEMPERATURE, &TEMPERATURE_DB)
@@ -95,9 +120,10 @@ void TemperatureSensor::process_value()
 void TemperatureSensor::save()
 {
     previous_values.add(int_value / 10);
+    Sensor::save();
 }
 
-EEMEM CircularBuffer<int16_t, 6> PressureSensor::PRESSURE_DB = CircularBuffer<int16_t, 6>();
+RingBuffer<int16_t, 6> EEMEM PressureSensor::PRESSURE_DB = RingBuffer<int16_t, 6>();
 
 PressureSensor::PressureSensor() :
         Sensor(&IMG_PRESSURE, &PRESSURE_DB)
@@ -118,4 +144,5 @@ void PressureSensor::process_value()
 void PressureSensor::save()
 {
     previous_values.add(int_value / 133);
+    Sensor::save();
 }

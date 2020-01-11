@@ -10,6 +10,7 @@
 #include "../../data/image.h"
 #include "../../data/imagemono8x8.h"
 
+//#define DISPLAY_DEBUG
 //#define FPS_DEBUG
 
 namespace dragberry
@@ -104,7 +105,7 @@ namespace dragberry
 					const Color color,
 					const Color bg_color);
 
-			static void draw_histogram(
+			static int32_t draw_histogram(
 			            uint8_t start_x,
 			            uint8_t start_y,
 			            const uint8_t width,
