@@ -4,7 +4,7 @@
 #include "weatherapp.hpp"
 #include "../../dragberry/os.hpp"
 
-#define WEATHER_APP_TIME 200 // x0.1 second
+#define WEATHER_APP_TIME 400 // x0.1 second
 
 WeatherApp::WeatherApp() :
         BME280::Interface(BME280::InterfaceType::I2C)

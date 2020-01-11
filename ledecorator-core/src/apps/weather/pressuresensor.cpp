@@ -28,22 +28,22 @@ const RingBuffer<int16_t, 6> EEMEM PressureSensor::PRESSURE_DB = RingBuffer<int1
 
 const uint8_t PROGMEM PressureSensor::IMG_PRESSURE_DATA[128] =
 {
-        BLACK,  BLACK,  BLACK,  BLUE,   BLUE,   BLACK,  BLACK,  BLACK,
-        BLACK,  BLACK,  BLUE,   WHITE,  WHITE,  BLUE,   BLACK,  BLACK,
-        BLACK,  BLACK,  BLUE,   WHITE,  WHITE,  BLUE,   BLACK,  BLACK,
-        BLACK,  BLACK,  BLUE,   WHITE,  WHITE,  BLUE,   BLACK,  BLACK,
-        BLACK,  BLACK,  BLUE,   WHITE,  WHITE,  BLUE,   BLACK,  BLACK,
-        BLACK,  BLACK,  BLUE,   RED,    RED,    BLUE,   BLACK,  BLACK,
-        BLACK,  BLACK,  BLUE,   RED,    RED,    BLUE,   BLACK,  BLACK,
-        BLACK,  BLACK,  BLUE,   RED,    RED,    BLUE,   BLACK,  BLACK,
-        BLACK,  BLACK,  BLUE,   RED,    RED,    BLUE,   BLACK,  BLACK,
-        BLACK,  BLACK,  BLUE,   RED,    RED,    BLUE,   BLACK,  BLACK,
-        BLACK,  BLACK,  BLUE,   RED,    RED,    BLUE,   BLACK,  BLACK,
-        BLACK,  BLUE,   BLUE,   RED,    RED,    BLUE,   BLUE,   BLACK,
-        BLACK,  BLUE,   RED,    RED,    RED,    RED,    BLUE,   BLACK,
-        BLACK,  BLUE,   RED,    RED,    RED,    RED,    BLUE,   BLACK,
-        BLACK,  BLUE,   BLUE,   RED,    RED,    BLUE,   BLUE,   BLACK,
-        BLACK,  BLACK,  BLUE,   BLUE,   BLUE,   BLUE,   BLACK,  BLACK,
+        BLACK,  BLACK,  BLACK,  BLACK,  BLACK,  BLACK,  BLACK,  BLACK,
+        BLACK,  BLACK,  BLACK,  BLACK,  BLACK,  BLACK,  BLACK,  BLACK,
+        BLACK,  BLACK,  BLACK,  RED,    RED,    RED,    RED,    BLACK,
+        CYAN,   BLACK,  BLACK,  BLACK,  BLACK,  BLACK,  RED,    BLACK,
+        BLACK,  CYAN,   BLACK,  CYAN,   BLACK,  BLACK,  RED,    BLACK,
+        BLACK,  BLACK,  CYAN,   CYAN,   BLACK,  RED,    RED,    BLACK,
+        BLACK,  CYAN,   CYAN,   CYAN,   BLACK,  BLACK,  RED,    BLACK,
+        BLACK,  BLACK,  BLACK,  BLACK,  BLACK,  BLACK,  RED,    BLACK,
+        BLACK,  BLACK,  BLACK,  BLACK,  RED,    RED,    RED,    BLACK,
+        CYAN,   BLACK,  BLACK,  BLACK,  BLACK,  BLACK,  RED,    BLACK,
+        BLACK,  CYAN,   BLACK,  CYAN,   BLACK,  BLACK,  RED,    BLACK,
+        BLACK,  BLACK,  CYAN,   CYAN,   BLACK,  RED,    RED,    BLACK,
+        BLACK,  CYAN,   CYAN,   CYAN,   BLACK,  BLACK,  RED,    BLACK,
+        BLACK,  BLACK,  BLACK,  BLACK,  BLACK,  BLACK,  RED,    BLACK,
+        BLACK,  BLACK,  BLACK,  RED,    RED,    RED,    RED,    BLACK,
+        BLACK,  BLACK,  BLACK,  BLACK,  BLACK,  BLACK,  BLACK,  BLACK,
 };
 
 const Image PROGMEM PressureSensor::IMG_PRESSURE = {8, 16, IMG_PRESSURE_DATA};

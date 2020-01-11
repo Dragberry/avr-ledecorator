@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include "lib/screen/definitions.h"
 
+#define LIFE_GAME_TIME 400
+
 LifeGame::LifeGame()
 {
 	clear_field();
@@ -145,7 +147,7 @@ void LifeGame::run()
 			is_step_required = false;
 		}
 	}
-	while (time <= 300);
+	while (time <= LIFE_GAME_TIME);
 }
 
 
