@@ -1,4 +1,4 @@
-#include "imagemono8x8.h"
+#include "imagemono8x8.hpp"
 
 const ImageMono8x8* ImageMono8x8::for_character(const char char_index)
 {

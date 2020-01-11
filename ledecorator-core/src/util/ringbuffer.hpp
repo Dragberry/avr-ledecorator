@@ -96,7 +96,7 @@ public:
     }
 
     template <typename Action>
-    void iterate(Action&& on_item) const
+    void iterate_reverse(Action&& on_item) const
     {
         if (size <= capacity)
         {
@@ -104,6 +104,25 @@ public:
             while (i < size)
             {
                 const uint8_t real_index = (tail > i ? 0 : capacity) + tail - i - 1;
+                on_item(buffer[real_index], i);
+                i++;
+            }
+        }
+    }
+
+    template <typename Action>
+    void iterate(Action&& on_item) const
+    {
+        if (size <= capacity)
+        {
+            uint8_t i = 0;
+            while (i < size)
+            {
+                uint8_t real_index = head + i;
+                if (real_index >= capacity)
+                {
+                    real_index -= capacity;
+                }
                 on_item(buffer[real_index], i);
                 i++;
             }

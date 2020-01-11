@@ -1,19 +1,24 @@
-#ifndef SENSORS_HPP_
-#define SENSORS_HPP_
+#ifndef SENSOR_HPP_
+#define SENSOR_HPP_
 
 #include <avr/eeprom.h>
 #include <avr/pgmspace.h>
 #include <stdint.h>
-#include "../../data/image.h"
+
+#include "../../data/image.hpp"
 #include "../../dragberry/os/drawablestring.hpp"
 #include "../../util/charts.hpp"
 #include "../../util/ringbuffer.hpp"
-#include "../../data/bitmap.hpp"
 
 using namespace dragberry::os;
 
 class Sensor
 {
+private:
+    static const uint8_t PROGMEM IMG_DIFF_DATA[18];
+
+    static const Image PROGMEM IMG_DIFF;
+
 protected:
     const Image* pictogram;
 
@@ -61,56 +66,5 @@ public:
 
     void draw();
 };
-
-class TemperatureSensor : public Sensor
-{
-private:
-    static RingBuffer<int16_t, 6> EEMEM TEMPERATURE_DB;
-
-public:
-    TemperatureSensor();
-
-    void load();
-
-    void save();
-
-protected:
-    void process_value();
-};
-
-class PressureSensor : public Sensor
-{
-private:
-    static RingBuffer<int16_t, 6> EEMEM PRESSURE_DB;
-
-public:
-    PressureSensor();
-
-    void load();
-
-    void save();
-
-protected:
-    void process_value();
-};
-
-const uint8_t DIFFERENCE_ICON_DATA[3] PROGMEM =
-{
-        /*
-         * 010
-         * 111
-         * 010
-         * 010
-         * 010
-         * 010
-         * 111
-         * 010
-         */
-        0b01011101,
-        0b00100100,
-        0b10111010
-};
-
-const BitMap DIFFERENCE_ICON PROGMEM = { 3, 8, DIFFERENCE_ICON_DATA };
 
 #endif

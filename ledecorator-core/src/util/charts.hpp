@@ -21,6 +21,7 @@ public:
 
 private:
     T step;
+    uint8_t data_set_size = 0;
     uint8_t normalized_data_set[capacity];
     uint8_t chart_width = 0;
 
@@ -39,6 +40,7 @@ public:
 
     void build(const T* data_set, const uint8_t data_set_size)
     {
+        this->data_set_size = data_set_size;
         chart_width = section_width * data_set_size;
 
         T min = data_set[0];
@@ -67,9 +69,10 @@ public:
         }
 
         index = 0;
-        while (index < data_set_size)
+        while (index < capacity)
         {
-            normalized_data_set[index] = base + ((data_set[index] - min) / step);
+            normalized_data_set[index] =
+                    index < data_set_size ? base + ((data_set[index] - min) / step) : 0;
             index++;
         }
 
@@ -92,7 +95,7 @@ public:
                     if (x % 4 < line_width && x < chart_width &&
                         normalized_data_set[line_index] >= height - y)
                     {
-                        return line_index == 0 &&
+                        return line_index == data_set_size - 1 &&
                                 normalized_data_set[line_index] == height - y ? first_line_color : line_color;
 
                     }

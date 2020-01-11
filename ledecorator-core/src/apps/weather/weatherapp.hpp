@@ -2,7 +2,8 @@
 #define WEATHERAPP_HPP_
 
 #include "lib/avr/hardware/timers.hpp"
-#include "sensors.hpp"
+#include "pressuresensor.hpp"
+#include "temperaturesensor.hpp"
 #include "../../hardware/bme280/bme280.hpp"
 #include "../../dragberry/os/drawablestring.hpp"
 

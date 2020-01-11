@@ -1,5 +1,5 @@
-#ifndef IMAGEMONO8X8_H_
-#define IMAGEMONO8X8_H_
+#ifndef IMAGEMONO8X8_HPP_
+#define IMAGEMONO8X8_HPP_
 
 #include <avr/pgmspace.h>
 #include <stdint.h>

@@ -8,8 +8,8 @@
 #include "lib/screen/commands.h"
 #include "lib/screen/definitions.h"
 #include "../../data/bitmap.hpp"
-#include "../../data/image.h"
-#include "../../data/imagemono8x8.h"
+#include "../../data/image.hpp"
+#include "../../data/imagemono8x8.hpp"
 
 //#define DISPLAY_DEBUG
 //#define FPS_DEBUG

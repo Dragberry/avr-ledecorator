@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include "lib/screen/colors.h"
-#include "../../data/imagemono8x8.h"
+#include "../../data/imagemono8x8.hpp"
 
 namespace dragberry
 {
