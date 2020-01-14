@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 #include "dragberry/os.hpp"
-#include "apps/dummyapp/dummyapp.hpp"
+#include "apps/clock/clockapp.hpp"
 #include "apps/games/life/lifegame.hpp"
 #include "apps/games/snake/snakegame.h"
 #include "apps/weather/weatherapp.hpp"
@@ -20,9 +20,9 @@ const uint8_t PROGRAMMS = 2;
 
 void (*programms[])() =
 {
-//        DummyApp::runner,
-		LifeGame::runner,
-		WeatherApp::runner,
+        ClockApp::runner,
+//		LifeGame::runner,
+//		WeatherApp::runner,
 };
 
 int main()

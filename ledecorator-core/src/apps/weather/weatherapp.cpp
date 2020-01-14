@@ -92,9 +92,11 @@ BME280::Status WeatherApp::read(
             uint8_t len
             )
 {
-    I2C::master_send_ni(dev_id, 1, &reg_addr);
-    I2C::master_receive_ni(dev_id, len, reg_data);
-    return BME280::Status::OK;
+    if (I2C::device_read(dev_id, reg_addr, reg_data, len) == I2C::Status::OK)
+    {
+        return BME280::Status::OK;
+    }
+    return BME280::Status::DEV_NOT_FOUND;
 }
 
 BME280::Status WeatherApp::write(
@@ -104,16 +106,11 @@ BME280::Status WeatherApp::write(
         uint8_t len
         )
 {
-    uint8_t full_data[len + 1];
-    full_data[0] = reg_addr;
-    uint8_t idx = 1;
-    while (idx <= len)
+    if (I2C::device_write(dev_id, reg_addr, reg_data, len) == I2C::Status::OK)
     {
-        full_data[idx] = reg_data[idx - 1];
-        idx++;
+        return BME280::Status::OK;
     }
-    I2C::master_send_ni(dev_id, len + 1, full_data);
-    return BME280::Status::OK;
+    return BME280::Status::DEV_NOT_FOUND;
 }
 
 void WeatherApp::delay_ms(uint8_t ms)

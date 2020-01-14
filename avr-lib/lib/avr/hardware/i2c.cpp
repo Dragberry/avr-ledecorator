@@ -176,12 +176,12 @@ void I2C::master_receive(uint8_t device_addr, uint8_t length, uint8_t* data)
     }
 }
 
-uint8_t I2C::master_send_ni(uint8_t device_addr, uint8_t length, uint8_t* data)
+I2C::Status I2C::master_send_ni(uint8_t device_addr, uint8_t length, uint8_t* data)
 {
     #ifdef I2C_DEBUG
     UART::send_string("I2C: MSTR SEND NI");
     #endif
-    uint8_t retval = I2C_OK;
+    Status status = OK;
 
     // disable TWI interrupt
     cbi(TWCR, TWIE);
@@ -220,7 +220,7 @@ uint8_t I2C::master_send_ni(uint8_t device_addr, uint8_t length, uint8_t* data)
         // device did not ACK it's address,
         // data will not be transferred
         // return error
-        retval = I2C_ERROR_NODEV;
+        status = ERROR_NODEV;
     }
 
     // transmit stop condition
@@ -231,15 +231,15 @@ uint8_t I2C::master_send_ni(uint8_t device_addr, uint8_t length, uint8_t* data)
     // enable TWI interrupt
     sbi(TWCR, TWIE);
 
-    return retval;
+    return status;
 }
 
-uint8_t I2C::master_receive_ni(uint8_t device_addr, uint8_t length, uint8_t *data)
+I2C::Status I2C::master_receive_ni(uint8_t device_addr, uint8_t length, uint8_t *data)
 {
     #ifdef I2C_DEBUG
     UART::send_string("I2C: MSTR RECEIVE NI");
     #endif
-    uint8_t retval = I2C_OK;
+    Status status = OK;
 
     // disable TWI interrupt
     cbi(TWCR, TWIE);
@@ -285,7 +285,7 @@ uint8_t I2C::master_receive_ni(uint8_t device_addr, uint8_t length, uint8_t *dat
         // device did not ACK it's address,
         // data will not be transferred
         // return error
-        retval = I2C_ERROR_NODEV;
+        status = ERROR_NODEV;
     }
 
     // transmit stop condition
@@ -295,7 +295,43 @@ uint8_t I2C::master_receive_ni(uint8_t device_addr, uint8_t length, uint8_t *dat
     // enable TWI interrupt
     sbi(TWCR, TWIE);
 
-    return retval;
+    return status;
+}
+
+//! High-level read operation to use with typical I2C devices
+I2C::Status I2C::device_read(
+        uint8_t device_addr,
+        uint8_t register_addr,
+        uint8_t *data,
+        uint8_t length
+        )
+{
+    Status status;
+    status = master_send_ni(device_addr, 1, &register_addr);
+    if (status == OK)
+    {
+        status = master_receive_ni(device_addr, length, data);
+    }
+    return status;
+}
+
+//! High-level write operation to use with typical I2C devices
+I2C::Status I2C::device_write(
+        uint8_t device_addr,
+        uint8_t register_addr,
+        uint8_t *data,
+        uint8_t length
+        )
+{
+    uint8_t full_data[length + 1];
+    full_data[0] = register_addr;
+    uint8_t idx = 1;
+    while (idx <= length)
+    {
+        full_data[idx] = data[idx - 1];
+        idx++;
+    }
+    return I2C::master_send_ni(device_addr, length + 1, full_data);
 }
 
 I2C::State I2C::get_state()

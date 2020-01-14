@@ -137,7 +137,9 @@
                         						
                         <entry excluding="util|common|programs2|dragberry|screen|apps|hardware|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
                         						
-                        <entry excluding="weather|i2capp|sensors|games|dummyapp|console" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
+                        <entry excluding="clock|weather|i2capp|sensors|games|dummyapp|console" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/clock"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/dummyapp"/>
                         						
@@ -157,11 +159,13 @@
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/dragberry/os"/>
                         						
-                        <entry excluding="bme280|atmega328|i2c|bmp280|uart|screen" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware"/>
+                        <entry excluding="ds1307|bme280|atmega328|i2c|bmp280|uart|screen" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/bme280"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/bmp280"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/ds1307"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/util"/>
                         					
@@ -301,7 +305,9 @@
                         						
                         <entry excluding="util|common|programs2|dragberry|screen|apps|hardware|data" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
                         						
-                        <entry excluding="weather|i2capp|sensors|games|dummyapp|console" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
+                        <entry excluding="clock|weather|i2capp|sensors|games|dummyapp|console" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/clock"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/apps/dummyapp"/>
                         						
@@ -321,11 +327,13 @@
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/dragberry/os"/>
                         						
-                        <entry excluding="bme280|atmega328|i2c|bmp280|uart|screen" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware"/>
+                        <entry excluding="ds1307|bme280|atmega328|i2c|bmp280|uart|screen" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/bme280"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/bmp280"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/hardware/ds1307"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/util"/>
                         					

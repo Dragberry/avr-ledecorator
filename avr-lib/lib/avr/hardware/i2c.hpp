@@ -57,10 +57,6 @@
 #define TWCR_CMD_MASK		0x0F
 #define TWSR_STATUS_MASK	0xF8
 
-// return values
-#define I2C_OK				0x00
-#define I2C_ERROR_NODEV		0x01
-
 #define I2C_SEND_DATA_BUFFER_SIZE 4
 #define I2C_RECEIVE_DATA_BUFFER_SIZE 4
 
@@ -86,7 +82,14 @@
 #endif
 
 namespace I2C {
-	enum State
+    enum Status
+    {
+       OK,
+       ERROR_NODEV
+
+    };
+
+    enum State
 	{
 		IDLE = 0,
 		BUSY = 1,
@@ -147,9 +150,25 @@ namespace I2C {
 	void master_receive(uint8_t device_addr, uint8_t length, uint8_t* data);
 
 	//! send I2C data to a device on the bus (non-interrupt based)
-	uint8_t master_send_ni(uint8_t device_addr, uint8_t length, uint8_t* data);
+	Status master_send_ni(uint8_t device_addr, uint8_t length, uint8_t* data);
 	//! receive I2C data from a device on the bus (non-interrupt based)
-	uint8_t master_receive_ni(uint8_t device_addr, uint8_t length, uint8_t *data);
+	Status master_receive_ni(uint8_t device_addr, uint8_t length, uint8_t *data);
+
+	//! High-level read operation to use with typical I2C devices
+	Status device_read(
+	        uint8_t device_addr,
+            uint8_t register_addr,
+            uint8_t *data,
+            uint8_t length
+            );
+
+	//! High-level write operation to use with typical I2C devices
+	Status device_write(
+	        uint8_t device_addr,
+            uint8_t register_addr,
+            uint8_t *data,
+            uint8_t length
+	        );
 
 	//! Get the current high-level state of the I2C interface
 	State get_state();
