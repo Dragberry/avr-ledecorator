@@ -55,8 +55,70 @@ private:
     static const BitMap<15>PROGMEM CHAR3x5_COLON;
 
     static const BitMap<15>PROGMEM CHAR3x5_SEMICOLON;
+    
+    static const BitMap<15> PROGMEM CHAR3X5_ANGLE_BRACKET_OPEN;
 
-    static const BitMap<15>* const PROGMEM DATA[18];
+    static const BitMap<15> PROGMEM CHAR3X5_EQ;
+
+    static const BitMap<15> PROGMEM CHAR3X5_ANGLE_BRACKET_CLOSE;
+
+    static const BitMap<15> PROGMEM CHAR3X5_QUESTION;
+
+    static const BitMap<15> PROGMEM CHAR3X5_MAIL;
+
+    static const BitMap<15> PROGMEM CHAR3X5_A;
+
+    static const BitMap<15> PROGMEM CHAR3X5_B;
+
+    static const BitMap<15> PROGMEM CHAR3X5_C;
+
+    static const BitMap<15> PROGMEM CHAR3X5_D;
+
+    static const BitMap<15> PROGMEM CHAR3X5_E;
+
+    static const BitMap<15> PROGMEM CHAR3X5_F;
+
+    static const BitMap<15> PROGMEM CHAR3X5_G;
+
+    static const BitMap<15> PROGMEM CHAR3X5_H;
+
+    static const BitMap<15> PROGMEM CHAR3X5_I;
+
+    static const BitMap<15> PROGMEM CHAR3X5_J;
+
+    static const BitMap<15> PROGMEM CHAR3X5_K;
+
+    static const BitMap<15> PROGMEM CHAR3X5_L;
+
+    static const BitMap<15> PROGMEM CHAR3X5_M;
+
+    static const BitMap<15> PROGMEM CHAR3X5_N;
+
+    static const BitMap<15> PROGMEM CHAR3X5_O;
+
+    static const BitMap<15> PROGMEM CHAR3X5_P;
+
+    static const BitMap<15> PROGMEM CHAR3X5_Q;
+
+    static const BitMap<15> PROGMEM CHAR3X5_R;
+
+    static const BitMap<15> PROGMEM CHAR3X5_S;
+
+    static const BitMap<15> PROGMEM CHAR3X5_T;
+
+    static const BitMap<15> PROGMEM CHAR3X5_U;
+
+    static const BitMap<15> PROGMEM CHAR3X5_V;
+
+    static const BitMap<15> PROGMEM CHAR3X5_W;
+
+    static const BitMap<15> PROGMEM CHAR3X5_X;
+
+    static const BitMap<15> PROGMEM CHAR3X5_Y;
+
+    static const BitMap<15> PROGMEM CHAR3X5_Z;
+
+    static const BitMap<15>* const PROGMEM DATA[48];
 };
 
 #endif
