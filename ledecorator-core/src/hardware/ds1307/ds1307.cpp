@@ -10,6 +10,7 @@ Clock::Clock(
 
 ) :
         address(address),
+        data{0},
         device_read(device_read),
         device_write(device_write)
 {

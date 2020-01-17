@@ -235,22 +235,3 @@ void display::draw_image(
 				return img->get_bit(x, y) ? color : bg_color;
 			});
 }
-
-void display::draw_image(
-        uint8_t start_x,
-        uint8_t start_y,
-        const int8_t offset_x,
-        const int8_t offset_y,
-        const BitMap* img,
-        const Color color,
-        const Color bg_color)
-{
-    draw(
-            start_x, start_y,
-            offset_x, offset_y,
-            img->get_width(), img->get_height(),
-            [&](const uint8_t x, const uint8_t y) -> Color
-            {
-                return img->get_bit(x, y) ? color : bg_color;
-            });
-}

@@ -8,13 +8,13 @@ Sensor::Sensor(const Image* pictogram, const RingBuffer<int16_t, 6>* database) :
         database(database)
 {
     value_string.color = WHITE;
-    value_string.align = DrawableString::Align::RIGHT;
+    value_string.align = Align::RIGHT;
 
     step_string.color = WHITE;
-    step_string.align = DrawableString::Align::RIGHT;
+    step_string.align = Align::RIGHT;
 
     unit_string.color = GREEN;
-    unit_string.align = DrawableString::Align::RIGHT;
+    unit_string.align = Align::RIGHT;
 }
 
 Sensor::~Sensor()

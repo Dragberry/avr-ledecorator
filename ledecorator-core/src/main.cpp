@@ -22,7 +22,7 @@ void (*programms[])() =
 {
         ClockApp::runner,
 //		LifeGame::runner,
-//		WeatherApp::runner,
+		WeatherApp::runner,
 };
 
 int main()

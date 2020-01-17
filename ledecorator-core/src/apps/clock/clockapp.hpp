@@ -5,10 +5,11 @@
 #include "lib/avr/hardware/uart.hpp"
 #include "lib/avr/hardware/i2c.hpp"
 #include "../../dragberry/os/display.hpp"
-#include "../../dragberry/os/drawablestring.hpp"
+#include "../../dragberry/os/drawablestring5x7.hpp"
+#include "../../dragberry/os/drawablestring3x5.hpp"
 #include "../../hardware/ds1307/ds1307.hpp"
 
-#define CLOCK_APP_TIME 10000
+#define CLOCK_APP_TIME 100
 
 using namespace dragberry::os;
 
@@ -22,11 +23,11 @@ private:
 
     char hh_mm_string_value[6];
 
-    DrawableString hh_mm_string;
+    DrawableString5x7 hh_mm_string;
 
     char ss_string_value[6];
 
-   DrawableString ss_string;
+    DrawableString3x5 ss_string;
 
 public:
     ClockApp();

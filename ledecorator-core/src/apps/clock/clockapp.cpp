@@ -1,9 +1,11 @@
 #include "clockapp.hpp"
+#include "../../data/font3x5.hpp"
+#include "../../data/font5x7.hpp"
 
 ClockApp::ClockApp() :
         clock(DS1307::Clock(DS1307_ADDRESS, ClockApp::read, ClockApp::write)),
-        hh_mm_string(DrawableString(3, 0, 27, 8)),
-        ss_string(DrawableString(10, 8, 12, 8))
+        hh_mm_string(DrawableString5x7(0, 0, 26, 7)),
+        ss_string(DrawableString3x5(25, 2, 7, 5))
 {
     hh_mm_string_value[0] = '0';
     hh_mm_string_value[1] = '0';
@@ -14,10 +16,10 @@ ClockApp::ClockApp() :
 
     ss_string.color = WHITE;
 
-    hh_mm_string_value[0] = '0';
+    ss_string_value[0] = '0';
     ss_string_value[1] = '0';
 
-    ss_string.color = WHITE;
+    ss_string.color = RED;
 }
 
 void ClockApp::runner()
@@ -47,6 +49,7 @@ void ClockApp::run()
     {
         if (update_required)
         {
+            dragberry::os::display::clear_screen(BLACK);
             hh_mm_string.draw();
             ss_string.draw();
             dragberry::os::display::update_assured();
