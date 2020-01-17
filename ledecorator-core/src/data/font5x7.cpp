@@ -1,6 +1,6 @@
 #include "font5x7.hpp"
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_SPACE =
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_SPACE =
 {
         3, 7,
         0b00000000,
@@ -10,7 +10,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_SPACE =
         0b00000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_PLUS =
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_PLUS =
 {
         3, 7,
         0b00000001,
@@ -20,17 +20,17 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_PLUS =
         0b00000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_COMMA =
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_COMMA =
 {
-        3, 7,
-        0b00000000,
-        0b00000000,
+        2, 7,
+        0b00000001,
+        0b01100000,
         0b00000000,
         0b00000000,
         0b00000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_MINUS =
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_MINUS =
 {
         3, 7,
         0b00000000,
@@ -40,7 +40,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_MINUS =
         0b00000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_DOT =
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_DOT =
 {
         1, 7,
         0b00000010,
@@ -50,17 +50,17 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_DOT =
         0b00000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_SLASH =
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_SLASH =
 {
         5, 7,
         0b00000000,
+        0b01000100,
+        0b01000100,
         0b01000000,
-        0b10000001,
-        0b00000010,
-        0b00000100,
+        0b00000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_0 =
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_0 =
 {
         5, 7,
         0b01110100,
@@ -70,7 +70,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_0 =
         0b11000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_1 =
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_1 =
 {
         5, 7,
         0b00100011,
@@ -80,7 +80,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_1 =
         0b11000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_2 =
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_2 =
 {
         5, 7,
         0b01110100,
@@ -90,7 +90,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_2 =
         0b11100000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_3 =
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_3 =
 {
         5, 7,
         0b11111000,
@@ -100,7 +100,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_3 =
         0b11000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_4 =
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_4 =
 {
         5, 7,
         0b00010001,
@@ -110,7 +110,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_4 =
         0b01000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_5 =
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_5 =
 {
         5, 7,
         0b11111100,
@@ -120,7 +120,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_5 =
         0b11000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_6 =
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_6 =
 {
         5, 7,
         0b00111010,
@@ -130,7 +130,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_6 =
         0b11000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_7 =
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_7 =
 {
         5, 7,
         0b11111000,
@@ -140,7 +140,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_7 =
         0b00000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_8 =
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_8 =
 {
         5, 7,
         0b01110100,
@@ -150,7 +150,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_8 =
         0b11000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_9 =
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_9 =
 {
         5, 7,
         0b01110100,
@@ -160,7 +160,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_9 =
         0b10000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_COLON =
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_COLON =
 {
         1, 7,
         0b00101000,
@@ -170,17 +170,17 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_COLON =
         0b00000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_SEMICOLON =
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_SEMICOLON =
 {
         2, 7,
-        0b00001000,
-        0b10110000,
+        0b00000100,
+        0b01100000,
         0b00000000,
         0b00000000,
         0b00000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_ANGLE_BRACKET_OPEN
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_ANGLE_BRACKET_OPEN
 {
         5, 7,
         0b00010001,
@@ -190,7 +190,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_ANGLE_BRACKET_OPEN
         0b01000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_EQ
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_EQ
 {
         5, 7,
         0b00000000,
@@ -200,7 +200,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_EQ
         0b00000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_ANGLE_BRACKET_CLOSE
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_ANGLE_BRACKET_CLOSE
 {
         5, 7,
         0b01000001,
@@ -210,7 +210,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_ANGLE_BRACKET_CLOSE
         0b00000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_QUESTION
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_QUESTION
 {
         5, 7,
         0b01110100,
@@ -220,7 +220,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_QUESTION
         0b10000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_MAIL
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_MAIL
 {
         5, 7,
         0b01110100,
@@ -230,7 +230,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_MAIL
         0b11100000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_A
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_A
 {
         5, 7,
         0b00100010,
@@ -240,7 +240,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_A
         0b00100000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_B
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_B
 {
         5, 7,
         0b11110100,
@@ -250,7 +250,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_B
         0b11000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_C
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_C
 {
         5, 7,
         0b01110100,
@@ -260,7 +260,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_C
         0b11000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_D
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_D
 {
         5, 7,
         0b11110100,
@@ -270,7 +270,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_D
         0b11000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_E
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_E
 {
         5, 7,
         0b11111100,
@@ -280,7 +280,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_E
         0b11100000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_F
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_F
 {
         5, 7,
         0b11111100,
@@ -290,7 +290,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_F
         0b00000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_G
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_G
 {
         5, 7,
         0b01111100,
@@ -300,7 +300,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_G
         0b11100000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_H
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_H
 {
         5, 7,
         0b10001100,
@@ -310,7 +310,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_H
         0b00100000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_I
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_I
 {
         5, 7,
         0b01110001,
@@ -320,7 +320,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_I
         0b11000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_J
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_J
 {
         5, 7,
         0b00001000,
@@ -330,7 +330,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_J
         0b11000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_K
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_K
 {
         5, 7,
         0b10001100,
@@ -340,7 +340,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_K
         0b00100000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_L
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_L
 {
         5, 7,
         0b10000100,
@@ -350,7 +350,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_L
         0b11100000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_M
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_M
 {
         5, 7,
         0b10001110,
@@ -360,7 +360,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_M
         0b00100000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_N
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_N
 {
         5, 7,
         0b10001100,
@@ -370,7 +370,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_N
         0b00100000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_O
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_O
 {
         5, 7,
         0b01110100,
@@ -380,7 +380,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_O
         0b11000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_P
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_P
 {
         5, 7,
         0b11110100,
@@ -390,7 +390,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_P
         0b00000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_Q
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_Q
 {
         5, 7,
         0b01110100,
@@ -400,7 +400,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_Q
         0b10100000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_R
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_R
 {
         5, 7,
         0b11111100,
@@ -410,7 +410,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_R
         0b00100000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_S
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_S
 {
         5, 7,
         0b01110100,
@@ -420,7 +420,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_S
         0b11000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_T
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_T
 {
         5, 7,
         0b11111001,
@@ -430,7 +430,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_T
         0b10000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_U
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_U
 {
         5, 7,
         0b10001100,
@@ -440,7 +440,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_U
         0b11000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_V
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_V
 {
         5, 7,
         0b10001100,
@@ -450,7 +450,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_V
         0b10000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_W
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_W
 {
         5, 7,
         0b10001100,
@@ -460,7 +460,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_W
         0b00100000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_X
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_X
 {
         5, 7,
         0b10001100,
@@ -470,7 +470,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_X
         0b00100000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_Y
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_Y
 {
         5, 7,
         0b10001100,
@@ -480,7 +480,7 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_Y
         0b10000000,
 };
 
-const BitMap<35> PROGMEM Font5x7::CHAR5x7_Z
+const BitMap<35> PROGMEM Font5x7::CHAR5X7_Z
 {
         5, 7,
         0b11111000,
@@ -490,34 +490,31 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_Z
         0b11100000,
 };
 
-const BitMap<35>* const PROGMEM Font5x7::DATA[23] =
+const BitMap<35>* const PROGMEM Font5x7::DATA[49] =
 {
-        &CHAR5x7_SPACE,
-        &CHAR5x7_PLUS,
-        &CHAR5x7_COMMA,
-        &CHAR5x7_MINUS,
-        &CHAR5x7_DOT,
-        &CHAR5x7_SLASH,
-
-        &CHAR5x7_0,
-        &CHAR5x7_1,
-        &CHAR5x7_2,
-        &CHAR5x7_3,
-        &CHAR5x7_4,
-        &CHAR5x7_5,
-        &CHAR5x7_6,
-        &CHAR5x7_7,
-        &CHAR5x7_8,
-        &CHAR5x7_9,
-
-        &CHAR5x7_COLON,
-        &CHAR5x7_SEMICOLON,
-        &CHAR5x7_ANGLE_BRACKET_OPEN,
-        &CHAR5x7_CHAR_EQ,
-        &CHAR5x7_ANGLE_BRACKET_CLOSE,
-        &CHAR5x7_QUESTION,
-        &CHAR5x7_MAIL,
-        
+        &CHAR5X7_SPACE,
+        &CHAR5X7_PLUS,
+        &CHAR5X7_COMMA,
+        &CHAR5X7_MINUS,
+        &CHAR5X7_DOT,
+        &CHAR5X7_SLASH,
+        &CHAR5X7_0,
+        &CHAR5X7_1,
+        &CHAR5X7_2,
+        &CHAR5X7_3,
+        &CHAR5X7_4,
+        &CHAR5X7_5,
+        &CHAR5X7_6,
+        &CHAR5X7_7,
+        &CHAR5X7_8,
+        &CHAR5X7_9,
+        &CHAR5X7_COLON,
+        &CHAR5X7_SEMICOLON,
+        &CHAR5X7_ANGLE_BRACKET_OPEN,
+        &CHAR5X7_EQ,
+        &CHAR5X7_ANGLE_BRACKET_CLOSE,
+        &CHAR5X7_QUESTION,
+        &CHAR5X7_MAIL,
         &CHAR5X7_A,
         &CHAR5X7_B,
         &CHAR5X7_C,

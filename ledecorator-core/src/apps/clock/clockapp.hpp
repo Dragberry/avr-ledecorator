@@ -9,7 +9,7 @@
 #include "../../dragberry/os/drawablestring3x5.hpp"
 #include "../../hardware/ds1307/ds1307.hpp"
 
-#define CLOCK_APP_TIME 100
+#define CLOCK_APP_TIME 1000
 
 using namespace dragberry::os;
 

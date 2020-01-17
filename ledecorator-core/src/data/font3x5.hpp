@@ -9,7 +9,7 @@ class Font3x5
 {
 private:
     static const uint8_t FIRST_INDEX = 43;
-    static const uint8_t LAST_INDEX = 59;
+    static const uint8_t LAST_INDEX = 92;
 
 public:
     static const BitMap<15>* get_char(const char char_index)
@@ -20,41 +20,41 @@ public:
     }
 
 private:
-    static const BitMap<15>PROGMEM CHAR3x5_SPACE;
+    static const BitMap<15> PROGMEM CHAR3X5_SPACE;
 
-    static const BitMap<15>PROGMEM CHAR3x5_PLUS;
+    static const BitMap<15> PROGMEM CHAR3X5_PLUS;
 
-    static const BitMap<15>PROGMEM CHAR3x5_COMMA;
+    static const BitMap<15> PROGMEM CHAR3X5_COMMA;
 
-    static const BitMap<15>PROGMEM CHAR3x5_MINUS;
+    static const BitMap<15> PROGMEM CHAR3X5_MINUS;
 
-    static const BitMap<15>PROGMEM CHAR3x5_DOT;
+    static const BitMap<15> PROGMEM CHAR3X5_DOT;
 
-    static const BitMap<15>PROGMEM CHAR3x5_SLASH;
+    static const BitMap<15> PROGMEM CHAR3X5_SLASH;
 
-    static const BitMap<15> PROGMEM CHAR3x5_0;
+    static const BitMap<15> PROGMEM CHAR3X5_0;
 
-    static const BitMap<15>PROGMEM CHAR3x5_1;
+    static const BitMap<15> PROGMEM CHAR3X5_1;
 
-    static const BitMap<15>PROGMEM CHAR3x5_2;
+    static const BitMap<15> PROGMEM CHAR3X5_2;
 
-    static const BitMap<15>PROGMEM CHAR3x5_3;
+    static const BitMap<15> PROGMEM CHAR3X5_3;
 
-    static const BitMap<15>PROGMEM CHAR3x5_4;
+    static const BitMap<15> PROGMEM CHAR3X5_4;
 
-    static const BitMap<15>PROGMEM CHAR3x5_5;
+    static const BitMap<15> PROGMEM CHAR3X5_5;
 
-    static const BitMap<15>PROGMEM CHAR3x5_6;
+    static const BitMap<15> PROGMEM CHAR3X5_6;
 
-    static const BitMap<15>PROGMEM CHAR3x5_7;
+    static const BitMap<15> PROGMEM CHAR3X5_7;
 
-    static const BitMap<15>PROGMEM CHAR3x5_8;
+    static const BitMap<15> PROGMEM CHAR3X5_8;
 
-    static const BitMap<15>PROGMEM CHAR3x5_9;
+    static const BitMap<15> PROGMEM CHAR3X5_9;
 
-    static const BitMap<15>PROGMEM CHAR3x5_COLON;
+    static const BitMap<15> PROGMEM CHAR3X5_COLON;
 
-    static const BitMap<15>PROGMEM CHAR3x5_SEMICOLON;
+    static const BitMap<15> PROGMEM CHAR3X5_SEMICOLON;
     
     static const BitMap<15> PROGMEM CHAR3X5_ANGLE_BRACKET_OPEN;
 
@@ -118,7 +118,7 @@ private:
 
     static const BitMap<15> PROGMEM CHAR3X5_Z;
 
-    static const BitMap<15>* const PROGMEM DATA[48];
+    static const BitMap<15>* const PROGMEM DATA[49];
 };
 
 #endif
