@@ -180,7 +180,57 @@ const BitMap<35> PROGMEM Font5x7::CHAR5x7_SEMICOLON =
         0b00000000,
 };
 
-const BitMap<35>* const PROGMEM Font5x7::DATA[18] =
+const BitMap<35> PROGMEM Font5x7::CHAR5x7_ANGLE_BRACKET_OPEN =
+{
+        5, 7,
+        0b00010001,
+        0b00010001,
+        0b00000100,
+        0b00010000,
+        0b01000000,
+};
+
+const BitMap<35> PROGMEM Font5x7::CHAR5x7_CHAR_EQ =
+{
+        5, 7,
+        0b00000000,
+        0b00111110,
+        0b00001111,
+        0b10000000,
+        0b00000000,
+};
+
+const BitMap<35> PROGMEM Font5x7::CHAR5x7_ANGLE_BRACKET_CLOSE =
+{
+        5, 7,
+        0b01000001,
+        0b00000100,
+        0b00010001,
+        0b00010001,
+        0b00000000,
+};
+
+const BitMap<35> PROGMEM Font5x7::CHAR5x7_QUESTION =
+{
+        5, 7,
+        0b01110100,
+        0b01000100,
+        0b01000010,
+        0b00000000,
+        0b10000000,
+};
+
+const BitMap<35> PROGMEM Font5x7::CHAR5x7_MAIL =
+{
+        5, 7,
+        0b01110100,
+        0b01101011,
+        0b01111011,
+        0b01000001,
+        0b11100000,
+};
+
+const BitMap<35>* const PROGMEM Font5x7::DATA[23] =
 {
         &CHAR5x7_SPACE,
         &CHAR5x7_PLUS,
@@ -202,6 +252,11 @@ const BitMap<35>* const PROGMEM Font5x7::DATA[18] =
 
         &CHAR5x7_COLON,
         &CHAR5x7_SEMICOLON,
+        &CHAR5x7_ANGLE_BRACKET_OPEN,
+        &CHAR5x7_CHAR_EQ,
+        &CHAR5x7_ANGLE_BRACKET_CLOSE,
+        &CHAR5x7_QUESTION,
+        &CHAR5x7_MAIL,
 };
 
 
