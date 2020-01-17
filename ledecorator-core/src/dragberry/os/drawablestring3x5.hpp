@@ -2,7 +2,6 @@
 #define DRAWABLESTRING3X5_HPP_
 
 #include "drawablestring.hpp"
-#include "../../data/font3x5.hpp"
 
 namespace dragberry
 {
@@ -16,16 +15,9 @@ public:
                const uint8_t start_y,
                const int8_t width,
                const int8_t height
-               ) :
-                   DrawableString(start_x, start_y, width, height, Font3x5::get_char)
+               );
 
-       {
-       }
-
-    void draw() const
-    {
-        DrawableString<3, 5>::draw();
-    }
+    void draw() const;
 };
 }
 }
