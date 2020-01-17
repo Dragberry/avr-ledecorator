@@ -7,14 +7,15 @@
 #include "drawablestring.hpp"
 #include "fps.hpp"
 #include "../../common/datatypeutils.h"
+#include "../../data/font3x5.hpp"
 
 using namespace dragberry::os;
 
 volatile uint32_t time = 0;
 volatile uint32_t frames = 0;
 
-DrawableString lbl_section = DrawableString(0, 0, 32, 8);
-DrawableString fps_section = DrawableString(0, 8, 32, 8);
+DrawableString<3, 5> lbl_section = DrawableString<3, 5>(0, 0, 32, 8, Font3x5::get_char);
+DrawableString<3, 5> fps_section = DrawableString<3, 5>(0, 8, 32, 8, Font3x5::get_char);
 char fps_string[7];
 
 void fps::init()

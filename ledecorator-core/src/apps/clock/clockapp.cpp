@@ -1,9 +1,11 @@
 #include "clockapp.hpp"
+#include "../../data/font3x5.hpp"
+#include "../../data/font5x7.hpp"
 
 ClockApp::ClockApp() :
         clock(DS1307::Clock(DS1307_ADDRESS, ClockApp::read, ClockApp::write)),
-        hh_mm_string(DrawableString(3, 0, 27, 8)),
-        ss_string(DrawableString(10, 8, 12, 8))
+        hh_mm_string(DrawableString5x7(0, 0, 32, 7)),
+        ss_string(DrawableString3x5(0, 8, 32, 5))
 {
     hh_mm_string_value[0] = '0';
     hh_mm_string_value[1] = '0';
@@ -14,10 +16,10 @@ ClockApp::ClockApp() :
 
     ss_string.color = WHITE;
 
-    hh_mm_string_value[0] = '0';
+    ss_string_value[0] = '0';
     ss_string_value[1] = '0';
 
-    ss_string.color = WHITE;
+    ss_string.color = RED;
 }
 
 void ClockApp::runner()
@@ -37,6 +39,8 @@ void ClockApp::run()
         return;
     }
 
+    hh_mm_string.set_string(" +,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWZYX");
+    ss_string.set_string(" +,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWZYX");
 //    clock.seconds(0);
 //    clock.minutes(35);
 //    clock.hours(2);
@@ -47,6 +51,7 @@ void ClockApp::run()
     {
         if (update_required)
         {
+            dragberry::os::display::clear_screen(BLACK);
             hh_mm_string.draw();
             ss_string.draw();
             dragberry::os::display::update_assured();
@@ -58,23 +63,24 @@ void ClockApp::run()
 void ClockApp::on_timer1_event()
 {
     time++;
-    clock.refresh();
-    if (clock.status == DS1307::Status::OK)
-    {
-        *(hh_mm_string_value + 0) = clock.hours_d();
-        *(hh_mm_string_value + 1) = clock.hours_u();
-
-        *(hh_mm_string_value + 3) = clock.minutes_d();
-        *(hh_mm_string_value + 4) = clock.minutes_u();
-
-        hh_mm_string.set_string(hh_mm_string_value);
-
-        *(ss_string_value + 0) = clock.seconds_d();
-        *(ss_string_value + 1) = clock.seconds_u();
-
-        ss_string.set_string(ss_string_value);
-    }
-
+//    clock.refresh();
+//    if (clock.status == DS1307::Status::OK)
+//    {
+//        *(hh_mm_string_value + 0) = clock.hours_d();
+//        *(hh_mm_string_value + 1) = clock.hours_u();
+//
+//        *(hh_mm_string_value + 3) = clock.minutes_d();
+//        *(hh_mm_string_value + 4) = clock.minutes_u();
+//
+//        hh_mm_string.set_string(hh_mm_string_value);
+//
+//        *(ss_string_value + 0) = clock.seconds_d();
+//        *(ss_string_value + 1) = clock.seconds_u();
+//
+//        ss_string.set_string(ss_string_value);
+//    }
+    hh_mm_string.update();
+    ss_string.update();
     update_required = true;
 }
 

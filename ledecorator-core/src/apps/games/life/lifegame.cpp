@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include "lib/screen/definitions.h"
+#include "entities.hpp"
 
 #define LIFE_GAME_TIME 400
 
@@ -11,9 +12,9 @@ LifeGame::LifeGame()
 	color_life = dragberry::io::read();
 	color_dead = dragberry::io::read();;
 	alive_indicator = ALIVE_INDICATOR_01;
-	place_entity(0, 0, &SHIP_LIGHT, alive_indicator);
-	place_entity(10, 0, &SHIP_MEDIUM, alive_indicator);
-	place_entity(20, 0, &SHIP_LARGE, alive_indicator);
+	place_entity<5, 4>(0, 0, alive_indicator, &Entities::SHIP_LIGHT);
+	place_entity<6, 5>(10, 0, alive_indicator, &Entities::SHIP_MEDIUM);
+	place_entity<7, 5>(20, 0, alive_indicator, &Entities::SHIP_LARGE);
 	is_step_required = 0;
 	time = 0;
 	Timers::T1::start(0x7A1, Timers::Prescaller::F_1024, this);
@@ -109,11 +110,11 @@ void LifeGame::step_up()
 	{
 	    if (time % 32 != 0)
 	    {
-	        place_entity(15, 11, &GLIDER, next_alive_indicator);
+	        place_entity<3, 3>(15, 11, next_alive_indicator, &Entities::GLIDER);
 	    }
 	    else
 	    {
-	        place_entity(0, 8, &SHIP_MEDIUM, next_alive_indicator);
+	        place_entity<6, 5>(0, 8, next_alive_indicator, &Entities::SHIP_MEDIUM);
 	    }
 	}
 
@@ -148,34 +149,4 @@ void LifeGame::run()
 		}
 	}
 	while (time <= LIFE_GAME_TIME);
-}
-
-
-void LifeGame::place_entity(
-		const uint8_t start_x,
-		const uint8_t start_y,
-		const BitMap* data,
-		const uint8_t next_alive
-		)
-{
-	uint8_t width = data->get_width();
-	uint8_t height = data->get_height();
-	for (uint8_t y = 0; y < height; y++)
-	{
-		for (uint8_t x = 0; x < width; x++)
-		{
-			uint8_t state = data->get_bit(x, y) ? next_alive : 0;
-			uint8_t real_y = start_y + y;
-			if (real_y > SCREEN_HEIGHT)
-			{
-				real_y -=SCREEN_HEIGHT;
-			}
-			uint8_t real_x = start_x + x;
-			if (real_x > SCREEN_WIDTH)
-			{
-				real_x -=SCREEN_WIDTH;
-			}
-			field[real_y][real_x] = state;
-		}
-	}
 }
