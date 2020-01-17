@@ -32,10 +32,10 @@ void fps::init()
 
 	lbl_section.bg_color = BLACK;
 	lbl_section.color = RED;
-	lbl_section.set_string("FPS", 3);
+	lbl_section.set_string("FPS");
 	fps_section.bg_color = BLACK;
 	fps_section.color = WHITE;
-	fps_section.set_string(fps_string, 5);
+	fps_section.set_string(fps_string);
 }
 
 void fps::start()
@@ -72,7 +72,7 @@ void fps::show()
 	fps_string[offset++] = '.';
 	itoa(full_fps % 100, fps_string + offset, 10);
 
-	fps_section.set_string(fps_string, 5);
+	fps_section.set_string(fps_string);
 	fps_section.draw();
 	lbl_section.draw();
 	display::update_assured();

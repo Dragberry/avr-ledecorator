@@ -18,4 +18,9 @@ void DrawableString3x5::draw() const
     DrawableString<3, 5>::draw();
 }
 
+void DrawableString3x5::set_string(const char* new_string)
+{
+    DrawableString<3, 5>::set_string(new_string);
+}
+
 

@@ -25,7 +25,7 @@ private:
 
     DrawableString5x7 hh_mm_string;
 
-    char ss_string_value[6];
+    char ss_string_value[3];
 
     DrawableString3x5 ss_string;
 

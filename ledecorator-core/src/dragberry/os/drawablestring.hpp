@@ -90,11 +90,7 @@ public:
         {
             length++;
         }
-        set_string(new_string, length);
-    }
 
-    void set_string(const char* new_string, const uint8_t length)
-    {
         string = new_string;
         string_length = length;
         string_width = 0;
@@ -103,6 +99,7 @@ public:
             const BitMap<fw * fh>* img = get_char(string[i]);
             string_width  += (img->get_width() + 1);
         }
+        string_width--;
         if (string_width > width)
         {
             offset_x = width;
@@ -178,7 +175,10 @@ public:
             }
             else
             {
-                display::draw_line_vertical(x++, start_y, height, bg_color);
+                if (i < string_length - 1)
+                {
+                    display::draw_line_vertical(x++, start_y, height, bg_color);
+                }
             }
         }
         if (passed_width < width)

@@ -18,6 +18,8 @@ public:
                );
 
     void draw() const;
+
+    void set_string(const char* new_string);
 };
 }
 }
