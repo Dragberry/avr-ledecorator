@@ -96,15 +96,60 @@ char Clock::minutes_u() const
 
 void Clock::hours(const uint8_t hours)
 {
-    data[2] = (hours % 10) | (((hours / 10) & 0x03) << 4);
+    data[2] = (hours % 10) | (((hours / 10) & 0x01) << 4);
 }
 
 char Clock::hours_d() const
 {
-    return ((data[2] & 0x30) >> 4) + '0';
+    return ((data[2] & 0x10) >> 4) + '0';
 }
 
 char Clock::hours_u() const
 {
     return (data[2] & 0x0F) + '0';
+}
+
+void Clock::days(const uint8_t days)
+{
+    data[4] = (days % 10) | (((days / 10) & 0x03) << 4);
+}
+
+char Clock::days_d() const
+{
+    return ((data[4] & 0x30) >> 4) + '0';
+}
+
+char Clock::days_u() const
+{
+    return (data[4] & 0x0F) + '0';
+}
+
+void Clock::months(const uint8_t months)
+{
+    data[5] = (months % 10) | (((months / 10) & 0x01) << 4);
+}
+
+char Clock::months_d() const
+{
+    return ((data[5] & 0x10) >> 4) + '0';
+}
+
+char Clock::months_u() const
+{
+    return (data[5] & 0x0F) + '0';
+}
+
+void Clock::years(const uint8_t years)
+{
+    data[6] = (years % 10) | (((years / 10) & 0x07) << 4);
+}
+
+char Clock::years_d() const
+{
+    return ((data[6] & 0x70) >> 4) + '0';
+}
+
+char Clock::years_u() const
+{
+    return (data[6] & 0x0F) + '0';
 }

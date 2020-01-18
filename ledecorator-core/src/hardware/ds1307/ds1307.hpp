@@ -61,6 +61,23 @@ public:
 
     char hours_u() const;
 
+    void days(const uint8_t days);
+
+    char days_d() const;
+
+    char days_u() const;
+
+    void months(const uint8_t months);
+
+    char months_d() const;
+
+    char months_u() const;
+
+    void years(const uint8_t years);
+
+    char years_d() const;
+
+    char years_u() const;
 };
 
 }

@@ -7,12 +7,16 @@ ClockApp::ClockApp() :
         hh_mm_string_value{"==:=="},
         hh_mm_string(DrawableString5x7(0, 0, 26, 7)),
         ss_string_value{"=="},
-        ss_string(DrawableString3x5(25, 2, 8, 5))
+        ss_string(DrawableString3x5(25, 2, 8, 5)),
+        date_string_value{"--/--/--"},
+        date_string(DrawableString3x5(0, 10, 32, 5))
 {
     hh_mm_string.color = WHITE;
     hh_mm_string.set_string(hh_mm_string_value);
     ss_string.color = RED;
     ss_string.set_string(ss_string_value);
+    date_string.color = YELLOW;
+    date_string.set_string(date_string_value);
 }
 
 void ClockApp::runner()
@@ -32,11 +36,9 @@ void ClockApp::run()
         return;
     }
 
-//    hh_mm_string.set_string(" +,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWZYX");
-//    ss_string.set_string(" +,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWZYX");
-//    clock.seconds(0);
-//    clock.minutes(35);
-//    clock.hours(2);
+//    clock.days(18);
+//    clock.months(1);
+//    clock.years(20);
 //    clock.update();
 
     Timers::T1::start(0x7A1, Timers::Prescaller::F_1024, this);
@@ -44,11 +46,10 @@ void ClockApp::run()
     {
         if (update_required)
         {
-//            hh_mm_string.update();
-//            ss_string.update();
             dragberry::os::display::clear_screen(BLACK);
             hh_mm_string.draw();
             ss_string.draw();
+            date_string.draw();
             dragberry::os::display::update_assured();
             update_required = false;
         }
@@ -73,6 +74,17 @@ void ClockApp::on_timer1_event()
         *(ss_string_value + 1) = clock.seconds_u();
 
         ss_string.set_string(ss_string_value);
+
+        *(date_string_value + 0) = clock.days_d();
+        *(date_string_value + 1) = clock.days_u();
+
+        *(date_string_value + 3) = clock.months_d();
+        *(date_string_value + 4) = clock.months_u();
+
+        *(date_string_value + 6) = clock.years_d();
+        *(date_string_value + 7) = clock.years_u();
+
+        date_string.set_string(date_string_value);
     }
     update_required = true;
 }
