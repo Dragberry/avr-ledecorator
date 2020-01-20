@@ -4,11 +4,10 @@
 #include <avr/eeprom.h>
 #include <avr/pgmspace.h>
 #include <stdint.h>
-
+#include "sensorstorage.hpp"
 #include "../../data/image.hpp"
 #include "../../dragberry/os/drawablestring5x7.hpp"
 #include "../../util/charts.hpp"
-#include "../../util/ringbuffer.hpp"
 
 using namespace dragberry::os;
 
@@ -26,7 +25,9 @@ protected:
 
     const RingBuffer<int16_t, 6>* database;
 
-    RingBuffer<int16_t, 6> previous_values;
+    const uint32_t* last_updated_time;
+
+    SensorStorage previous_values;
 
     char string_value[6];
 
@@ -40,6 +41,7 @@ protected:
 
     Histogram<int16_t, 6> chart = Histogram<int16_t, 6>(24, 8);
 
+
 public:
     enum DisplayMode
     {
@@ -48,7 +50,11 @@ public:
     } display_mode = VALUE;
 
 public:
-    Sensor(const Image* pictogram, const RingBuffer<int16_t, 6>* database);
+    Sensor(
+            const Image* pictogram,
+            const RingBuffer<int16_t, 6>* database,
+            const uint32_t* last_updated_time
+            );
 
     virtual ~Sensor();
 

@@ -298,42 +298,6 @@ I2C::Status I2C::master_receive_ni(uint8_t device_addr, uint8_t length, uint8_t 
     return status;
 }
 
-//! High-level read operation to use with typical I2C devices
-I2C::Status I2C::device_read(
-        uint8_t device_addr,
-        uint8_t register_addr,
-        uint8_t *data,
-        uint8_t length
-        )
-{
-    Status status;
-    status = master_send_ni(device_addr, 1, &register_addr);
-    if (status == OK)
-    {
-        status = master_receive_ni(device_addr, length, data);
-    }
-    return status;
-}
-
-//! High-level write operation to use with typical I2C devices
-I2C::Status I2C::device_write(
-        uint8_t device_addr,
-        uint8_t register_addr,
-        uint8_t *data,
-        uint8_t length
-        )
-{
-    uint8_t full_data[length + 1];
-    full_data[0] = register_addr;
-    uint8_t idx = 1;
-    while (idx <= length)
-    {
-        full_data[idx] = data[idx - 1];
-        idx++;
-    }
-    return I2C::master_send_ni(device_addr, length + 1, full_data);
-}
-
 I2C::State I2C::get_state()
 {
     return state;

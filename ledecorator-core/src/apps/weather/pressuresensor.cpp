@@ -1,7 +1,7 @@
 #include "pressuresensor.hpp"
 
 PressureSensor::PressureSensor() :
-        Sensor(&IMG_PRESSURE, &PRESSURE_DB)
+        Sensor(&IMG_PRESSURE, &PRESSURE_DB, &LAST_UPDATED_TIME)
 {
     unit_string.set_string("MM");
 }
@@ -18,11 +18,15 @@ void PressureSensor::process_value()
     itoa(int_value / 133, string_value, 10);
 }
 
-void PressureSensor::save()
+void PressureSensor::update(uint32_t time)
 {
-    previous_values.add(int_value / 133);
-    Sensor::save();
+    if (previous_values.add(int_value / 133, time))
+    {
+        Sensor::save();
+    }
 }
+
+const uint32_t EEMEM PressureSensor::LAST_UPDATED_TIME = 0;
 
 const RingBuffer<int16_t, 6> EEMEM PressureSensor::PRESSURE_DB = RingBuffer<int16_t, 6>();
 

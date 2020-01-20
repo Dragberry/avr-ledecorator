@@ -154,21 +154,43 @@ namespace I2C {
 	//! receive I2C data from a device on the bus (non-interrupt based)
 	Status master_receive_ni(uint8_t device_addr, uint8_t length, uint8_t *data);
 
-	//! High-level read operation to use with typical I2C devices
-	Status device_read(
-	        uint8_t device_addr,
-            uint8_t register_addr,
-            uint8_t *data,
-            uint8_t length
-            );
 
-	//! High-level write operation to use with typical I2C devices
-	Status device_write(
-	        uint8_t device_addr,
+    //! High-level read operation to use with typical I2C devices
+    template <typename TemplateStatus, TemplateStatus OK, TemplateStatus DEV_NOT_FOUND>
+    TemplateStatus device_read(
+            uint8_t device_addr,
             uint8_t register_addr,
             uint8_t *data,
             uint8_t length
-	        );
+            )
+    {
+        Status status = master_send_ni(device_addr, 1, &register_addr);
+        if (status == Status::OK)
+        {
+            status = master_receive_ni(device_addr, length, data);
+        }
+        return status == Status::OK ? OK : DEV_NOT_FOUND;
+    }
+
+    //! High-level write operation to use with typical I2C devices
+    template <typename TemplateStatus, TemplateStatus OK, TemplateStatus DEV_NOT_FOUND>
+    TemplateStatus device_write(
+            uint8_t device_addr,
+            uint8_t register_addr,
+            uint8_t *data,
+            uint8_t length
+          )
+    {
+        uint8_t full_data[length + 1];
+        full_data[0] = register_addr;
+        uint8_t idx = 1;
+        while (idx <= length)
+        {
+            full_data[idx] = data[idx - 1];
+            idx++;
+        }
+        return I2C::master_send_ni(device_addr, length + 1, full_data) == Status::OK ? OK : DEV_NOT_FOUND;
+    }
 
 	//! Get the current high-level state of the I2C interface
 	State get_state();

@@ -13,13 +13,13 @@
 /* To identify filter and standby settings selected by user */
 #define FILTER_STANDBY_SETTINGS UINT8_C(0x18)
 
-BME280::Device::Device(BME280::Interface* interface, uint8_t dev_id)
+BME280::Device::Device(BME280::Interface& interface, uint8_t dev_id) :
+    interface(interface),
+    dev_id(dev_id),
+    chip_id(0),
+    calib_data{0},
+    settings{0}
 {
-    this->interface = interface;
-    this->chip_id = 0;
-    this->dev_id = dev_id;
-    this->calib_data = {0};
-    this->settings = {0};
     null_ptr_check();
 }
 
@@ -59,7 +59,7 @@ void BME280::Device::init(void (*with_settings)(BME280::Settings& settings))
             }
 
             /* Wait for 1 ms */
-            interface->delay_ms(1);
+            interface.delay_ms(1);
             --try_count;
         }
 
@@ -86,13 +86,13 @@ void BME280::Device::get_regs(uint8_t reg_addr, uint8_t *reg_data, uint8_t len)
     if (status == OK)
     {
         /* If interface selected is SPI */
-        if (interface->value != I2C)
+        if (interface.value != I2C)
         {
             reg_addr = reg_addr | 0x80;
         }
 
         /* Read the data  */
-        status = interface->read(dev_id, reg_addr, reg_data, len);
+        status = interface.read(dev_id, reg_addr, reg_data, len);
         #ifdef BME280_DEBUG
             for (uint8_t i = 0; i < len; i++)
             {
@@ -134,7 +134,7 @@ void BME280::Device::set_regs(uint8_t *reg_addr, const uint8_t *reg_data, uint8_
            temp_buff[0] = reg_data[0];
 
            /* If interface selected is SPI */
-           if (interface->value != I2C)
+           if (interface.value != I2C)
            {
                for (reg_addr_cnt = 0; reg_addr_cnt < len; reg_addr_cnt++)
                {
@@ -155,7 +155,7 @@ void BME280::Device::set_regs(uint8_t *reg_addr, const uint8_t *reg_data, uint8_
            {
                temp_len = len;
            }
-           status = interface->write(dev_id, reg_addr[0], temp_buff, temp_len);
+           status = interface.write(dev_id, reg_addr[0], temp_buff, temp_len);
            #ifdef BME280_DEBUG
                UART::send_byte_as_hex(reg_addr[0]);
                for (uint8_t i = 0; i < temp_len; i++)
@@ -304,7 +304,7 @@ void BME280::Device::soft_reset()
            do
            {
                /* As per data sheet - Table 1, startup time is 2 ms. */
-               interface->delay_ms(2);
+               interface.delay_ms(2);
                get_regs(BME280_STATUS_REG_ADDR, &status_reg, 1);
            } while ((status == OK) && (try_run--) && (status_reg & BME280_STATUS_IM_UPDATE));
 
@@ -778,7 +778,7 @@ void BME280::Device::interleave_reg_addr(const uint8_t *reg_addr, uint8_t *temp_
  */
 void BME280::Device::null_ptr_check()
 {
-    if (interface == nullptr)
+    if (interface.read == nullptr || interface.write == nullptr || interface.delay_ms == nullptr)
     {
         /* Device structure pointers is not valid */
         status = NULL_PTR;

@@ -45,39 +45,39 @@ public:
 
     void seconds(const uint8_t seconds);
 
-    char seconds_d() const;
+    uint8_t seconds_d() const;
 
-    char seconds_u() const;
+    uint8_t seconds_u() const;
 
     void minutes(const uint8_t minutes);
 
-    char minutes_d() const;
+    uint8_t minutes_d() const;
 
-    char minutes_u() const;
+    uint8_t minutes_u() const;
 
     void hours(const uint8_t hours);
 
-    char hours_d() const;
+    uint8_t hours_d() const;
 
-    char hours_u() const;
+    uint8_t hours_u() const;
 
     void days(const uint8_t days);
 
-    char days_d() const;
+    uint8_t days_d() const;
 
-    char days_u() const;
+    uint8_t days_u() const;
 
     void months(const uint8_t months);
 
-    char months_d() const;
+    uint8_t months_d() const;
 
-    char months_u() const;
+    uint8_t months_u() const;
 
     void years(const uint8_t years);
 
-    char years_d() const;
+    uint8_t years_d() const;
 
-    char years_u() const;
+    uint8_t years_u() const;
 };
 
 }

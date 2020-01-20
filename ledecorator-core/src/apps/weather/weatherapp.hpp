@@ -5,17 +5,17 @@
 #include "pressuresensor.hpp"
 #include "temperaturesensor.hpp"
 #include "../../hardware/bme280/bme280.hpp"
+#include "../../hardware/ds1307/ds1307.hpp"
 #include "../../dragberry/os/drawablestring.hpp"
 
 #define BMP280_ADDR 0xEC
 
-class WeatherApp :
-        public BME280::Interface,
-        public Timers::T1::Handler
+class WeatherApp : public Timers::T1::Handler
 {
 private:
-    BME280::Device device =
-            BME280::Device(this, BMP280_ADDR);
+    DS1307::Clock clock;
+    BME280::Interface interface;
+    BME280::Device device;
 
     volatile uint16_t time = 0;
 
@@ -42,27 +42,14 @@ public:
 
     void on_timer1_event();
 
-    BME280::Status read(
-                uint8_t dev_id,
-                uint8_t reg_addr,
-                uint8_t *reg_data,
-                uint8_t len
-                );
-
-    BME280::Status write(
-                uint8_t dev_id,
-                uint8_t reg_addr,
-                uint8_t *reg_data,
-                uint8_t len
-                );
-
-    void delay_ms(uint8_t ms);
+    static void delay_ms(uint8_t ms);
 
 private:
     void init();
 
     void work();
 
+    uint32_t get_time();
 };
 
 #endif

@@ -73,7 +73,7 @@ public:
         return item;
     }
 
-    void reset()
+    bool reset()
     {
         bool is_valid = false;
         if (size <= capacity && head < capacity && tail < capacity)
@@ -93,6 +93,7 @@ public:
             tail = 0;
             size = 0;
         }
+        return !is_valid;
     }
 
     template <typename Action>

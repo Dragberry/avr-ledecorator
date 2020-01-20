@@ -3,9 +3,14 @@
 #include "../../util/charts.hpp"
 #include "sensor.hpp"
 
-Sensor::Sensor(const Image* pictogram, const RingBuffer<int16_t, 6>* database) :
+Sensor::Sensor(
+        const Image* pictogram,
+        const RingBuffer<int16_t, 6>* database,
+        const uint32_t* last_updated_time
+        ) :
         pictogram(pictogram),
-        database(database)
+        database(database),
+        last_updated_time(last_updated_time)
 {
     value_string.color = WHITE;
     value_string.align = Align::RIGHT;
@@ -24,13 +29,18 @@ Sensor::~Sensor()
 void Sensor::load()
 {
     eeprom_read_block(
-            (void*) &previous_values,
+            (void*) previous_values.get_data(),
             (const void*) database,
-            sizeof(previous_values)
+            sizeof(RingBuffer<int16_t, 6>)
+            );
+    eeprom_read_block(
+            (void*) previous_values.get_last_updated_time(),
+            (const void*) last_updated_time,
+            sizeof(uint32_t)
             );
     previous_values.reset();
     int16_t values[previous_values.get_size()];
-    previous_values.iterate([&](const int16_t& item, const uint8_t index) -> void
+    previous_values.get_data()->iterate([&](const int16_t& item, const uint8_t index) -> void
     {
         values[index] = item;
     });
@@ -40,9 +50,14 @@ void Sensor::load()
 void Sensor::save()
 {
     eeprom_update_block(
-           (const void*) &previous_values,
+           (const void*) previous_values.get_data(),
            (void*) database,
-           sizeof(previous_values)
+           sizeof(RingBuffer<int16_t, 6>)
+           );
+    eeprom_update_block(
+           (const void*) previous_values.get_last_updated_time(),
+           (void*) last_updated_time,
+           sizeof(uint32_t)
            );
 }
 

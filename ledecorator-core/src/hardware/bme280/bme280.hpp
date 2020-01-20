@@ -93,27 +93,23 @@ enum InterfaceType
 class Interface
 {
 public:
-    const InterfaceType value;
+    InterfaceType value;
 
-    Interface(InterfaceType value) : value(value) { }
+    Status (*read)  (uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint8_t len);
 
-    virtual ~Interface() { }
+    Status (*write) (uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint8_t len);
 
-    virtual Status read(uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint8_t len) = 0;
-
-    virtual Status write(uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint8_t len) = 0;
-
-    virtual void delay_ms(uint8_t ms);
+    void (*delay_ms)(uint8_t ms);
 };
 
 class Device
 {
 private:
-    Interface* interface;
-
-    uint8_t chip_id;
+    Interface& interface;
 
     uint8_t dev_id;
+
+    uint8_t chip_id;
 
     CalibrationData calib_data;
 
@@ -122,7 +118,7 @@ private:
 public:
     Status status;
 
-    Device(Interface* interface, uint8_t dev_id);
+    Device(Interface& interface, uint8_t dev_id);
 
     void init(void (*setup_settings)(Settings& settings));
 

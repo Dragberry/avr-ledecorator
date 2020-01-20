@@ -68,14 +68,14 @@ void Clock::seconds(const uint8_t seconds)
     data[0] = (seconds % 10) | (((seconds / 10) & 0x07) << 4);
 }
 
-char Clock::seconds_d() const
+uint8_t Clock::seconds_d() const
 {
-    return ((data[0] & 0x70) >> 4) + '0';
+    return ((data[0] & 0x70) >> 4);
 }
 
-char Clock::seconds_u() const
+uint8_t Clock::seconds_u() const
 {
-    return (data[0] & 0x0F) + '0';
+    return (data[0] & 0x0F);
 }
 
 void Clock::minutes(const uint8_t minutes)
@@ -83,15 +83,15 @@ void Clock::minutes(const uint8_t minutes)
     data[1] = (minutes % 10) | (((minutes / 10) & 0x07) << 4);
 }
 
-char Clock::minutes_d() const
+uint8_t Clock::minutes_d() const
 {
-    return ((data[1] & 0x70) >> 4) + '0';
+    return ((data[1] & 0x70) >> 4);
 
 }
 
-char Clock::minutes_u() const
+uint8_t Clock::minutes_u() const
 {
-    return (data[1] & 0x0F) + '0';
+    return (data[1] & 0x0F);
 }
 
 void Clock::hours(const uint8_t hours)
@@ -99,14 +99,14 @@ void Clock::hours(const uint8_t hours)
     data[2] = (hours % 10) | (((hours / 10) & 0x01) << 4);
 }
 
-char Clock::hours_d() const
+uint8_t Clock::hours_d() const
 {
-    return ((data[2] & 0x10) >> 4) + '0';
+    return ((data[2] & 0x10) >> 4);
 }
 
-char Clock::hours_u() const
+uint8_t Clock::hours_u() const
 {
-    return (data[2] & 0x0F) + '0';
+    return (data[2] & 0x0F);
 }
 
 void Clock::days(const uint8_t days)
@@ -114,14 +114,14 @@ void Clock::days(const uint8_t days)
     data[4] = (days % 10) | (((days / 10) & 0x03) << 4);
 }
 
-char Clock::days_d() const
+uint8_t Clock::days_d() const
 {
-    return ((data[4] & 0x30) >> 4) + '0';
+    return ((data[4] & 0x30) >> 4);
 }
 
-char Clock::days_u() const
+uint8_t Clock::days_u() const
 {
-    return (data[4] & 0x0F) + '0';
+    return (data[4] & 0x0F);
 }
 
 void Clock::months(const uint8_t months)
@@ -129,14 +129,14 @@ void Clock::months(const uint8_t months)
     data[5] = (months % 10) | (((months / 10) & 0x01) << 4);
 }
 
-char Clock::months_d() const
+uint8_t Clock::months_d() const
 {
-    return ((data[5] & 0x10) >> 4) + '0';
+    return ((data[5] & 0x10) >> 4);
 }
 
-char Clock::months_u() const
+uint8_t Clock::months_u() const
 {
-    return (data[5] & 0x0F) + '0';
+    return (data[5] & 0x0F);
 }
 
 void Clock::years(const uint8_t years)
@@ -144,12 +144,12 @@ void Clock::years(const uint8_t years)
     data[6] = (years % 10) | (((years / 10) & 0x07) << 4);
 }
 
-char Clock::years_d() const
+uint8_t Clock::years_d() const
 {
-    return ((data[6] & 0x70) >> 4) + '0';
+    return ((data[6] & 0x70) >> 4);
 }
 
-char Clock::years_u() const
+uint8_t Clock::years_u() const
 {
-    return (data[6] & 0x0F) + '0';
+    return (data[6] & 0x0F);
 }

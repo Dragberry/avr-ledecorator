@@ -4,10 +4,22 @@
 #include "weatherapp.hpp"
 #include "../../dragberry/os.hpp"
 
-#define WEATHER_APP_TIME 400 // x0.1 second
+#define WEATHER_APP_TIME 200 // x0.1 second
 
 WeatherApp::WeatherApp() :
-        BME280::Interface(BME280::InterfaceType::I2C)
+    clock(DS1307::Clock(DS1307_ADDRESS,
+            I2C::device_read<DS1307::Status, DS1307::Status::OK, DS1307::Status::DEV_NOT_FOUND>,
+            I2C::device_write<DS1307::Status, DS1307::Status::OK, DS1307::Status::DEV_NOT_FOUND>
+            )
+    ),
+    interface
+    {
+        BME280::InterfaceType::I2C,
+        I2C::device_read<BME280::Status, BME280::Status::OK, BME280::Status::DEV_NOT_FOUND>,
+        I2C::device_write<BME280::Status, BME280::Status::OK, BME280::Status::DEV_NOT_FOUND>,
+        WeatherApp::delay_ms
+    },
+    device(BME280::Device(interface, BMP280_ADDR))
 {
     I2C::init();
     I2C::set_bitrate(400);
@@ -39,8 +51,9 @@ void WeatherApp::run()
         dragberry::os::display::update_assured();
         delay_ms(70);
     }
-    temperature_sensor.save();
-    pressure_sensor.save();
+    uint32_t time = get_time();
+    temperature_sensor.update(time);
+    pressure_sensor.update(time);
 }
 
 void WeatherApp::init()
@@ -85,38 +98,21 @@ void WeatherApp::on_timer1_event()
     }
 }
 
-BME280::Status WeatherApp::read(
-            uint8_t dev_id,
-            uint8_t reg_addr,
-            uint8_t *reg_data,
-            uint8_t len
-            )
-{
-    if (I2C::device_read(dev_id, reg_addr, reg_data, len) == I2C::Status::OK)
-    {
-        return BME280::Status::OK;
-    }
-    return BME280::Status::DEV_NOT_FOUND;
-}
-
-BME280::Status WeatherApp::write(
-        uint8_t dev_id,
-        uint8_t reg_addr,
-        uint8_t *reg_data,
-        uint8_t len
-        )
-{
-    if (I2C::device_write(dev_id, reg_addr, reg_data, len) == I2C::Status::OK)
-    {
-        return BME280::Status::OK;
-    }
-    return BME280::Status::DEV_NOT_FOUND;
-}
-
 void WeatherApp::delay_ms(uint8_t ms)
 {
     while (0 < ms--)
     {
       _delay_ms(1);
     }
+}
+
+uint32_t WeatherApp::get_time()
+{
+    clock.refresh();
+    uint32_t time = 0;
+    time += (clock.seconds_d() * 10 + clock.seconds_u());
+    time += ((clock.minutes_d() * 10 + clock.minutes_u()) * 60);
+    time += ((clock.hours_d() * 10 + clock.hours_u()) * 360);
+    time += ((clock.days_d() * 10 + clock.days_u()) * 86400);
+    return time;
 }

@@ -1,7 +1,7 @@
 #include "temperaturesensor.hpp"
 
 TemperatureSensor::TemperatureSensor() :
-        Sensor(&IMG_TEMPERATURE, &TEMPERATURE_DB)
+        Sensor(&IMG_TEMPERATURE, &TEMPERATURE_DB, &LAST_UPDATED_TIME)
 {
     unit_string.set_string("C");
 }
@@ -39,11 +39,15 @@ void TemperatureSensor::process_value()
    itoa((int_value % 100) / 10, string_value + offset, 10);
 }
 
-void TemperatureSensor::save()
+void TemperatureSensor::update(uint32_t time)
 {
-    previous_values.add(int_value / 10);
-    Sensor::save();
+    if (previous_values.add(int_value / 10, time))
+    {
+        Sensor::save();
+    }
 }
+
+const uint32_t EEMEM TemperatureSensor::LAST_UPDATED_TIME = 0;
 
 const RingBuffer<int16_t, 6> EEMEM TemperatureSensor::TEMPERATURE_DB = RingBuffer<int16_t, 6>();
 

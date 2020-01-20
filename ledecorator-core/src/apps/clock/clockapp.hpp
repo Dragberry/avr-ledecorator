@@ -2,8 +2,6 @@
 #define CLOCKAPP_HPP_
 
 #include "lib/avr/hardware/timers.hpp"
-#include "lib/avr/hardware/uart.hpp"
-#include "lib/avr/hardware/i2c.hpp"
 #include "../../dragberry/os/display.hpp"
 #include "../../dragberry/os/drawablestring5x7.hpp"
 #include "../../dragberry/os/drawablestring3x5.hpp"
@@ -42,10 +40,6 @@ public:
 
     void on_timer1_event();
 
-private:
-    static DS1307::Status read(uint8_t dev_addr, uint8_t reg_addr, uint8_t *data, uint8_t length);
-
-    static DS1307::Status write(uint8_t dev_addr, uint8_t reg_addr, uint8_t *data, uint8_t length);
 };
 
 #endif
