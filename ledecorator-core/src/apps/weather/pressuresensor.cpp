@@ -1,15 +1,20 @@
+#include <stdlib.h>
+#include <string.h>
 #include "pressuresensor.hpp"
+
+const char PressureSensor::UNIT[] = "MM";
 
 PressureSensor::PressureSensor() :
         Sensor(&IMG_PRESSURE, &PRESSURE_DB, &LAST_UPDATED_TIME)
 {
-    unit_string.set_string("MM");
+    unit_string.set_string(UNIT);
 }
 
 void PressureSensor::load()
 {
     Sensor::load();
     itoa(chart.get_step(), step_string_value, 10);
+    strcat(step_string_value, UNIT);
     step_string.set_string(step_string_value);
 }
 

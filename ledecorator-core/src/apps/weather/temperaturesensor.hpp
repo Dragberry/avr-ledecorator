@@ -6,6 +6,8 @@
 class TemperatureSensor : public Sensor
 {
 private:
+    static const char UNIT[];
+
     static const uint32_t EEMEM LAST_UPDATED_TIME;
 
     static const RingBuffer<int16_t, 6> EEMEM TEMPERATURE_DB;

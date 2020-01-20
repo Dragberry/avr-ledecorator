@@ -1,9 +1,12 @@
+#include <string.h>
 #include "temperaturesensor.hpp"
+
+const char TemperatureSensor::UNIT[] = "C";
 
 TemperatureSensor::TemperatureSensor() :
         Sensor(&IMG_TEMPERATURE, &TEMPERATURE_DB, &LAST_UPDATED_TIME)
 {
-    unit_string.set_string("C");
+    unit_string.set_string(UNIT);
 }
 
 void TemperatureSensor::load()
@@ -16,7 +19,7 @@ void TemperatureSensor::load()
     offset += (step > 10 ? 2 : 1);
     step_string_value[offset++] = '.';
     itoa(step % 10, step_string_value + offset, 10);
-
+    strcat(step_string_value, UNIT);
     step_string.set_string(step_string_value);
 }
 

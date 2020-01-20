@@ -4,7 +4,7 @@
 #include "lib/screen/definitions.h"
 #include "entities.hpp"
 
-#define LIFE_GAME_TIME 400
+#define LIFE_GAME_TIME 300
 
 LifeGame::LifeGame()
 {

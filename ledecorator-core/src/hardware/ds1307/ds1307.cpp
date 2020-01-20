@@ -96,12 +96,12 @@ uint8_t Clock::minutes_u() const
 
 void Clock::hours(const uint8_t hours)
 {
-    data[2] = (hours % 10) | (((hours / 10) & 0x01) << 4);
+    data[2] = (hours % 10) | (((hours / 10) & 0x03) << 4);
 }
 
 uint8_t Clock::hours_d() const
 {
-    return ((data[2] & 0x10) >> 4);
+    return ((data[2] & 0x30) >> 4);
 }
 
 uint8_t Clock::hours_u() const

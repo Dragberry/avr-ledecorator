@@ -4,7 +4,7 @@
 #include "weatherapp.hpp"
 #include "../../dragberry/os.hpp"
 
-#define WEATHER_APP_TIME 200 // x0.1 second
+#define WEATHER_APP_TIME 500 // x0.1 second
 
 WeatherApp::WeatherApp() :
     clock(DS1307::Clock(DS1307_ADDRESS,
@@ -81,7 +81,7 @@ void WeatherApp::init()
 void WeatherApp::on_timer1_event()
 {
     time++;
-    uint16_t sensor_up_time = time % 100;
+    uint16_t sensor_up_time = time % 120;
     if (sensor_up_time == 0)
     {
         if (++active_sensor_index == 2)
@@ -92,9 +92,18 @@ void WeatherApp::on_timer1_event()
     }
     else
     {
-        active_sensor->display_mode = sensor_up_time < 60 ?
-                Sensor::DisplayMode::VALUE :
-                Sensor::DisplayMode::CHART;
+        if (sensor_up_time < 60)
+        {
+            active_sensor->display_mode = Sensor::DisplayMode::VALUE;
+        }
+        else if (sensor_up_time < 90)
+        {
+            active_sensor->display_mode = Sensor::DisplayMode::CHART_Y_AXIS;
+        }
+        else
+        {
+            active_sensor->display_mode = Sensor::DisplayMode::CHART_X_AXIS;
+        }
     }
 }
 

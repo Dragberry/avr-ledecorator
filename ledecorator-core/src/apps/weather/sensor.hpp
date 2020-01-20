@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include "sensorstorage.hpp"
 #include "../../data/image.hpp"
+#include "../../dragberry/os/drawablestring3x5.hpp"
 #include "../../dragberry/os/drawablestring5x7.hpp"
 #include "../../util/charts.hpp"
 
@@ -14,9 +15,21 @@ using namespace dragberry::os;
 class Sensor
 {
 private:
-    static const uint8_t PROGMEM IMG_DIFF_DATA[18];
+    static const uint8_t PROGMEM IMG_Y_AXIS_DATA[16];
 
-    static const Image PROGMEM IMG_DIFF;
+    static const Image PROGMEM IMG_Y_AXIS;
+
+    static const uint8_t PROGMEM IMG_Y_AXIS_HIGHLIGHTED_DATA[6];
+
+    static const Image PROGMEM IMG_Y_AXIS_HIGHLIGHTED;
+
+    static const uint8_t PROGMEM IMG_X_AXIS_DATA[16];
+
+    static const Image PROGMEM IMG_X_AXIS;
+
+    static const uint8_t PROGMEM IMG_X_AXIS_HIGHLIGHTED_DATA[6];
+
+    static const Image PROGMEM IMG_X_AXIS_HIGHLIGHTED;
 
 protected:
     const Image* pictogram;
@@ -31,22 +44,24 @@ protected:
 
     char string_value[6];
 
-    DrawableString5x7 value_string = DrawableString5x7(8, 0, 24, 8);
+    DrawableString5x7 value_string = DrawableString5x7(8, 0, 24, 7);
 
-    DrawableString5x7 unit_string = DrawableString5x7(8, 8, 24, 8);
+    DrawableString5x7 unit_string = DrawableString5x7(8, 8, 24, 7);
 
-    char step_string_value[5];
+    char step_string_value[7];
 
-    DrawableString5x7 step_string = DrawableString5x7(8, 0, 24, 8);
+    DrawableString3x5 step_string = DrawableString3x5(16, 1, 16, 5);
+
+    DrawableString3x5 period_string = DrawableString3x5(16, 1, 16, 5);
 
     Histogram<int16_t, 6> chart = Histogram<int16_t, 6>(24, 8);
-
 
 public:
     enum DisplayMode
     {
         VALUE,
-        CHART
+        CHART_X_AXIS,
+        CHART_Y_AXIS
     } display_mode = VALUE;
 
 public:
@@ -71,6 +86,9 @@ public:
     void set_value(int32_t int_value);
 
     void draw();
+
+private:
+    void draw_chart();
 };
 
 #endif

@@ -20,6 +20,11 @@ Sensor::Sensor(
 
     unit_string.color = GREEN;
     unit_string.align = Align::RIGHT;
+
+    period_string.color = WHITE;
+    period_string.align = Align::RIGHT;
+
+    period_string.set_string("1HR");
 }
 
 Sensor::~Sensor()
@@ -78,24 +83,65 @@ void Sensor::draw()
         value_string.draw();
         unit_string.draw();
         break;
-    case CHART:
+    case CHART_Y_AXIS:
         step_string.draw();
-        display::draw_image(8, 1, &IMG_DIFF, BLACK);
-        chart.draw(8, 8, 1, 0);
+        display::draw_image(8, 0, &IMG_Y_AXIS, BLACK);
+        display::draw_image(8, 6, &IMG_X_AXIS, BLACK);
+        display::draw_image(8, 2, &IMG_Y_AXIS_HIGHLIGHTED, BLACK);
+        draw_chart();
+        break;
+    case CHART_X_AXIS:
+        period_string.draw();
+        display::draw_image(8, 0, &IMG_Y_AXIS, BLACK);
+        display::draw_image(8, 6, &IMG_X_AXIS, BLACK);
+        display::draw_image(11, 6, &IMG_X_AXIS_HIGHLIGHTED, BLACK);
+        draw_chart();
         break;
     default:
         break;
     }
 }
 
-const uint8_t PROGMEM Sensor::IMG_DIFF_DATA[18] =
+void Sensor::draw_chart()
 {
-        BLACK,  YELLOW, BLACK,
-        YELLOW, YELLOW, YELLOW,
-        BLACK,  RED,    BLACK,
-        BLACK,  RED,    BLACK,
-        YELLOW, YELLOW, YELLOW,
-        BLACK,  YELLOW, BLACK,
+    chart.draw(8, 8, 1, 0);
+}
+
+const uint8_t PROGMEM Sensor::IMG_Y_AXIS_DATA[16] =
+{
+        GREEN,  GREEN,
+        BLACK,  GREEN,
+        GREEN,  GREEN,
+        BLACK,  GREEN,
+        GREEN,  GREEN,
+        BLACK,  GREEN,
+        GREEN,  GREEN,
+        BLACK,  GREEN,
 };
 
-const Image PROGMEM Sensor::IMG_DIFF = {3, 6, IMG_DIFF_DATA};
+const Image PROGMEM Sensor::IMG_Y_AXIS = {2, 8, IMG_Y_AXIS_DATA};
+
+const uint8_t PROGMEM Sensor::IMG_Y_AXIS_HIGHLIGHTED_DATA[6] =
+{
+        CYAN,   CYAN,
+        BLACK,  CYAN,
+        CYAN,   CYAN,
+};
+
+const Image PROGMEM Sensor::IMG_Y_AXIS_HIGHLIGHTED = {2, 3, IMG_Y_AXIS_HIGHLIGHTED_DATA};
+
+const uint8_t PROGMEM Sensor::IMG_X_AXIS_DATA[16] =
+{
+        GREEN,  GREEN,  GREEN,  GREEN,  GREEN,  GREEN,  GREEN,  GREEN,
+        BLACK,  GREEN,  BLACK,  GREEN,  BLACK,  GREEN,  BLACK,  GREEN,
+};
+
+const Image PROGMEM Sensor::IMG_X_AXIS = {8, 2, IMG_X_AXIS_DATA};
+
+const uint8_t PROGMEM Sensor::IMG_X_AXIS_HIGHLIGHTED_DATA[6] =
+{
+        CYAN,   CYAN,  CYAN,
+        CYAN,   BLACK, CYAN,
+};
+
+const Image PROGMEM Sensor::IMG_X_AXIS_HIGHLIGHTED = {3, 2, IMG_X_AXIS_HIGHLIGHTED_DATA};

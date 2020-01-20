@@ -30,9 +30,9 @@ const BitMap<15> PROGMEM Font3x5::CHAR3X5_MINUS =
 
 const BitMap<15> PROGMEM Font3x5::CHAR3X5_DOT =
 {
-        3, 5,
-        0b00000000,
-        0b00000100
+        1, 5,
+        0b00001000,
+        0b00000000
 };
 
 const BitMap<15> PROGMEM Font3x5::CHAR3X5_SLASH =
