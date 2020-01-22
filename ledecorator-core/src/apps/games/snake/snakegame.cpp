@@ -1,95 +1,135 @@
-#include "snakegame.h"
 #include <stdlib.h>
+#include "snakegame.h"
 
-#include "lib/screen/colors.h"
-
-SnakeGame::SnakeGame(
-		uint8_t height,
-		uint8_t width,
-		uint8_t color_field,
-		uint8_t color_snake,
-		uint8_t color_food
-		)
+SnakeGame::SnakeGame() :
+    time(0),
+    field{0}
 {
-	this->height = height;
-	this->width = width;
-	this->color_field = color_field;
-	this->color_snake = color_snake;
-	this->color_food = color_food;
-	this->snake = new Snake(height, width, 4, Direction::Right);
-	this->food = NULL;
-	this->state = true;
 }
 
-SnakeGame::~SnakeGame()
+void SnakeGame::runner()
 {
-	delete food;
-	delete snake;
+    SnakeGame app;
+    app.run();
 }
 
-bool SnakeGame::is_running()
+void SnakeGame::run()
 {
-	return state && snake->getLength() < height;
+    Timers::T1::start(0x7A1, Timers::Prescaller::F_1024, this);
+
+    head.x = 2;
+    head.y = 8;
+
+    tail.x = 0;
+    tail.y = 8;
+
+    field[tail.y][tail.x] =
+            Type::SNAKE | (SnakePart::TAIL << 3) | (SnakeDirection::RIGHT << 5);
+    field[8][1] =
+            Type::SNAKE | (SnakePart::BODY << 3) | (SnakeDirection::RIGHT << 5);
+    field[head.y][head.x] =
+            Type::SNAKE | (SnakePart::HEAD << 3) | (SnakeDirection::RIGHT << 5);
+
+    do
+    {
+        uint8_t head_value = field[head.y][head.x];
+        SnakeDirection direction = (SnakeDirection)((head_value & MASK_SNAKE_DIRECTION) >> 5);
+        switch ((head_value & MASK_SNAKE_DIRECTION) >> 5)
+        {
+        case SnakeDirection::UP:
+            if (head.y == 0)
+            {
+                head.y = SCREEN_HEIGHT - 1;
+            }
+            else
+            {
+                head.y--;
+            }
+            break;
+        case SnakeDirection::RIGHT:
+            if (head.x == SCREEN_WIDTH - 1)
+            {
+                head.x = 0;
+            }
+            else
+            {
+                head.x++;
+            }
+            break;
+        case SnakeDirection::DOWN:
+            if (head.y == SCREEN_HEIGHT - 1)
+            {
+                head.y = 0;
+            }
+            else
+            {
+                head.y++;
+            }
+            break;
+        case SnakeDirection::LEFT:
+            if (head.x == 0)
+            {
+                head.x = SCREEN_WIDTH - 1;
+            }
+            else
+            {
+                head.x--;
+            }
+            break;
+        default:
+            break;
+        }
+        field[head.y][head.x] =
+                Type::SNAKE | (SnakePart::HEAD << 3) | (direction << 5);
+
+        for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
+        {
+            for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
+            {
+                uint8_t color = BLACK;
+                uint8_t data = field[y][x];
+                uint8_t type = data & MASK_TYPE;
+                switch (type)
+                {
+                case Type::FIELD:
+                    color = FIELD_COLOR;
+                    break;
+                case Type::SNAKE:
+                    switch ((data & MASK_SNAKE_PART) >> 3)
+                    {
+                    case SnakePart::BODY:
+                        color = SNAKE_COLOR;
+                        break;
+                    case SnakePart::HEAD:
+                        color = SNAKE_HEAD_COLOR;
+                        break;
+                    case SnakePart::TAIL:
+                        color = SNAKE_COLOR;
+                        break;
+                    default:
+                        break;
+                    }
+                    break;
+                case Type::FOOD:
+                    color = FOOD_COLOR;
+                    break;
+                case Type::WALL:
+                    color = WALL_COLOR;
+                    break;
+                default:
+                    break;
+                }
+
+                dragberry::os::display::set_pixel(y, x, color);
+            }
+        }
+        dragberry::os::display::update_assured();
+    }
+    while (time <= 100);
+    Timers::T1::stop();
 }
 
-void SnakeGame::placeFood()
+void SnakeGame::on_timer1_event()
 {
-	uint8_t newX = rand() % width;
-	uint8_t newY = rand() % height;
-	if (food == NULL)
-	{
-		food = new Food(newX, newY);
-	}
-	else
-	{
-		food->x = newX;
-		food->y = newY;
-	}
-}
-
-void SnakeGame::increment()
-{
-	if ((rand() % 5 == 0)  == 0)
-	{
-		if (rand() % 2 == 0)
-		{
-			snake->turnRight();
-		}
-		else
-		{
-			snake->turnLeft();
-		}
-	}
-	snake->move();
-	if (!snake->isAlive())
-	{
-		state = false;
-		return;
-	}
-	if (food == NULL || snake->eat(*food))
-	{
-		placeFood();
-	}
-}
-
-void SnakeGame::build_image()
-{
-//	for (uint8_t row = 0; row < height; row++)
-//	{
-//		for (uint8_t cell = 0; cell < width; cell++)
-//		{
-//			if (snake->isHere(row, cell))
-//			{
-//				image[row][cell] = color_snake;
-//			}
-//			else if (food->isHere(row, cell))
-//			{
-//				image[row][cell] = color_food;
-//			}
-//			else
-//			{
-//				image[row][cell] = color_field;
-//			}
-//		}
-//	}
+    time++;
 }
