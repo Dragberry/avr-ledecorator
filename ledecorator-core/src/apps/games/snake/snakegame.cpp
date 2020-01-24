@@ -2,10 +2,13 @@
 #include "snakegame.h"
 
 SnakeGame::SnakeGame() :
-    time(0),
-    field{0},
-    head{0},
-    tail{0}
+        time(0),
+        steps(0),
+        current_speed(MIN_SPEED),
+        remaining_time(0),
+        field{ 0 },
+        head{ 0 },
+        tail{ 0 }
 {
 }
 
@@ -17,30 +20,7 @@ void SnakeGame::runner()
 
 void SnakeGame::run()
 {
-    Timers::T1::start(0x7A1, Timers::Prescaller::F_1024, this);
-
-    head.x = 2;
-    head.y = 8;
-
-    tail.x = 7;
-    tail.y = 8;
-
-    set(tail.x, tail.y,
-            Type::SNAKE | SnakePart::TAIL | SnakeDirection::RIGHT);
-    set(1, 8,
-            Type::SNAKE | SnakePart::BODY | SnakeDirection::RIGHT);
-    set(2, 8,
-            Type::SNAKE | SnakePart::BODY | SnakeDirection::RIGHT);
-    set(3, 8,
-            Type::SNAKE | SnakePart::BODY | SnakeDirection::RIGHT);
-    set(4, 8,
-            Type::SNAKE | SnakePart::BODY | SnakeDirection::RIGHT);
-    set(5, 8,
-            Type::SNAKE | SnakePart::BODY | SnakeDirection::RIGHT);
-    set(6, 8,
-            Type::SNAKE | SnakePart::BODY | SnakeDirection::RIGHT);
-    set(head.x, head.y,
-            Type::SNAKE | SnakePart::HEAD | SnakeDirection::RIGHT);
+    place_snake(0, 8, 12);
 
     set(23, 11, Type::FOOD);
     set(13, 3, Type::FOOD);
@@ -48,20 +28,26 @@ void SnakeGame::run()
     set(2, 6, Type::FOOD);
     set(12, 9, Type::FOOD);
 
+    current_speed = MAX_SPEED;
+    refresh_remaining_time();
+    Timers::T1::start(0x3D1, Timers::Prescaller::F_1024, this);
     do
     {
-        move();
-        draw();
-        dragberry::os::display::update_requsted();
-    }
-    while (time <= 200);
+        make_step([&]() -> void
+        {
+            move();
+            draw();
+            dragberry::os::display::update_requsted();
+        });
+    } while (time <= 600);
     Timers::T1::stop();
 }
 
 void SnakeGame::on_timer1_event()
 {
     time++;
-    is_action_allowed = true;
-
-
+    if (remaining_time > 0)
+    {
+        remaining_time--;
+    }
 }
