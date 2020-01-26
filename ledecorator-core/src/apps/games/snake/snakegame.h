@@ -3,16 +3,21 @@
 
 #include "lib/avr/hardware/timers.hpp"
 #include "../../../dragberry/os/display.hpp"
+#include "../../../util/arraylist.hpp"
 
 class SnakeGame : public Timers::T1::Handler
 {
 private:
-    static const uint8_t FIELD_COLOR        = GREEN;
+    static const uint8_t FIELD_COLOR        = 0b00000100;
     static const uint8_t SNAKE_COLOR        = WHITE;
     static const uint8_t SNAKE_HEAD_COLOR   = YELLOW;
     static const uint8_t TRASH_COLOR        = 0b00010101;
     static const uint8_t WALL_COLOR         = BLACK;
-    static const uint8_t FOOD_COLOR         = RED;
+
+    static const uint8_t FOOD_INCREMENT_COLOR   = RED;
+    static const uint8_t FOOD_DECREMENT_COLOR   = BLUE;
+    static const uint8_t FOOD_SPEED_UP_COLOR    = MAGENTA;
+    static const uint8_t FOOD_SPEED_DOWN_COLOR  = 0b00010011;
 
     static const uint8_t MASK_TYPE = 0b00000011;
 
@@ -54,6 +59,16 @@ private:
 
     static const uint8_t MASK_FIELD_LIFETIME = 0b11110000;
 
+    static const uint8_t MASK_FOOD_TYPE = 0b00001100;
+
+    enum FoodType : uint8_t
+    {
+        INCREMENT   = 0b00000000,
+        DECREMENT   = 0b00000100,
+        SPEED_UP    = 0b00001000,
+        SPEED_DOWN  = 0b00001100,
+    };
+
     const static uint8_t MAX_SPEED = 20;
     const static uint8_t MIN_SPEED = 1;
 
@@ -71,93 +86,45 @@ private:
     {
         int8_t x;
         int8_t y;
+
+        inline
+        bool operator == (Point& p)
+        {
+            return p.x == x && p.y == y;
+        };
     };
 
     Point head;
     Point tail;
-
-    Point food;
 
     struct Distance
     {
         int8_t x;
         int8_t y;
 
-        Distance(const Point& start, const Point& end)
-        {
-            x = abs(start.x - end.x);
-            if (x > SCREEN_WIDTH / 2)
-            {
-                x = SCREEN_WIDTH - x;
-            }
-            y = abs(start.y - end.y);
-            if (y > SCREEN_HEIGHT / 2)
-            {
-                y = SCREEN_HEIGHT - y;
-            }
-        }
+        Distance(const Point& start, const Point& end);
 
-        inline
-        bool is_zero()
-        {
-            return x == 0 && y == 0;
-        }
+        bool is_zero();
 
-        inline
-        int8_t full()
-        {
-            return x + y;
-        }
+        int8_t full();
     };
 
     struct PossibleStep
     {
-        enum Quality
+        enum Priority
         {
-            Good, Normal, Bad
-        } possibility;
+            PREFERRED,
+            POSSIBLE,
+            NOT_RECOMMENDED,
+            IMPOSSIBLE
+        } priority;
 
         SnakeDirection direction;
 
         int8_t distance;
     };
 
-    void possible_step(SnakeDirection direction, PossibleStep& step)
-    {
-        step.direction = direction;
-        Point point = get_next(head, direction);
-        Distance distance = Distance(point, food);
-        switch (field[point.y][point.x] & MASK_TYPE)
-        {
-        case FIELD:
-        case FOOD:
-            step.possibility = PossibleStep::Quality::Good;
-            break;
-        case SNAKE:
-            step.possibility = PossibleStep::Quality::Normal;
-            break;
-        case WALL:
-            step.possibility = PossibleStep::Quality::Bad;
-        }
-        step.distance = distance.full();
-    }
-
-    template <typename Type, typename Comparator>
-    void sort(Type* array, const int size, Comparator&& compare)
-    {
-        for (uint8_t i = 0; i < (size - 1); i++)
-        {
-            for (uint8_t j = i + 1; j < size; j++)
-            {
-                if (compare(array[i], array[j]))
-                {
-                    Type temp = array[i];
-                    array[i] = array[j];
-                    array[j] = temp;
-                }
-            }
-        }
-    }
+    ArrayList<Point, 5> food;
 
 public:
 	SnakeGame();
@@ -175,28 +142,23 @@ private:
         remaining_time = MAX_SPEED + 1 - current_speed;
     }
 
-    template <typename Step>
-    void make_step(Step&& step)
-    {
-        if (remaining_time == 0)
-        {
-            step();
-            refresh_remaining_time();
-            steps++;
-        }
-    }
+    bool do_step();
 
     void set(const uint8_t x, const uint8_t y, const uint8_t data);
 
     void set(const Point& point, const uint8_t data);
 
-    void move();
+    bool move();
 
     void move_head(Point& next, SnakeDirection direction);
 
     void move_tail();
 
-    void eat();
+    void eat(Point& what_to_eat);
+
+    bool place_food();
+
+    uint8_t get_food();
 
     void eat_yourself(const Point& next);
 
@@ -210,11 +172,14 @@ private:
 
     SnakeDirection turn_right(SnakeDirection direction);
 
-    SnakeDirection make_decision();
+    PossibleStep make_decision();
+
+    void possible_step(SnakeDirection direction, PossibleStep& step);
 
     void draw();
 
     void place_snake(uint8_t start_x, uint8_t start_y, uint8_t length);
+
 };
 
 #endif

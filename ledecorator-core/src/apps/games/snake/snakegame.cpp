@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "snakegame.h"
+#include "../../../util/sorting.hpp"
 
 SnakeGame::SnakeGame() :
         time(0),
@@ -10,7 +11,7 @@ SnakeGame::SnakeGame() :
         field{ 0 },
         head{ 0 },
         tail{ 0 },
-        food{ 24, 11 }
+        food(ArrayList<Point, 5>())
 {
 }
 
@@ -22,29 +23,42 @@ void SnakeGame::runner()
 
 void SnakeGame::run()
 {
-    place_snake(0, 8, 12);
+    place_snake(0, 8, 3);
 
-    set(23, 11, Type::FOOD);
-    set(13, 3, Type::FOOD);
-    set(31, 15, Type::FOOD);
-    set(2, 6, Type::FOOD);
-    set(12, 9, Type::FOOD);
-
-    set(food.x, food.y, Type::FOOD);
+    place_food();
+    place_food();
+    place_food();
+    place_food();
+    place_food();
 
     current_speed = MAX_SPEED;
     refresh_remaining_time();
+    // 0x1E9
     Timers::T1::start(0x3D1, Timers::Prescaller::F_1024, this);
     do
     {
-        make_step([&]() -> void
+        if (!do_step())
         {
-            move();
-            draw();
-            dragberry::os::display::update_requsted();
-        });
-    } while (time <= 600);
+            break;
+        }
+    } while (time <= 6000);
     Timers::T1::stop();
+}
+
+bool SnakeGame::do_step()
+{
+    if (remaining_time == 0)
+    {
+        if (!move())
+        {
+            return false;
+        }
+        draw();
+        dragberry::os::display::update_requsted();
+        refresh_remaining_time();
+        steps++;
+    }
+    return true;
 }
 
 void SnakeGame::on_timer1_event()
@@ -56,40 +70,59 @@ void SnakeGame::on_timer1_event()
     }
 }
 
-void SnakeGame::move()
+bool SnakeGame::move()
 {
-    bool is_tail_moved = true;
+    bool action_move_tail = true;
+    bool action_move_head = true;
+    bool action_eat = false;
+    bool action_eat_yourself = false;
 
-    SnakeDirection direction_next = make_decision();
+    PossibleStep next_step = make_decision();
+    if (next_step.priority == SnakeGame::PossibleStep::Priority::IMPOSSIBLE ||
+            next_step.priority == SnakeGame::PossibleStep::Priority::NOT_RECOMMENDED)
+    {
+        return false;
+    }
 
-    Point next = get_next(head, direction_next);
+    Point next = get_next(head, next_step.direction);
 
-    uint8_t data = field[next.y][next.x];
-    switch (data & MASK_TYPE)
+    Type type = (Type)(field[next.y][next.x] & MASK_TYPE);
+    switch (type)
     {
     case FIELD:
         break;
     case FOOD:
-        eat();
-        is_tail_moved = false;
+        action_move_tail = false;
+        action_eat = true;
+        break;
+    case SNAKE:
+        action_eat_yourself = !(next.x == tail.x && next.y == tail.y);
+        action_move_tail = !action_eat_yourself;
         break;
     case WALL:
         break;
-    case SNAKE:
-        eat_yourself(next);
-        is_tail_moved = false;
-        break;
     }
 
-    move_head(next, direction_next);
-    if (is_tail_moved)
+    if (action_eat_yourself)
     {
-      move_tail();
+        eat_yourself(next);
     }
+    if (action_move_head)
+    {
+        move_head(next, next_step.direction);
+    }
+    if (action_move_tail)
+    {
+        move_tail();
+    }
+    if (action_eat)
+    {
+        eat(next);
+    }
+    return true;
 }
 
-
-SnakeGame::SnakeDirection SnakeGame::make_decision()
+SnakeGame::PossibleStep SnakeGame::make_decision()
 {
     PossibleStep possible_steps[3];
     SnakeDirection direction = get_direction(head);
@@ -98,24 +131,31 @@ SnakeGame::SnakeDirection SnakeGame::make_decision()
     possible_step(turn_right(direction), possible_steps[2]);
 
     sort(possible_steps, 3, [](PossibleStep& i, PossibleStep& j) -> bool {
-        return i.possibility > j.possibility || (i.possibility == j.possibility ? i.distance > j.distance : false);
+        return i.priority > j.priority || (i.priority == j.priority ? i.distance > j.distance : false);
     });
+    return possible_steps[0];
+}
 
-//    if (steps % ((rand() % 4) + 3) == 0)
-//        if (steps % 2 == 0)
-//    {
-//            return turn_left(direction);
-//        switch (rand() % 3)
-//        {
-//        case 1:
-//            return turn_left(direction);
-//        case 2:
-//            return turn_right(direction);
-//        default:
-//            return direction;
-//        }
-//    }
-    return possible_steps[0].direction;
+void SnakeGame::possible_step(SnakeDirection direction, PossibleStep& step)
+{
+   step.direction = direction;
+   Point point = get_next(head, direction);
+   Distance distance = Distance(point, food.get(0));
+   switch (field[point.y][point.x] & MASK_TYPE)
+   {
+   case FIELD:
+       step.priority = PossibleStep::Priority::POSSIBLE;
+       break;
+   case FOOD:
+       step.priority = PossibleStep::Priority::PREFERRED;
+       break;
+   case SNAKE:
+       step.priority = PossibleStep::Priority::NOT_RECOMMENDED;
+       break;
+   case WALL:
+       step.priority = PossibleStep::Priority::IMPOSSIBLE;
+   }
+   step.distance = distance.full();
 }
 
 void SnakeGame::move_head(Point& next, SnakeDirection direction)
@@ -135,20 +175,69 @@ void SnakeGame::move_tail()
     tail = next_tail;
 }
 
-void SnakeGame::eat()
+void SnakeGame::eat(Point& what_to_eat)
 {
-    uint8_t attempts = 0;
-    while (attempts++ < 10)
+    food.remove(what_to_eat);
+    place_food();
+}
+
+bool SnakeGame::place_food()
+{
+    const int8_t init_x = 20;
+    const int8_t init_y = 8;
+
+    int8_t x = rand() % SCREEN_WIDTH;
+    int8_t y = rand() % SCREEN_HEIGHT;
+
+    while (true)
     {
-       food.x = rand() % SCREEN_WIDTH;
-       food.y = rand() % SCREEN_HEIGHT;
-       uint8_t place_for_food = field[food.y][food.x];
-       if ((place_for_food & MASK_TYPE) != Type::SNAKE)
-       {
-           set(food.x, food.y, Type::FOOD);
-           break;
-       }
+        uint8_t place_for_food = field[y][x];
+        if (Type::FIELD == (place_for_food & MASK_TYPE))
+        {
+            Point place = { x, y };
+            set(place, get_food());
+            food.add(place);
+            return true;
+        }
+        else
+        {
+            if (++x == SCREEN_WIDTH)
+            {
+               x = 0;
+               if (++y == SCREEN_HEIGHT)
+               {
+                   y = 0;
+               }
+            }
+            if (x == init_x && y == init_y)
+            {
+               return false;
+            }
+        }
     }
+}
+
+uint8_t SnakeGame::get_food()
+{
+    FoodType food_type;
+    uint8_t temp = (rand() % 10);
+    if (temp < 6)
+    {
+        food_type = FoodType::INCREMENT;
+    }
+    else if (temp < 8)
+    {
+        food_type = FoodType::DECREMENT;
+    }
+    else if (temp < 9)
+    {
+        food_type = FoodType::SPEED_UP;
+    }
+    else
+    {
+        food_type = FoodType::SPEED_DOWN;
+    }
+    return Type::FOOD | food_type;
 }
 
 void SnakeGame::eat_yourself(const Point& next)
@@ -301,7 +390,20 @@ void SnakeGame::draw()
                }
                break;
            case Type::FOOD:
-               color = FOOD_COLOR;
+               switch (data & MASK_FOOD_TYPE)
+               {
+               case INCREMENT:
+                   color = FOOD_INCREMENT_COLOR;
+                   break;
+               case DECREMENT:
+                   color = FOOD_DECREMENT_COLOR;
+                   break;
+               case SPEED_UP:
+                  color = FOOD_SPEED_UP_COLOR;
+                  break;
+               case SPEED_DOWN:
+                  color = FOOD_SPEED_DOWN_COLOR;
+               }
                break;
            case Type::WALL:
                color = WALL_COLOR;
@@ -309,8 +411,33 @@ void SnakeGame::draw()
            default:
                break;
            }
-
            dragberry::os::display::set_pixel(y, x, color);
        }
    }
+}
+
+SnakeGame::Distance::Distance(const Point& start, const Point& end)
+{
+    x = abs(start.x - end.x);
+    if (x >= SCREEN_WIDTH / 2)
+    {
+        x = SCREEN_WIDTH - x;
+    }
+    y = abs(start.y - end.y);
+    if (y >= SCREEN_HEIGHT / 2)
+    {
+        y = SCREEN_HEIGHT - y;
+    }
+}
+
+inline
+bool SnakeGame::Distance::is_zero()
+{
+    return x == 0 && y == 0;
+}
+
+inline
+int8_t SnakeGame::Distance::full()
+{
+    return x + y;
 }

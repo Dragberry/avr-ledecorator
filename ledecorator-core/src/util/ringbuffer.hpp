@@ -8,7 +8,7 @@ template <typename Type, uint8_t capacity>
 struct RingBuffer
 {
 private:
-    Type buffer[capacity] = { 0 };
+    Type buffer[capacity] = {};
     uint8_t head = 0;
     uint8_t tail = 0;
     uint8_t size = 0;
@@ -62,9 +62,14 @@ public:
         add_inner(item);
     }
 
+    Type peek()
+    {
+        return buffer[head];
+    }
+
     Type poll()
     {
-        Type& item = buffer[head++];
+        Type item = buffer[head++];
         if (head == capacity)
         {
             head = 0;
@@ -130,40 +135,6 @@ public:
         }
     }
 
-//    void print_meta()
-//    {
-//        char string[4];
-//        UART::send_string("Size:");
-//        itoa(size, string, 10);
-//        UART::send_string(string);
-//
-//        UART::send_string("Head:");
-//        itoa(head, string, 10);
-//        UART::send_string(string);
-//
-//
-//        UART::send_string("Tail:");
-//        itoa(tail, string, 10);
-//        UART::send_string(string);
-//    }
-//
-//    void print(const char* title)
-//    {
-//        UART::send_string(title);
-//        char string[10];
-//        UART::send_string("Capacity:");
-//        itoa(capacity, string, 10);
-//        UART::send_string(string);
-//
-//        print_meta();
-//
-//        UART::send_string("Values:");
-//        iterate([&](const int16_t& element, const uint8_t index) -> void
-//        {
-//            itoa(element, string, 10);
-//            UART::send_string(string);
-//        });
-//    }
 };
 
 #endif
