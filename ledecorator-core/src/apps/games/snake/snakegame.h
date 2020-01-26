@@ -2,6 +2,7 @@
 #define SNAKEGAME_H_
 
 #include "lib/avr/hardware/timers.hpp"
+#include "walls.hpp"
 #include "../../../dragberry/os/display.hpp"
 #include "../../../util/arraylist.hpp"
 
@@ -12,7 +13,7 @@ private:
     static const uint8_t SNAKE_COLOR        = WHITE;
     static const uint8_t SNAKE_HEAD_COLOR   = YELLOW;
     static const uint8_t TRASH_COLOR        = 0b00010101;
-    static const uint8_t WALL_COLOR         = BLACK;
+    static const uint8_t WALL_COLOR         = 0b00010000;
 
     static const uint8_t FOOD_INCREMENT_COLOR   = RED;
     static const uint8_t FOOD_DECREMENT_COLOR   = BLUE;
@@ -66,7 +67,7 @@ private:
         INCREMENT   = 0b00000000,
         DECREMENT   = 0b00000100,
         SPEED_UP    = 0b00001000,
-        SPEED_DOWN  = 0b00001100,
+        SLOW_DOWN  = 0b00001100,
     };
 
     const static uint8_t MAX_SPEED = 20;
@@ -91,6 +92,12 @@ private:
         bool operator == (Point& p)
         {
             return p.x == x && p.y == y;
+        };
+
+        inline
+        bool operator != (Point& p)
+        {
+            return !(*this == p);
         };
     };
 
@@ -124,6 +131,8 @@ private:
         int8_t distance;
     };
 
+    PossibleStep possible_steps[3];
+
     ArrayList<Point, 5> food;
 
 public:
@@ -154,7 +163,11 @@ private:
 
     void move_tail();
 
-    void eat(Point& what_to_eat);
+    void eat(Point& where_to_eat, FoodType what_to_eat);
+
+    void speed_up();
+
+    void slow_down();
 
     bool place_food();
 
@@ -172,14 +185,40 @@ private:
 
     SnakeDirection turn_right(SnakeDirection direction);
 
-    PossibleStep make_decision();
+    void make_decision();
 
     void possible_step(SnakeDirection direction, PossibleStep& step);
 
-    void draw();
-
     void place_snake(uint8_t start_x, uint8_t start_y, uint8_t length);
 
+    void place_walls();
+
+    void draw();
+
+    template <uint8_t width, uint8_t height>
+    void place_wall(
+            const uint8_t start_x,
+            const uint8_t start_y,
+            const BitMap<width * height>* data)
+    {
+        for (uint8_t y = 0; y < height; y++)
+        {
+            for (uint8_t x = 0; x < width; x++)
+            {
+                uint8_t real_y = start_y + y;
+                if (real_y > SCREEN_HEIGHT)
+                {
+                    real_y -=SCREEN_HEIGHT;
+                }
+                uint8_t real_x = start_x + x;
+                if (real_x > SCREEN_WIDTH)
+                {
+                    real_x -=SCREEN_WIDTH;
+                }
+                set(real_x, real_y, data->get_bit(x, y) ? Type::WALL : Type::FIELD);
+            }
+        }
+    }
 };
 
 #endif

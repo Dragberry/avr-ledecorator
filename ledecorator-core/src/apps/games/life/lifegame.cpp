@@ -8,13 +8,21 @@
 
 LifeGame::LifeGame()
 {
-	clear_field();
+    is_random = rand() % 2;
 	color_life = dragberry::io::read();
 	color_dead = dragberry::io::read();;
 	alive_indicator = ALIVE_INDICATOR_01;
-	place_entity<5, 4>(0, 0, alive_indicator, &Entities::SHIP_LIGHT);
-	place_entity<6, 5>(10, 0, alive_indicator, &Entities::SHIP_MEDIUM);
-	place_entity<7, 5>(20, 0, alive_indicator, &Entities::SHIP_LARGE);
+	if (is_random)
+	{
+	    random_field();
+	}
+	else
+	{
+	    place_entity<5, 4>(0, 0, alive_indicator, &Entities::SHIP_LIGHT);
+        place_entity<6, 5>(10, 0, alive_indicator, &Entities::SHIP_MEDIUM);
+        place_entity<7, 5>(20, 0, alive_indicator, &Entities::SHIP_LARGE);
+	}
+
 	is_step_required = 0;
 	time = 0;
 	Timers::T1::start(0x7A1, Timers::Prescaller::F_1024, this);
@@ -25,13 +33,13 @@ LifeGame::~LifeGame()
 	Timers::T1::stop();
 }
 
-void LifeGame::clear_field()
+void LifeGame::random_field()
 {
 	for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
 	{
 		for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
 		{
-			field[y][x] = 0;
+			field[y][x] = rand() % 2 ? alive_indicator : 0;
 		}
 	}
 }
@@ -105,17 +113,19 @@ void LifeGame::step_up()
 		}
 	}
 
-
-	if (time >= 16 && time % 16 == 0)
+	if (!is_random)
 	{
-	    if (time % 32 != 0)
-	    {
-	        place_entity<3, 3>(15, 11, next_alive_indicator, &Entities::GLIDER);
-	    }
-	    else
-	    {
-	        place_entity<6, 5>(0, 8, next_alive_indicator, &Entities::SHIP_MEDIUM);
-	    }
+        if (time >= 16 && (time % (14 + rand() % 8)) == 0)
+        {
+            if (rand() % 2)
+            {
+                place_entity<3, 3>(15, 11, next_alive_indicator, &Entities::GLIDER);
+            }
+            else
+            {
+                place_entity<6, 5>(0, 8, next_alive_indicator, &Entities::SHIP_MEDIUM);
+            }
+        }
 	}
 
 	alive_indicator = next_alive_indicator;

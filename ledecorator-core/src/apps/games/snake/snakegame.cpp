@@ -23,7 +23,8 @@ void SnakeGame::runner()
 
 void SnakeGame::run()
 {
-    place_snake(0, 8, 3);
+    place_walls();
+    place_snake(0, 8, 5);
 
     place_food();
     place_food();
@@ -34,14 +35,15 @@ void SnakeGame::run()
     current_speed = MAX_SPEED;
     refresh_remaining_time();
     // 0x1E9
-    Timers::T1::start(0x3D1, Timers::Prescaller::F_1024, this);
+    // 0x3D1
+    Timers::T1::start(0x1E9, Timers::Prescaller::F_1024, this);
     do
     {
         if (!do_step())
         {
             break;
         }
-    } while (time <= 6000);
+    } while (time <= 1200);
     Timers::T1::stop();
 }
 
@@ -72,68 +74,68 @@ void SnakeGame::on_timer1_event()
 
 bool SnakeGame::move()
 {
-    bool action_move_tail = true;
-    bool action_move_head = true;
-    bool action_eat = false;
-    bool action_eat_yourself = false;
-
-    PossibleStep next_step = make_decision();
-    if (next_step.priority == SnakeGame::PossibleStep::Priority::IMPOSSIBLE ||
-            next_step.priority == SnakeGame::PossibleStep::Priority::NOT_RECOMMENDED)
+    make_decision();
+    PossibleStep next_step = possible_steps[0];
+    if (next_step.priority == SnakeGame::PossibleStep::Priority::IMPOSSIBLE)
     {
         return false;
     }
 
     Point next = get_next(head, next_step.direction);
-
-    Type type = (Type)(field[next.y][next.x] & MASK_TYPE);
-    switch (type)
+    uint8_t data = field[next.y][next.x];
+    switch (data & MASK_TYPE)
     {
     case FIELD:
+        move_head(next, next_step.direction);
+        move_tail();
         break;
     case FOOD:
-        action_move_tail = false;
-        action_eat = true;
+        move_head(next, next_step.direction);
+        eat(next, (FoodType)(data & MASK_FOOD_TYPE));
         break;
     case SNAKE:
-        action_eat_yourself = !(next.x == tail.x && next.y == tail.y);
-        action_move_tail = !action_eat_yourself;
+        if (next == tail)
+        {
+            move_head(next, next_step.direction);
+            move_tail();
+        }
+        else
+        {
+            eat_yourself(next);
+            move_head(next, next_step.direction);
+        }
         break;
     case WALL:
-        break;
-    }
-
-    if (action_eat_yourself)
-    {
-        eat_yourself(next);
-    }
-    if (action_move_head)
-    {
-        move_head(next, next_step.direction);
-    }
-    if (action_move_tail)
-    {
-        move_tail();
-    }
-    if (action_eat)
-    {
-        eat(next);
+        return false;
     }
     return true;
 }
 
-SnakeGame::PossibleStep SnakeGame::make_decision()
+void SnakeGame::make_decision()
 {
-    PossibleStep possible_steps[3];
     SnakeDirection direction = get_direction(head);
     possible_step(direction, possible_steps[0]);
     possible_step(turn_left(direction), possible_steps[1]);
     possible_step(turn_right(direction), possible_steps[2]);
 
     sort(possible_steps, 3, [](PossibleStep& i, PossibleStep& j) -> bool {
-        return i.priority > j.priority || (i.priority == j.priority ? i.distance > j.distance : false);
+        if (i.priority > j.priority)
+        {
+            return true;
+        }
+        if (i.priority == j.priority)
+        {
+            if (i.distance > j.distance)
+            {
+                return true;
+            }
+            if (i.distance == j.distance)
+            {
+                return rand() % 2;
+            }
+        }
+        return false;
     });
-    return possible_steps[0];
 }
 
 void SnakeGame::possible_step(SnakeDirection direction, PossibleStep& step)
@@ -169,16 +171,50 @@ void SnakeGame::move_tail()
 {
     SnakeDirection direction_tail = get_direction(tail);
     Point next_tail = get_next(tail, direction_tail);
-    SnakeDirection direction_tail_next = get_direction(next_tail);
-    set(next_tail,  Type::SNAKE | SnakePart::TAIL | direction_tail_next);
-    set(tail,       Type::FIELD | FieldType::GRASS);
-    tail = next_tail;
+    if (next_tail != head)
+    {
+        SnakeDirection direction_tail_next = get_direction(next_tail);
+        set(next_tail,  Type::SNAKE | SnakePart::TAIL | direction_tail_next);
+        set(tail,       Type::FIELD | FieldType::GRASS);
+        tail = next_tail;
+    }
 }
 
-void SnakeGame::eat(Point& what_to_eat)
+void SnakeGame::eat(Point& where_to_eat, FoodType what_to_eat)
 {
-    food.remove(what_to_eat);
+    food.remove(where_to_eat);
     place_food();
+    switch (what_to_eat)
+    {
+    case INCREMENT:
+        break;
+    case DECREMENT:
+        move_tail();
+        move_tail();
+        break;
+    case SPEED_UP:
+        speed_up();
+        break;
+    case SLOW_DOWN:
+        slow_down();
+        break;
+    }
+}
+
+void SnakeGame::speed_up()
+{
+    if (current_speed < MAX_SPEED)
+    {
+        current_speed++;
+    }
+}
+
+void SnakeGame::slow_down()
+{
+    if (current_speed > 0)
+    {
+        current_speed--;
+    }
 }
 
 bool SnakeGame::place_food()
@@ -235,7 +271,7 @@ uint8_t SnakeGame::get_food()
     }
     else
     {
-        food_type = FoodType::SPEED_DOWN;
+        food_type = FoodType::SLOW_DOWN;
     }
     return Type::FOOD | food_type;
 }
@@ -351,6 +387,11 @@ void SnakeGame::place_snake(uint8_t start_x, uint8_t start_y, uint8_t length)
     set(head.x, head.y, Type::SNAKE | SnakePart::HEAD | SnakeDirection::RIGHT);
 }
 
+void SnakeGame::place_walls()
+{
+//    place_wall<12, 8>(10, 4, &Walls::TUNNEL);
+}
+
 void SnakeGame::draw()
 {
     for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
@@ -401,7 +442,7 @@ void SnakeGame::draw()
                case SPEED_UP:
                   color = FOOD_SPEED_UP_COLOR;
                   break;
-               case SPEED_DOWN:
+               case SLOW_DOWN:
                   color = FOOD_SPEED_DOWN_COLOR;
                }
                break;

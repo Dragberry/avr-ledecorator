@@ -21,7 +21,7 @@ struct BitMap
 		 return pgm_read_byte(&height);
 	}
 
-	const uint8_t get_bit(const uint8_t x, const uint8_t y) const
+	const bool get_bit(const uint8_t x, const uint8_t y) const
 	{
 		const uint16_t flat_index = y * get_width() + x;
 		const uint8_t byte_index = flat_index / 8;

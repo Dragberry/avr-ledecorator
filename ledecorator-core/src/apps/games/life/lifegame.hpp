@@ -17,10 +17,12 @@ private:
 
 	uint8_t alive_indicator;
 
-	uint8_t field[SCREEN_HEIGHT][SCREEN_WIDTH];
+	uint8_t field[SCREEN_HEIGHT][SCREEN_WIDTH] = { };
 
 	volatile uint16_t time;
 	volatile bool is_step_required;
+
+	bool is_random;
 
 public:
 	LifeGame();
@@ -28,7 +30,7 @@ public:
 	~LifeGame();
 
 private:
-	void clear_field();
+	void random_field();
 
 	void build_scene();
 
