@@ -21,9 +21,9 @@ const uint8_t PROGRAMMS = 4;
 void (*programms[])() =
 {
         SnakeGame::runner,
-        ClockApp::runner,
-		LifeGame::runner,
-		WeatherApp::runner,
+//        ClockApp::runner,
+//		LifeGame::runner,
+//		WeatherApp::runner,
 };
 
 int main()

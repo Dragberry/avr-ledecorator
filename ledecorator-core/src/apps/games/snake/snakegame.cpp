@@ -32,18 +32,19 @@ void SnakeGame::run()
     place_food();
     place_food();
 
-    current_speed = MAX_SPEED;
+    current_speed = MAX_SPEED - 2;
     refresh_remaining_time();
     // 0x1E9
     // 0x3D1
-    Timers::T1::start(0x1E9, Timers::Prescaller::F_1024, this);
+    // 0x7A
+    Timers::T1::start(0x7A, Timers::Prescaller::F_1024, this);
     do
     {
         if (!do_step())
         {
             break;
         }
-    } while (time <= 1200);
+    } while (time <= 65535);
     Timers::T1::stop();
 }
 
@@ -86,8 +87,8 @@ bool SnakeGame::move()
     switch (data & MASK_TYPE)
     {
     case FIELD:
-        move_head(next, next_step.direction);
         move_tail();
+        move_head(next, next_step.direction);
         break;
     case FOOD:
         move_head(next, next_step.direction);
@@ -96,8 +97,8 @@ bool SnakeGame::move()
     case SNAKE:
         if (next == tail)
         {
-            move_head(next, next_step.direction);
             move_tail();
+            move_head(next, next_step.direction);
         }
         else
         {
@@ -129,7 +130,7 @@ void SnakeGame::make_decision()
             {
                 return true;
             }
-            if (i.distance == j.distance)
+            else if(i.distance == j.distance)
             {
                 return rand() % 2;
             }
@@ -171,13 +172,10 @@ void SnakeGame::move_tail()
 {
     SnakeDirection direction_tail = get_direction(tail);
     Point next_tail = get_next(tail, direction_tail);
-    if (next_tail != head)
-    {
-        SnakeDirection direction_tail_next = get_direction(next_tail);
-        set(next_tail,  Type::SNAKE | SnakePart::TAIL | direction_tail_next);
-        set(tail,       Type::FIELD | FieldType::GRASS);
-        tail = next_tail;
-    }
+    SnakeDirection direction_tail_next = get_direction(next_tail);
+    set(next_tail, Type::SNAKE | SnakePart::TAIL | direction_tail_next);
+    set(tail, Type::FIELD | FieldType::GRASS);
+    tail = next_tail;
 }
 
 void SnakeGame::eat(Point& where_to_eat, FoodType what_to_eat)
@@ -418,13 +416,12 @@ void SnakeGame::draw()
                switch (data & MASK_SNAKE_PART)
                {
                case SnakePart::BODY:
+               case SnakePart::TAIL:
                    color = SNAKE_COLOR;
                    break;
                case SnakePart::HEAD:
                    color = SNAKE_HEAD_COLOR;
                    break;
-               case SnakePart::TAIL:
-                   color = SNAKE_COLOR;
                    break;
                default:
                    break;

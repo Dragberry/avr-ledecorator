@@ -29,7 +29,7 @@ private:
 
     char date_string_value[9];
 
-   DrawableString3x5 date_string;
+    DrawableString3x5 date_string;
 
 public:
     ClockApp();

@@ -67,10 +67,10 @@ private:
         INCREMENT   = 0b00000000,
         DECREMENT   = 0b00000100,
         SPEED_UP    = 0b00001000,
-        SLOW_DOWN  = 0b00001100,
+        SLOW_DOWN   = 0b00001100,
     };
 
-    const static uint8_t MAX_SPEED = 20;
+    const static uint8_t MAX_SPEED = 40;
     const static uint8_t MIN_SPEED = 1;
 
     volatile uint16_t time;

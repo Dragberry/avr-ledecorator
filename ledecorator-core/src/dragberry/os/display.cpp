@@ -103,7 +103,15 @@ void display::update_requsted()
 void display::update_assured()
 {
     #ifndef DISPLAY_DEBUG
-	    while (transmitter.state != Transmitter::IDLE);
+        uint16_t watchdog_timer = 0;
+	    while (transmitter.state != Transmitter::IDLE)
+	    {
+	        if (watchdog_timer++ == 65535)
+	        {
+	            transmitter.state = Transmitter::IDLE;
+	            break;
+	        }
+	    }
 	    buffers.swap();
 	    transmitter.start_new_frame();
     #endif
