@@ -3,13 +3,14 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include "../../../dragberry/os.hpp"
 #include "../../../dragberry/os/display.hpp"
 #include "../../../dragberry/os/io.hpp"
 
 #define ALIVE_INDICATOR_01 0b00000001
 #define ALIVE_INDICATOR_10 0b00000010
 
-class LifeGame : public Timers::T1::Handler
+class LifeGame : public Timer
 {
 private:
 	uint8_t color_life;
@@ -41,7 +42,7 @@ public:
 
 	void run();
 
-	void on_timer1_event();
+	void on_timer_event();
 
 	template <uint8_t width, uint8_t height>
 	void place_entity(

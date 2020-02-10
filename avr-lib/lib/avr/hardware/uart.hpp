@@ -35,6 +35,7 @@
 	#define UART_TXC 	TXC0
 	#define UART_TXEN 	TXEN0
 	#define UART_TXCIE 	TXCIE0
+    #define UART_UDRIE  UDRIE0
 	#define UART_UBRRH	UBRR0H
 	#define UART_UBRRL	UBRR0L
 	#define UART_U2X	U2X0
@@ -56,6 +57,7 @@ namespace UART
 	{
 		B_4_800 = UBRR_2X(4800UL),
 		B_9_600 = UBRR_2X(9600UL),
+		B_230_400 = 10, //UBRR_2X(230400UL),
 		B_250_000 = UBRR_2X(250000UL),
 		B_500_000 = UBRR_2X(500000UL),
 		B_1_250_000 = UBRR_2X(1250000UL),
@@ -72,19 +74,30 @@ namespace UART
 
 	static RxHandler* rx_handler = nullptr;
 
-	void set_rx_handler(RxHandler* rx_handler);
+	void set_rx_handler(RxHandler* rx_handler = nullptr);
 
 	class TxHandler
 	{
 	public:
 		virtual ~TxHandler();
 
-		virtual void handle_tx() = 0;
+		virtual void on_uart_tx_event() = 0;
 	};
 
 	static TxHandler* tx_handler = nullptr;
 
-	void set_tx_handler(TxHandler* tx_handler);
+	void set_tx_handler(TxHandler* tx_handler = nullptr);
+
+	class UdreHandler {
+	public:
+	        virtual ~UdreHandler();
+
+	        virtual void on_uart_udre_event() = 0;
+	};
+
+	static UdreHandler* udre_handler = nullptr;
+
+	void set_udre_handler(UdreHandler* empty_handler = nullptr);
 
 	void init(BaudRate baud_rate);
 

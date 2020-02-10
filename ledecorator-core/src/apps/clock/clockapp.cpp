@@ -1,3 +1,4 @@
+#include <string.h>
 #include "lib/avr/hardware/i2c.hpp"
 #include "clockapp.hpp"
 #include "../../data/font3x5.hpp"
@@ -32,6 +33,10 @@ void ClockApp::runner()
     app.run();
 }
 
+ClockApp::~ClockApp()
+{
+}
+
 void ClockApp::run()
 {
     I2C::init();
@@ -48,11 +53,29 @@ void ClockApp::run()
 //    clock.years(20);
 //    clock.update();
 
-    Timers::T1::start(0x7A1, Timers::Prescaller::F_1024, this);
+    System::register_timer(this, 10);
     while (time < CLOCK_APP_TIME)
     {
         if (update_required)
         {
+            System::out::send_assured([&](RingBuffer<uint8_t, 20>& frame) -> void
+            {
+                char str[20] = { 0 };
+                strcat(str, hh_mm_string_value);
+                strcat(str, ":");
+                strcat(str, ss_string_value);
+                strcat(str, " ");
+                strcat(str, date_string_value);
+
+                uint8_t i = 0;
+                while (str[i] != '\0')
+                {
+                    frame.add(str[i++]);
+                }
+
+                frame.add('\n');
+            });
+
             dragberry::os::display::clear_screen(BLACK);
             hh_mm_string.draw();
             ss_string.draw();
@@ -61,9 +84,10 @@ void ClockApp::run()
             update_required = false;
         }
     }
+    System::deregister_timer(this);
 }
 
-void ClockApp::on_timer1_event()
+void ClockApp::on_timer_event()
 {
     time++;
     clock.refresh();

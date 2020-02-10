@@ -78,6 +78,13 @@ public:
         return item;
     }
 
+    void clear()
+    {
+        head = 0;
+        tail = 0;
+        size = 0;
+    }
+
     bool reset()
     {
         bool is_valid = false;

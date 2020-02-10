@@ -12,6 +12,7 @@
 #define 	outw(addr, data)  	addr = (data)
 #define 	inw(addr)   		(addr)
 #define 	BV(bit)   			(1<<(bit))
+#define     check_bit(addr, bit)(addr, BV(bit))
 #define 	cbi(reg, bit)   	reg &= ~(BV(bit))
 #define 	sbi(reg, bit)   	reg |= (BV(bit))
 

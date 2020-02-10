@@ -1,7 +1,7 @@
 #ifndef CLOCKAPP_HPP_
 #define CLOCKAPP_HPP_
 
-#include "lib/avr/hardware/timers.hpp"
+#include "../../dragberry/os.hpp"
 #include "../../dragberry/os/display.hpp"
 #include "../../dragberry/os/drawablestring5x7.hpp"
 #include "../../dragberry/os/drawablestring3x5.hpp"
@@ -11,7 +11,7 @@
 
 using namespace dragberry::os;
 
-class ClockApp : public Timers::T1::Handler
+class ClockApp : public Timer
 {
 private:
     volatile uint16_t time = 0;
@@ -34,11 +34,13 @@ private:
 public:
     ClockApp();
 
+    ~ClockApp();
+
     static void runner();
 
     void run();
 
-    void on_timer1_event();
+    void on_timer_event();
 
 };
 

@@ -1,8 +1,8 @@
-#include "lifegame.hpp"
-
 #include <stdlib.h>
+#include <string.h>
 #include "lib/screen/definitions.h"
 #include "entities.hpp"
+#include "lifegame.hpp"
 
 #define LIFE_GAME_TIME 300
 
@@ -25,12 +25,12 @@ LifeGame::LifeGame()
 
 	is_step_required = 0;
 	time = 0;
-	Timers::T1::start(0x7A1, Timers::Prescaller::F_1024, this);
+	System::register_timer(this, 10);
 }
 
 LifeGame::~LifeGame()
 {
-	Timers::T1::stop();
+    System::deregister_timer(this);
 }
 
 void LifeGame::random_field()
@@ -138,7 +138,7 @@ void LifeGame::runner()
 	app.run();
 }
 
-void LifeGame::on_timer1_event()
+void LifeGame::on_timer_event()
 {
 	time++;
 	is_step_required = true;
@@ -155,6 +155,21 @@ void LifeGame::run()
 		{
 			build_scene();
 			step_up();
+			System::out::send_assured([&](RingBuffer<uint8_t, 20>& frame) -> void
+            {
+                char str[20] = { 0 };
+                strcat(str, "Time: ");
+                char value[8];
+                strcat(str, ltoa(time, value, 10));
+
+                uint8_t i = 0;
+                while (str[i] != '\0')
+                {
+                    frame.add(str[i++]);
+                }
+
+                frame.add('\n');
+            });
 			is_step_required = false;
 		}
 	}

@@ -1,5 +1,6 @@
 #include <avr/interrupt.h>
 #include "display.hpp"
+#include "../os.hpp"
 
 #ifdef FPS_DEBUG
 #include "fps.hpp"
@@ -18,12 +19,9 @@ inline void display::Buffers::swap()
 	buffer = temp;
 }
 
-display::Transmitter::Transmitter()
+void display::Transmitter::send_byte(const uint8_t byte)
 {
-    #ifndef DISPLAY_DEBUG
-	    UART::init(UART::BaudRate::B_2_500_000);
-	    UART::set_rx_handler(this);
-    #endif
+    UartBus::send_byte(byte);
 }
 
 void display::Transmitter::start_new_frame()
@@ -33,7 +31,7 @@ void display::Transmitter::start_new_frame()
 	#endif
     #ifndef DISPLAY_DEBUG
 		state = FRAME_START;
-	    UART::send_byte(mask_command(CMD_DEFAULT_FRAME_START));
+	    send_byte(mask_command(CMD_DEFAULT_FRAME_START));
     #endif
 }
 
@@ -48,19 +46,20 @@ void display::Transmitter::on_uart_rx_event(const uint8_t byte)
 			if (++y == SCREEN_HEIGHT)
 			{
 				state = FRAME_END;
-				UART::send_byte(mask_command(CMD_DEFAULT_FRAME_END));
+				send_byte(mask_command(CMD_DEFAULT_FRAME_END));
 				return;
 			}
 		}
-		UART::send_byte(buffers.active_buffer[y][x]);
+		send_byte(buffers.active_buffer[y][x]);
 		return;
 	case FRAME_START:
 		y = 0;
 		x = 0;
-		UART::send_byte(buffers.active_buffer[0][0]);
+		send_byte(buffers.active_buffer[0][0]);
 		state = TRANSMIT;
 		return;
 	case FRAME_END:
+		UartBus::free(PC0);
 		state = IDLE;
 		#ifdef FPS_DEBUG
 			fps::count();
@@ -69,6 +68,11 @@ void display::Transmitter::on_uart_rx_event(const uint8_t byte)
 	default:
 		return;
 	}
+}
+
+bool display::is_busy()
+{
+    return transmitter.state != Transmitter::IDLE;
 }
 
 void display::connect()
@@ -103,17 +107,14 @@ void display::update_requsted()
 void display::update_assured()
 {
     #ifndef DISPLAY_DEBUG
-        uint16_t watchdog_timer = 0;
-	    while (transmitter.state != Transmitter::IDLE)
-	    {
-	        if (watchdog_timer++ == 65535)
-	        {
-	            transmitter.state = Transmitter::IDLE;
-	            break;
-	        }
-	    }
-	    buffers.swap();
-	    transmitter.start_new_frame();
+        while (is_busy());
+        while (!UartBus::acquire(PC0, UartBus::BaudRate::B_2_500_000, []() -> void
+            {
+                UartBus::set_rx_handler(&transmitter);
+                buffers.swap();
+                transmitter.start_new_frame();
+            })
+        );
     #endif
 }
 

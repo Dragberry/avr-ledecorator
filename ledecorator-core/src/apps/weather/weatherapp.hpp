@@ -1,16 +1,16 @@
 #ifndef WEATHERAPP_HPP_
 #define WEATHERAPP_HPP_
 
-#include "lib/avr/hardware/timers.hpp"
 #include "pressuresensor.hpp"
 #include "temperaturesensor.hpp"
 #include "../../hardware/bme280/bme280.hpp"
 #include "../../hardware/ds1307/ds1307.hpp"
 #include "../../dragberry/os/drawablestring.hpp"
+#include "../../dragberry/os.hpp"
 
 #define BMP280_ADDR 0xEC
 
-class WeatherApp : public Timers::T1::Handler
+class WeatherApp : public Timer
 {
 private:
     DS1307::Clock clock;
@@ -40,7 +40,7 @@ public:
 
     void run();
 
-    void on_timer1_event();
+    void on_timer_event();
 
     static void delay_ms(uint8_t ms);
 

@@ -5,9 +5,10 @@
 
 class PressureSensor : public Sensor
 {
-private:
+public:
     static const char UNIT[];
 
+private:
     static const uint32_t EEMEM LAST_UPDATED_TIME;
 
     static const RingBuffer<int16_t, 6> EEMEM PRESSURE_DB;

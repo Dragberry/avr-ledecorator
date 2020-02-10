@@ -1,3 +1,79 @@
 #include "os.hpp"
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include "lib/avr/hardware/uart.hpp"
 
-dragberry::os::Program::~Program() { }
+#include <util/delay.h>
+
+using namespace dragberry::os;
+
+volatile uint16_t System::time = 0;
+
+Timer *System::timer = nullptr;
+
+uint16_t System::period = 0;
+
+Timer::~Timer()
+{
+}
+
+void System::register_timer(Timer *timer, uint8_t period)
+{
+    System::period = period * 4;
+    System::timer = timer;
+}
+
+void System::deregister_timer(Timer *timer)
+{
+    System::timer = nullptr;
+    System::period = 0;
+}
+
+inline
+void System::on_system_timer_event()
+{
+    if (time % (period == 0 ? 32 : period) == period / 2)
+    {
+        if (BLE::is_connected())
+        {
+            BLE::run();
+        }
+        else
+        {
+            BLE::stop();
+        }
+    }
+    if (timer != nullptr)
+    {
+        if (time % period == 0)
+        {
+            timer->on_timer_event();
+        }
+    }
+    if (++time == 40000)
+    {
+        time = 0;
+    }
+}
+
+void System::init()
+{
+    UartBus::init();
+
+    cbi(TCCR0B, WGM02);
+    sbi(TCCR0A, WGM01);
+    cbi(TCCR0A, WGM00);
+
+    sbi(TCCR0B, CS02);
+    cbi(TCCR0B, CS01);
+    sbi(TCCR0B, CS00);
+
+    sbi(TIMSK0, OCIE0A);
+
+    outb(OCR0A, 49);
+}
+
+ISR(TIMER0_COMPA_vect)
+{
+    System::on_system_timer_event();
+}

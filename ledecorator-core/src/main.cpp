@@ -21,21 +21,23 @@ const uint8_t PROGRAMMS = 4;
 void (*programms[])() =
 {
         SnakeGame::runner,
-//        ClockApp::runner,
-//		LifeGame::runner,
-//		WeatherApp::runner,
+        ClockApp::runner,
+		LifeGame::runner,
+		WeatherApp::runner,
 };
 
 int main()
 {
-	sei();
-	uint8_t command = 0;
-	while (true)
-	{
-		dragberry::os::run(programms[command++]);
-		 if (command >= PROGRAMMS)
-		 {
-			 command = 0;
-		 }
-	}
+    System::init();
+
+    sei();
+    uint8_t command = 0;
+    while (true)
+    {
+        dragberry::os::run(programms[command++]);
+        if (command >= PROGRAMMS)
+        {
+            command = 0;
+        }
+    }
 }

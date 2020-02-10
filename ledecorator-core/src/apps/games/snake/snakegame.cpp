@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include "snakegame.h"
 #include "../../../util/sorting.hpp"
@@ -23,6 +24,10 @@ void SnakeGame::runner()
 
 void SnakeGame::run()
 {
+    step_string.align = dragberry::os::Align::LEFT;
+    step_string.color = WHITE;
+    step_string.bg_color = BLACK;
+
     place_walls();
     place_snake(0, 8, 5);
 
@@ -32,39 +37,64 @@ void SnakeGame::run()
     place_food();
     place_food();
 
-    current_speed = MAX_SPEED - 2;
+    current_speed = MAX_SPEED;
     refresh_remaining_time();
-    // 0x1E9
-    // 0x3D1
-    // 0x7A
-    Timers::T1::start(0x7A, Timers::Prescaller::F_1024, this);
+    System::register_timer(this, 4);
     do
     {
         if (!do_step())
         {
             break;
         }
-    } while (time <= 65535);
-    Timers::T1::stop();
+    } while (time <= 750);
+    System::deregister_timer(this);
 }
+
+uint16_t SnakeGame::counter = 0;
 
 bool SnakeGame::do_step()
 {
     if (remaining_time == 0)
     {
+        System::out::send_assured([&](RingBuffer<uint8_t, 20>& frame) -> void
+        {
+            char str[20] = { 0 };
+            strcat(str, "[X=");
+            char value[4];
+            strcat(str, itoa(head.x, value, 10));
+            strcat(str, ";Y=");
+            strcat(str, itoa(head.y, value, 10));
+            strcat(str, "]");
+
+            uint8_t i = 0;
+            while (str[i] != '\0')
+            {
+                frame.add(str[i++]);
+            }
+
+            frame.add('\n');
+        });
+
+
         if (!move())
         {
             return false;
         }
+
+
+        itoa(counter, step_string_value, 10);
+        step_string.set_string(step_string_value);
         draw();
-        dragberry::os::display::update_requsted();
+        step_string.draw();
+        dragberry::os::display::update_assured();
         refresh_remaining_time();
         steps++;
+        counter++;
     }
     return true;
 }
 
-void SnakeGame::on_timer1_event()
+void SnakeGame::on_timer_event()
 {
     time++;
     if (remaining_time > 0)

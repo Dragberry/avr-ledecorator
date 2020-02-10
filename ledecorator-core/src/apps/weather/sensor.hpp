@@ -87,6 +87,8 @@ public:
 
     void draw();
 
+    const char* get_value();
+
 private:
     void draw_chart();
 };

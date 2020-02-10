@@ -102,6 +102,11 @@ void Sensor::draw()
     }
 }
 
+const char* Sensor::get_value()
+{
+    return string_value;
+}
+
 void Sensor::draw_chart()
 {
     chart.draw(8, 8, 1, 0);

@@ -191,10 +191,10 @@ void Timers::T0::stop()
 	comp_a_handler = nullptr;
 }
 
-ISR(TIMER0_COMPA_vect)
-{
-	Timers::T0::comp_a_handler->on_timer0_event();
-}
+//ISR(TIMER0_COMPA_vect)
+//{
+//	Timers::T0::comp_a_handler->on_timer0_event();
+//}
 
 void Timers::T1::start(uint16_t counter, Prescaller prescaller, Handler* handler)
 {

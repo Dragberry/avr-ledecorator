@@ -1,10 +1,11 @@
 #include <stdlib.h>
+#include <string.h>
 #include <util/delay.h>
 #include "lib/avr/hardware/i2c.hpp"
 #include "weatherapp.hpp"
 #include "../../dragberry/os.hpp"
 
-#define WEATHER_APP_TIME 500 // x0.1 second
+#define WEATHER_APP_TIME 36 // x0.1 second
 
 WeatherApp::WeatherApp() :
     clock(DS1307::Clock(DS1307_ADDRESS,
@@ -28,7 +29,6 @@ WeatherApp::WeatherApp() :
 
 WeatherApp::~WeatherApp()
 {
-    Timers::T1::stop();
 }
 
 void WeatherApp::runner()
@@ -50,10 +50,29 @@ void WeatherApp::run()
         active_sensor->draw();
         dragberry::os::display::update_assured();
         delay_ms(70);
+        System::out::send_assured([&](RingBuffer<uint8_t, 20>& frame) -> void
+        {
+            char str[20] = { 0 };
+            strcat(str, "T:");
+            strcat(str, temperature_sensor.get_value());
+            strcat(str, TemperatureSensor::UNIT);
+            strcat(str, " | P:");
+            strcat(str, pressure_sensor.get_value());
+            strcat(str, PressureSensor::UNIT);
+
+            uint8_t i = 0;
+            while (str[i] != '\0')
+            {
+                frame.add(str[i++]);
+            }
+
+            frame.add('\n');
+        });
     }
     uint32_t time = get_time();
     temperature_sensor.update(time);
     pressure_sensor.update(time);
+    System::deregister_timer(this);
 }
 
 void WeatherApp::init()
@@ -75,13 +94,13 @@ void WeatherApp::init()
             BME280_STANDBY_SEL
     );
     device.set_sensor_mode(BME280_NORMAL_MODE);
-    Timers::T1::start(0x7A1, Timers::Prescaller::F_1024, this);
+    System::register_timer(this, 100);
 }
 
-void WeatherApp::on_timer1_event()
+void WeatherApp::on_timer_event()
 {
     time++;
-    uint16_t sensor_up_time = time % 120;
+    uint16_t sensor_up_time = time % 12;
     if (sensor_up_time == 0)
     {
         if (++active_sensor_index == 2)
@@ -92,11 +111,11 @@ void WeatherApp::on_timer1_event()
     }
     else
     {
-        if (sensor_up_time < 60)
+        if (sensor_up_time < 6)
         {
             active_sensor->display_mode = Sensor::DisplayMode::VALUE;
         }
-        else if (sensor_up_time < 90)
+        else if (sensor_up_time < 9)
         {
             active_sensor->display_mode = Sensor::DisplayMode::CHART_Y_AXIS;
         }

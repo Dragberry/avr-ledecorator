@@ -2,11 +2,10 @@
 #define DRAGBERRY_DISPLAY_HPP_
 
 #include <stdint.h>
-#include "lib/avr/hardware/timers.hpp"
-#include "lib/avr/hardware/uart.hpp"
 #include "lib/screen/colors.h"
 #include "lib/screen/commands.h"
 #include "lib/screen/definitions.h"
+#include "../../dragberry/uartbus.hpp"
 #include "../../data/bitmap.hpp"
 #include "../../data/image.hpp"
 #include "../../data/imagemono8x8.hpp"
@@ -35,7 +34,7 @@ namespace dragberry
 			};
 
 		public:
-			class Transmitter : public UART::RxHandler
+			class Transmitter : public UartBus::RxHandler
 			{
 			private:
 				uint8_t y = 0;
@@ -51,15 +50,19 @@ namespace dragberry
 				} state = IDLE;
 
 			public:
-				Transmitter();
+				void send_byte(const uint8_t byte);
 
-			public:
+				void confirm_byte();
+
 				void start_new_frame();
 
 				void on_uart_rx_event(const uint8_t byte);
+
 			};
 
 		public:
+			static bool is_busy();
+
 			static void connect();
 
 			static void disconnect();
