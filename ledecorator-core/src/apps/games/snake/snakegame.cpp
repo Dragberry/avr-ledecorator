@@ -24,10 +24,6 @@ void SnakeGame::runner()
 
 void SnakeGame::run()
 {
-    step_string.align = dragberry::os::Align::LEFT;
-    step_string.color = WHITE;
-    step_string.bg_color = BLACK;
-
     place_walls();
     place_snake(0, 8, 5);
 
@@ -50,46 +46,19 @@ void SnakeGame::run()
     System::deregister_timer(this);
 }
 
-uint16_t SnakeGame::counter = 0;
-
 bool SnakeGame::do_step()
 {
     if (remaining_time == 0)
     {
-        System::out::send_assured([&](RingBuffer<uint8_t, 20>& frame) -> void
-        {
-            char str[20] = { 0 };
-            strcat(str, "[X=");
-            char value[4];
-            strcat(str, itoa(head.x, value, 10));
-            strcat(str, ";Y=");
-            strcat(str, itoa(head.y, value, 10));
-            strcat(str, "]");
-
-            uint8_t i = 0;
-            while (str[i] != '\0')
-            {
-                frame.add(str[i++]);
-            }
-
-            frame.add('\n');
-        });
-
-
         if (!move())
         {
             return false;
         }
 
-
-        itoa(counter, step_string_value, 10);
-        step_string.set_string(step_string_value);
         draw();
-        step_string.draw();
         dragberry::os::display::update_assured();
         refresh_remaining_time();
         steps++;
-        counter++;
     }
     return true;
 }
@@ -105,35 +74,64 @@ void SnakeGame::on_timer_event()
 
 bool SnakeGame::move()
 {
-    make_decision();
-    PossibleStep next_step = possible_steps[0];
-    if (next_step.priority == SnakeGame::PossibleStep::Priority::IMPOSSIBLE)
-    {
-        return false;
-    }
+//    make_decision();
+//    PossibleStep next_step = possible_steps[0];
+//    if (next_step.priority == SnakeGame::PossibleStep::Priority::IMPOSSIBLE)
+//    {
+//        return false;
+//    }
+//
+//    Point next = get_next(head, next_step.direction);
 
-    Point next = get_next(head, next_step.direction);
+    volatile SnakeDirection direction = get_direction(head);
+    System::io::exchange(
+        [&](char* frame) -> void
+        {
+            char value[4];
+            strcat(frame, "[X=");
+            strcat(frame, itoa(head.x, value, 10));
+            strcat(frame, ";Y=");
+            strcat(frame, itoa(head.y, value, 10));
+            strcat(frame, "]");
+        },
+        [&](char* frame) -> void
+        {
+            switch (frame[0])
+            {
+                case 'a':
+                    direction = turn_left(direction);
+                    break;
+                case 'b':
+                    direction = turn_right(direction);
+                    break;
+                default:
+                    break;
+            }
+        }
+    );
+    Point next = get_next(head, direction);
+
     uint8_t data = field[next.y][next.x];
     switch (data & MASK_TYPE)
     {
     case FIELD:
         move_tail();
-        move_head(next, next_step.direction);
+        move_head(next, direction);
         break;
     case FOOD:
-        move_head(next, next_step.direction);
+        move_head(next, direction);
         eat(next, (FoodType)(data & MASK_FOOD_TYPE));
         break;
     case SNAKE:
         if (next == tail)
         {
             move_tail();
-            move_head(next, next_step.direction);
+            move_head(next, direction);
         }
         else
         {
             eat_yourself(next);
-            move_head(next, next_step.direction);
+            move_head(next, direction);
         }
         break;
     case WALL:
@@ -144,29 +142,30 @@ bool SnakeGame::move()
 
 void SnakeGame::make_decision()
 {
-    SnakeDirection direction = get_direction(head);
-    possible_step(direction, possible_steps[0]);
-    possible_step(turn_left(direction), possible_steps[1]);
-    possible_step(turn_right(direction), possible_steps[2]);
-
-    sort(possible_steps, 3, [](PossibleStep& i, PossibleStep& j) -> bool {
-        if (i.priority > j.priority)
-        {
-            return true;
-        }
-        if (i.priority == j.priority)
-        {
-            if (i.distance > j.distance)
-            {
-                return true;
-            }
-            else if(i.distance == j.distance)
-            {
-                return rand() % 2;
-            }
-        }
-        return false;
-    });
+//
+//    direction = get_direction(head);
+//    possible_step(direction, possible_steps[0]);
+//    possible_step(turn_left(direction), possible_steps[1]);
+//    possible_step(turn_right(direction), possible_steps[2]);
+//
+//    sort(possible_steps, 3, [](PossibleStep& i, PossibleStep& j) -> bool {
+//        if (i.priority > j.priority)
+//        {
+//            return true;
+//        }
+//        if (i.priority == j.priority)
+//        {
+//            if (i.distance > j.distance)
+//            {
+//                return true;
+//            }
+//            else if(i.distance == j.distance)
+//            {
+//                return rand() % 2;
+//            }
+//        }
+//        return false;
+//    });
 }
 
 void SnakeGame::possible_step(SnakeDirection direction, PossibleStep& step)

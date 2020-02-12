@@ -5,19 +5,12 @@
 #include "../../../dragberry/os.hpp"
 #include "../../../dragberry/os/display.hpp"
 #include "../../../util/arraylist.hpp"
-#include "../../../dragberry/os/drawablestring3x5.hpp"
 
 class SnakeGame : public Timer
 {
 public:
     uint8_t period = 0;
 private:
-    static uint16_t counter;
-
-    char step_string_value[7];
-
-    dragberry::os::DrawableString3x5 step_string = dragberry::os::DrawableString3x5(0, 0, 20, 5);
-
     static const uint8_t FIELD_COLOR        = 0b00000100;
     static const uint8_t SNAKE_COLOR        = WHITE;
     static const uint8_t SNAKE_HEAD_COLOR   = YELLOW;

@@ -7,9 +7,9 @@ uint8_t BLE::lifetime = 0;
 
 uint8_t BLE::counter = 0;
 
-RingBuffer<uint8_t, 20> BLE::rx_buffer;
+Frame BLE::rx_frame;
 
-RingBuffer<uint8_t, 20> BLE::tx_buffer;
+Frame BLE::tx_frame;
 
 volatile BLE::State BLE::state = BLE::State::IDLE;
 
@@ -19,8 +19,8 @@ BLE::UartHandler::~UartHandler()
 
 void BLE::UartHandler::on_uart_rx_event(const uint8_t byte)
 {
-    rx_buffer.offer(byte);
-    if (rx_buffer.is_full())
+    rx_frame.add(byte);
+    if (rx_frame.is_full())
     {
         stop();
     }
@@ -28,14 +28,13 @@ void BLE::UartHandler::on_uart_rx_event(const uint8_t byte)
 
 void BLE::UartHandler::on_uart_udre_event()
 {
-    if (!tx_buffer.is_empty())
+    if (!tx_frame.is_empty())
     {
-        UartBus::send_byte(tx_buffer.poll());
+        UartBus::send_byte(tx_frame.poll());
     }
     else
     {
         state = RECEIVING;
-        stop();
     }
 }
 
@@ -59,15 +58,21 @@ void BLE::timeout()
     }
 }
 
+bool BLE::start(void (*callback)())
+{
+    return true;
+}
+
 bool BLE::start()
 {
     return UartBus::acquire(PC1, UartBus::BaudRate::B_230_400, []() -> void
     {
         UartBus::set_rx_handler(&uart_handler);
         UartBus::set_udre_handler(&uart_handler);
-        UartBus::send_byte(tx_buffer.poll());
+        UartBus::send_byte(tx_frame.poll());
         lifetime = TIMEOUT;
         state = TRANSMITTING;
+        rx_frame.clear();
     });
 }
 
@@ -95,8 +100,6 @@ void BLE::stop()
 {
     if (is_busy())
     {
-        tx_buffer.clear();
-        rx_buffer.clear();
         UartBus::free(PC1);
         state = IDLE;
     }
@@ -109,17 +112,17 @@ void BLE::idle()
     itoa(counter++, counter_string, 10);
 
 
-    tx_buffer.add('i');
-    tx_buffer.add('d');
-    tx_buffer.add('l');
-    tx_buffer.add('e');
+    tx_frame.add('i');
+    tx_frame.add('d');
+    tx_frame.add('l');
+    tx_frame.add('e');
 
     uint8_t i = 0;
     while(counter_string[i] != '\0')
     {
-       tx_buffer.add(counter_string[i++]);
+       tx_frame.add(counter_string[i++]);
     }
 
-    tx_buffer.add('\n');
+    tx_frame.add('\n');
     state = State::READY;
 }

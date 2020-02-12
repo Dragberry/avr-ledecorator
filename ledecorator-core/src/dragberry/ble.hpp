@@ -2,8 +2,8 @@
 #define BLE_HPP_
 
 #include <stdint.h>
+#include "frame.hpp"
 #include "uartbus.hpp"
-#include "../util/ringbuffer.hpp"
 
 class BLE
 {
@@ -15,9 +15,9 @@ private:
     static uint8_t counter;
 
 public:
-    static RingBuffer<uint8_t, 20> tx_buffer;
+    static Frame tx_frame;
 
-    static RingBuffer<uint8_t, 20> rx_buffer;
+    static Frame rx_frame;
 
 private:
     static class UartHandler :
@@ -48,6 +48,8 @@ public:
     static bool is_busy();
 
     static bool is_connected();
+
+    static bool start(void (*callback)());
 
     static bool start();
 

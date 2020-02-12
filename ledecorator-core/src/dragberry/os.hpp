@@ -41,6 +41,38 @@ public:
 
     static void on_system_timer_event();
 
+    class io
+    {
+    public:
+        template <typename In, typename Out>
+        static void exchange(Out&& out, In&& in)
+        {
+            if (BLE::is_connected())
+            {
+                char data[20] = { 0 };
+                out(data);
+
+                while (BLE::is_busy());
+                BLE::state = BLE::State::PREPARING;
+                uint8_t i = 0;
+                while (data[i] != '\0' &&i < 20 && !BLE::tx_frame.is_full())
+                {
+                    BLE::tx_frame.add(data[i++]);
+                }
+                BLE::state = BLE::State::READY;
+                while (!BLE::start());
+
+                while (BLE::state != BLE::State::IDLE);
+                uint8_t y = 0;
+                while (y < 20 && !BLE::rx_frame.is_empty())
+                {
+                    data[y++] = BLE::rx_frame.poll();
+                }
+                in(data);
+            }
+        }
+    };
+
     class out
     {
     public:
@@ -49,7 +81,7 @@ public:
         {
             while (BLE::is_busy());
             BLE::state = BLE::State::PREPARING;
-            frame_builder(BLE::tx_buffer);
+            frame_builder(BLE::tx_frame);
             BLE::state = BLE::State::READY;
             while (!BLE::start());
         }
@@ -60,7 +92,7 @@ public:
             if (!BLE::is_busy())
             {
                 BLE::state = BLE::State::PREPARING;
-                frame_builder(BLE::tx_buffer);
+                frame_builder(BLE::tx_frame);
                 BLE::state = BLE::State::READY;
             }
         }
