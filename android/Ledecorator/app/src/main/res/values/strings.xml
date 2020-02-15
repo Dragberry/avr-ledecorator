@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Ledecorator</string>
+    <string name="scan">Scan</string>
+    <string name="status_disconnected">DISCONNECTED</string>
+    <string name="status_connected">CONNECTED</string>
+    <string name="scan_devices">Scan Devices</string>
+    <string name="cancel">Cancel</string>
+    <string name="refresh">Refresh</string>
+    <string name="available_devices">Available Devices</string>
 </resources>
