@@ -1,10 +1,15 @@
 package org.dragberry.ledecorator
 
 import android.app.Activity
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothManager
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanResult
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Parcelable
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,44 +21,68 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.parcel.Parcelize
+
+private const val TAG = "SelectBleDeviceActivity"
+private const val ENABLE_BT_REQUEST = 2
 
 class SelectBleDeviceActivity : AppCompatActivity() {
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var viewManager: RecyclerView.LayoutManager
-    private lateinit var viewAdapter: BleDeviceAdapter
+    private lateinit var bleDeviceListRecyclerView: RecyclerView
+    private lateinit var bleDeviceListViewManager: RecyclerView.LayoutManager
+    private lateinit var bleDeviceListAdapter: BleDeviceListAdapter
+    private val bleDeviceList: MutableList<BluetoothDevice> = mutableListOf()
+
+    private val bluetoothManager: BluetoothManager? by lazy {
+        getSystemService(BluetoothManager::class.java)?.apply {
+            startActivityForResult(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), ENABLE_BT_REQUEST)
+        }
+    }
+
+    private val bluetoothAdapter: BluetoothAdapter? by lazy(LazyThreadSafetyMode.NONE) {
+        bluetoothManager?.adapter
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_ble_device)
 
-        viewManager = LinearLayoutManager(this)
-        viewAdapter = BleDeviceAdapter().apply {
-            submitList(mutableListOf(
-                BleDevice("111", "One"),
-                BleDevice("222", "Two"),
-                BleDevice("333", "Three"),
-                BleDevice("444", "Four"),
-                BleDevice("555", "Five"),
-                BleDevice("666", "Six"),
-                BleDevice("777", "Seven"),
-                BleDevice("888", "Eight"),
-                BleDevice("999", "Nine"),
-                BleDevice("1010", "Ten"),
-                BleDevice("1111", "Elven"),
-                BleDevice("1212", "Twelve")
-            ))
+
+        bleDeviceListViewManager = LinearLayoutManager(this)
+        bleDeviceListAdapter = BleDeviceListAdapter().apply {
+            submitList(bleDeviceList)
         }
-        recyclerView = findViewById<RecyclerView>(R.id.availableBleDevicesListView).apply {
-            layoutManager = viewManager
-            adapter = viewAdapter
+        bleDeviceListRecyclerView = findViewById<RecyclerView>(R.id.availableBleDevicesListView).apply {
+            layoutManager = bleDeviceListViewManager
+            adapter = bleDeviceListAdapter
 
         }
     }
 
-    private inner class BleDeviceAdapter(private var selectedIndex: Int = -1) :
-        ListAdapter<BleDevice, BleDeviceAdapter.BleDeviceViewHolder>(BleDeviceDiffCallback()) {
+    private val scanCallback: ScanCallback  = object : ScanCallback()
+    {
+        override fun onScanResult(callbackType: Int, result: ScanResult?) {
+            Log.i(TAG, "On scan result: $callbackType : $result")
+            result?.apply {
+
+                if (bleDeviceList.find { it.address == result.device.address } == null) {
+                    bleDeviceList.add(result.device)
+                }
+                bleDeviceListAdapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    fun scanBleDevices(view: View) {
+        Handler().postDelayed({
+            Log.i(TAG, "Stop scanning...")
+            bluetoothAdapter?.bluetoothLeScanner?.stopScan(scanCallback)
+        }, 10000)
+        Log.i(TAG, "Start scanning...")
+        bluetoothAdapter?.bluetoothLeScanner?.startScan(scanCallback)
+    }
+
+    private inner class BleDeviceListAdapter(private var selectedIndex: Int = -1) :
+        ListAdapter<BluetoothDevice, BleDeviceListAdapter.BleDeviceViewHolder>(BleDeviceDiffCallback()) {
 
         inner class BleDeviceViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
@@ -67,10 +96,9 @@ class SelectBleDeviceActivity : AppCompatActivity() {
                     addressView = findViewById(R.id.deviceAddressTextView)
                     actionButton = findViewById(R.id.bleDeviceButton)
                 }
-
             }
 
-            fun bind(item: BleDevice) {
+            fun bind(item: BluetoothDevice) {
                 nameView.text = item.name
                 addressView.text = item.address
                 actionButton.visibility = View.GONE
@@ -83,7 +111,7 @@ class SelectBleDeviceActivity : AppCompatActivity() {
                             visibility = View.VISIBLE
                             setOnClickListener {
                                 setResult(Activity.RESULT_OK, Intent().apply {
-                                    putExtra("device", item)
+                                    putExtra(BluetoothDevice::class.java.name, item)
                                 })
                                 finish()
                             }
@@ -92,7 +120,7 @@ class SelectBleDeviceActivity : AppCompatActivity() {
                             notifyItemChanged(selectedIndex)
                             selectedIndex = adapterPosition
                         }
-                        Log.i(BleDeviceAdapter::class.java.name, "Clicked: ${item.name}")
+                        Log.i(BleDeviceListAdapter::class.java.name, "Clicked: ${item.name}")
                     }
                 }
             }
@@ -106,19 +134,15 @@ class SelectBleDeviceActivity : AppCompatActivity() {
         }
     }
 
-    private class BleDeviceDiffCallback : DiffUtil.ItemCallback<BleDevice>() {
+    private class BleDeviceDiffCallback : DiffUtil.ItemCallback<BluetoothDevice>() {
 
-        override fun areItemsTheSame(oldItem: BleDevice, newItem: BleDevice): Boolean {
+        override fun areItemsTheSame(oldItem: BluetoothDevice, newItem: BluetoothDevice): Boolean {
             return oldItem.address == newItem.address
         }
 
-        override fun areContentsTheSame(oldItem: BleDevice, newItem: BleDevice): Boolean {
+        override fun areContentsTheSame(oldItem: BluetoothDevice, newItem: BluetoothDevice): Boolean {
             return oldItem.address == newItem.address
         }
     }
-
-    @Parcelize
-    class BleDevice(val address: String, val name: String) : Parcelable
-
 }
 
