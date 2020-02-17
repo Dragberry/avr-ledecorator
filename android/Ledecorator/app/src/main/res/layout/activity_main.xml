@@ -14,18 +14,15 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/statusView"
+            android:id="@+id/selectedBleDeviceStatusTextView"
             android:layout_width="0dp"
             android:layout_height="26dp"
             android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:text="@string/status_disconnected"
             android:textSize="18sp"
-            app:layout_constraintEnd_toStartOf="@+id/selectBleDeviceButton"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintEnd_toStartOf="@+id/connectBleDeviceButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,7 +37,7 @@
             android:layout_marginRight="16dp"
             app:layout_constraintEnd_toStartOf="@+id/selectBleDeviceButton"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/statusView" />
+            app:layout_constraintTop_toBottomOf="@+id/selectedBleDeviceStatusTextView" />
 
         <Button
             android:id="@+id/selectBleDeviceButton"
@@ -48,10 +45,19 @@
             android:layout_height="50dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:onClick="selectBleDevice"
             android:text="@string/select"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <Switch
+            android:id="@+id/connectBleDeviceButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toStartOf="@+id/selectBleDeviceButton"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

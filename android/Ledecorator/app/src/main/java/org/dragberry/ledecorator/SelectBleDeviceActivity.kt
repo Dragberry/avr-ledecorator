@@ -27,10 +27,15 @@ private const val ENABLE_BT_REQUEST = 2
 
 class SelectBleDeviceActivity : AppCompatActivity() {
 
+    private lateinit var scanBleDevicesButton: Button
+
     private lateinit var bleDeviceListRecyclerView: RecyclerView
     private lateinit var bleDeviceListViewManager: RecyclerView.LayoutManager
     private lateinit var bleDeviceListAdapter: BleDeviceListAdapter
     private val bleDeviceList: MutableList<BluetoothDevice> = mutableListOf()
+
+    private var scanning = false
+    private val handler = Handler()
 
     private val bluetoothManager: BluetoothManager? by lazy {
         getSystemService(BluetoothManager::class.java)?.apply {
@@ -46,6 +51,7 @@ class SelectBleDeviceActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_ble_device)
 
+        scanBleDevicesButton = findViewById(R.id.scanBleDevicesButton)
 
         bleDeviceListViewManager = LinearLayoutManager(this)
         bleDeviceListAdapter = BleDeviceListAdapter().apply {
@@ -63,7 +69,6 @@ class SelectBleDeviceActivity : AppCompatActivity() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             Log.i(TAG, "On scan result: $callbackType : $result")
             result?.apply {
-
                 if (bleDeviceList.find { it.address == result.device.address } == null) {
                     bleDeviceList.add(result.device)
                 }
@@ -73,12 +78,28 @@ class SelectBleDeviceActivity : AppCompatActivity() {
     }
 
     fun scanBleDevices(view: View) {
-        Handler().postDelayed({
-            Log.i(TAG, "Stop scanning...")
-            bluetoothAdapter?.bluetoothLeScanner?.stopScan(scanCallback)
-        }, 10000)
+        if (scanning) {
+            stopScan()
+        } else {
+            handler.postDelayed({ stopScan() }, 10000)
+            startScan()
+        }
+    }
+
+    private fun startScan() {
         Log.i(TAG, "Start scanning...")
+        scanning = true
+        scanBleDevicesButton.text = getString(R.string.stop)
+        bleDeviceList.clear()
         bluetoothAdapter?.bluetoothLeScanner?.startScan(scanCallback)
+    }
+
+    private fun stopScan() {
+        Log.i(TAG, "Stop scanning...")
+        bluetoothAdapter?.bluetoothLeScanner?.stopScan(scanCallback)
+        scanning = false
+        scanBleDevicesButton.text = getString(R.string.scan)
+        handler.removeCallbacksAndMessages(null)
     }
 
     private inner class BleDeviceListAdapter(private var selectedIndex: Int = -1) :
@@ -94,7 +115,7 @@ class SelectBleDeviceActivity : AppCompatActivity() {
                 view.apply {
                     nameView = findViewById(R.id.deviceNameTextView)
                     addressView = findViewById(R.id.deviceAddressTextView)
-                    actionButton = findViewById(R.id.bleDeviceButton)
+                    actionButton = findViewById(R.id.selectBleDeviceButton)
                 }
             }
 
