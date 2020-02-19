@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 private const val TAG = "SelectBleDeviceActivity"
 private const val ENABLE_BT_REQUEST = 2
+private const val ENABLE_FINE_LOCATION_REQUEST = 3
 
 class SelectBleDeviceActivity : AppCompatActivity() {
 
@@ -40,6 +41,9 @@ class SelectBleDeviceActivity : AppCompatActivity() {
     private val bluetoothManager: BluetoothManager? by lazy {
         getSystemService(BluetoothManager::class.java)?.apply {
             startActivityForResult(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), ENABLE_BT_REQUEST)
+        }
+        getSystemService(BluetoothManager::class.java)?.apply {
+            startActivityForResult(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), ENABLE_FINE_LOCATION_REQUEST)
         }
     }
 
