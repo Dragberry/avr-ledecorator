@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +30,16 @@ class MainActivity : AppCompatActivity() {
     private var bluetoothGatt: BluetoothGatt? = null
     private var bluetoothDevice: BluetoothDevice? = null
 
+    private var leftButton: Button? = null
+    private var rightButton: Button? = null
+
+    enum class Action {
+        NO_ACTION, TURN_LEFT, TURN_RIGHT
+    }
+
+    @Volatile
+    private var action = Action.NO_ACTION
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -39,15 +50,51 @@ class MainActivity : AppCompatActivity() {
             visibility = View.INVISIBLE
             setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                    bluetoothGatt = bluetoothDevice?.connectGatt(this@MainActivity, true, GattCallback())
+                    connect()
                 } else {
-                    if (bluetoothGatt != null) {
-                        bluetoothGatt?.disconnect()
-                    }
+                    disconnect()
                 }
             }
         }
+
+        leftButton = findViewById<Button>(R.id.leftButton).apply {
+            setOnClickListener {
+                Log.i(TAG, "LEFT")
+                action = Action.TURN_LEFT
+            }
+        }
+        rightButton = findViewById<Button>(R.id.rightButton).apply {
+            setOnClickListener {
+                Log.i(TAG, "RIGHT")
+                action = Action.TURN_RIGHT
+            }
+        }
     }
+
+    override fun onPause() {
+        connectBleDeviceButton.isChecked = false
+        super.onPause()
+    }
+
+    private fun connect() {
+        bluetoothGatt = bluetoothDevice?.connectGatt(this@MainActivity, true, GattCallback())
+    }
+
+    private fun disconnect() {
+        bluetoothGatt?.close()
+        bluetoothGatt?.disconnect()
+        bluetoothGatt = null
+    }
+
+    class DataFrame {
+        private val data: ByteArray = ByteArray(20)
+
+        fun build(newData: ByteArray ) {
+            newData.copyInto(data)
+        }
+    }
+
+    val dataFrame = DataFrame()
 
     inner class GattCallback : BluetoothGattCallback() {
 
@@ -69,7 +116,20 @@ class MainActivity : AppCompatActivity() {
             characteristic: BluetoothGattCharacteristic?
         ) {
             Log.i(TAG, "onCharacteristicChanged: $gatt | characteristic: ${characteristic?.value?.toString(StandardCharsets.US_ASCII)}")
-            gatt?.writeCharacteristic(characteristic?.apply { value = "aaaaaaaaaaaaaaaaaaaa".toByteArray(StandardCharsets.US_ASCII) } )
+            gatt?.writeCharacteristic(characteristic?.apply {
+                value =
+                    when (action) {
+                        Action.TURN_RIGHT -> {
+                            "bbbbbbbbbbbbbbbbbbbb"
+                        }
+                        Action.TURN_LEFT -> {
+                            "aaaaaaaaaaaaaaaaaaaa"
+                        }
+                        else ->
+                            "00000000000000000000"
+                    }.toByteArray(StandardCharsets.US_ASCII)
+            })
+            action = Action.NO_ACTION
         }
 
         override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {

@@ -138,6 +138,7 @@ class SelectBleDeviceActivity : AppCompatActivity() {
                                 setResult(Activity.RESULT_OK, Intent().apply {
                                     putExtra(BluetoothDevice::class.java.name, item)
                                 })
+                                stopScan()
                                 finish()
                             }
                         }
