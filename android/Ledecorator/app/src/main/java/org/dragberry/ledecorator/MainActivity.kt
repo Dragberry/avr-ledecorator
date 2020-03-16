@@ -7,11 +7,15 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import org.dragberry.ledecorator.apps.LedecoratorApp
+import org.dragberry.ledecorator.apps.LedecoratorAppFragment
 import java.nio.charset.StandardCharsets
 import java.util.*
+
 
 private const val GENERIC_CHARACTERISTIC = "00001801-0000-1000-8000-00805f9b34fb"
 
@@ -19,7 +23,7 @@ private const val TAG = "MainActivity"
 
 private const val SELECT_BLE_DEVICE_REQUEST = 1
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), LedecoratorAppFragment.LedecoratorAppInteractionListener {
 
     private val GENERIC_CHARACTERISTIC_UUID = UUID.fromString(GENERIC_CHARACTERISTIC)
 
@@ -87,6 +91,13 @@ class MainActivity : AppCompatActivity() {
     private fun connect() {
         Log.i(TAG, "Connecting...")
         bluetoothGatt = bluetoothDevice?.connectGatt(this@MainActivity, true, GattCallback())
+
+        findViewById<LinearLayout>(R.id.mainFragmentLayout)?.apply {
+            supportFragmentManager
+                .beginTransaction()
+                .add(R.id.mainFragmentLayout, LedecoratorAppFragment.newInstance())
+                .commit()
+        }
     }
 
     private fun disconnect() {
@@ -95,16 +106,6 @@ class MainActivity : AppCompatActivity() {
         bluetoothGatt?.disconnect()
         bluetoothGatt = null
     }
-
-    class DataFrame {
-        private val data: ByteArray = ByteArray(20)
-
-        fun build(newData: ByteArray ) {
-            newData.copyInto(data)
-        }
-    }
-
-    val dataFrame = DataFrame()
 
     inner class GattCallback : BluetoothGattCallback() {
 
@@ -193,7 +194,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun connectBleDevice() {
+    override fun onLedecoratorAppInteraction(app: LedecoratorApp?) {
 
     }
 }
