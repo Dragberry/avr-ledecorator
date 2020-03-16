@@ -34,7 +34,7 @@ int main()
     uint8_t command = 0;
     while (true)
     {
-        dragberry::os::run(programms[command++]);
+        System::run(programms[command++]);
         if (command >= PROGRAMMS)
         {
             command = 0;

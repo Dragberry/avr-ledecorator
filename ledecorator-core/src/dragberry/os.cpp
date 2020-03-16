@@ -5,13 +5,15 @@
 
 #include <util/delay.h>
 
-using namespace dragberry::os;
-
 volatile uint16_t System::time = 0;
 
 Timer *System::timer = nullptr;
 
 uint16_t System::period = 0;
+
+volatile uint8_t System::current_app_index = 1;
+
+Application* System::current_app = nullptr;
 
 Timer::~Timer()
 {
@@ -59,6 +61,15 @@ void System::on_system_timer_event()
 void System::init()
 {
     UartBus::init();
+
+    cbi(DDRC, PC3);
+    sbi(PORTC, PC3);
+
+    cbi(DDRD, PD3);
+    sbi(PORTD, PD3);
+    sbi(EICRA, ISC10);
+    cbi(EICRA, ISC11);
+    sbi(EIMSK, INT1);
 
     cbi(TCCR0B, WGM02);
     sbi(TCCR0A, WGM01);

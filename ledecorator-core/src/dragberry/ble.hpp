@@ -15,6 +15,8 @@ private:
     static uint8_t counter;
 
 public:
+    volatile static bool connected;
+
     static Frame tx_frame;
 
     static Frame rx_frame;
@@ -48,8 +50,6 @@ public:
     static bool is_busy();
 
     static bool is_connected();
-
-    static bool start(void (*callback)());
 
     static bool start();
 

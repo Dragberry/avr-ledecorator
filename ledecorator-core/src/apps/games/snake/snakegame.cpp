@@ -5,7 +5,6 @@
 #include "../../../util/sorting.hpp"
 
 SnakeGame::SnakeGame() :
-        time(0),
         steps(0),
         current_speed(MIN_SPEED),
         remaining_time(0),
@@ -14,12 +13,14 @@ SnakeGame::SnakeGame() :
         tail{ 0 },
         food(ArrayList<Point, 5>())
 {
+            this->time_to_live = 750;
 }
 
 void SnakeGame::runner()
 {
-    SnakeGame app;
-    app.run();
+    SnakeGame snake_game_app;
+    System::set_app(&snake_game_app);
+    snake_game_app.run();
 }
 
 void SnakeGame::run()
@@ -33,7 +34,7 @@ void SnakeGame::run()
     place_food();
     place_food();
 
-    current_speed = MAX_SPEED;
+    current_speed = 35;
     refresh_remaining_time();
     System::register_timer(this, 4);
     do
@@ -42,7 +43,7 @@ void SnakeGame::run()
         {
             break;
         }
-    } while (time <= 750);
+    } while (is_going_on());
     System::deregister_timer(this);
 }
 
@@ -65,7 +66,7 @@ bool SnakeGame::do_step()
 
 void SnakeGame::on_timer_event()
 {
-    time++;
+    increment_time();
     if (remaining_time > 0)
     {
         remaining_time--;

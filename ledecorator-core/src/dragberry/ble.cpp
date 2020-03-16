@@ -1,3 +1,4 @@
+#include "string.h"
 #include "ble.hpp"
 #include "os.hpp"
 
@@ -11,6 +12,8 @@ Frame BLE::rx_frame;
 
 Frame BLE::tx_frame;
 
+volatile bool BLE::connected = false;
+
 volatile BLE::State BLE::state = BLE::State::IDLE;
 
 BLE::UartHandler::~UartHandler()
@@ -22,6 +25,7 @@ void BLE::UartHandler::on_uart_rx_event(const uint8_t byte)
     rx_frame.add(byte);
     if (rx_frame.is_full())
     {
+        System::process_event();
         stop();
     }
 }
@@ -42,7 +46,7 @@ BLE::UartHandler BLE::uart_handler = BLE::UartHandler();
 
 bool BLE::is_connected()
 {
-    return true;
+    return connected;
 }
 
 bool BLE::is_busy()
@@ -56,11 +60,6 @@ void BLE::timeout()
     {
         stop();
     }
-}
-
-bool BLE::start(void (*callback)())
-{
-    return true;
 }
 
 bool BLE::start()
@@ -81,8 +80,8 @@ void BLE::run()
     switch(state)
     {
     case State::IDLE:
-        idle();
-        start();
+//        idle();
+//        start();
         break;
     case State::TRANSMITTING:
     case State::RECEIVING:
@@ -108,21 +107,23 @@ void BLE::stop()
 void BLE::idle()
 {
     state = State::PREPARING;
-    char counter_string[4];
-    itoa(counter++, counter_string, 10);
-
-
-    tx_frame.add('i');
-    tx_frame.add('d');
-    tx_frame.add('l');
-    tx_frame.add('e');
+    char data[20] = { 0 };
+    strcat(data, "[idle=");
+    char value[4];
+    strcat(data, itoa(counter++, value, 10));
+    strcat(data, "]");
 
     uint8_t i = 0;
-    while(counter_string[i] != '\0')
+    while(i < 20)
     {
-       tx_frame.add(counter_string[i++]);
+       tx_frame.add(data[i++]);
     }
 
-    tx_frame.add('\n');
     state = State::READY;
 }
+
+ISR(INT1_vect)
+{
+    BLE::connected = check_bit(PIND, PD3);
+}
+

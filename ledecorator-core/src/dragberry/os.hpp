@@ -2,10 +2,10 @@
 #define DRAGBERRY_OS_HPP_
 
 #include "lib/avr/hardware/timers.hpp"
+#include "os/application.hpp"
 #include "os/display.hpp"
 #include "ble.hpp"
 #include "../util/ringbuffer.hpp"
-
 
 class Timer
 {
@@ -44,7 +44,7 @@ public:
     class io
     {
     public:
-        template <typename In, typename Out>
+        template <typename Out, typename In>
         static void exchange(Out&& out, In&& in)
         {
             if (BLE::is_connected())
@@ -55,7 +55,7 @@ public:
                 while (BLE::is_busy());
                 BLE::state = BLE::State::PREPARING;
                 uint8_t i = 0;
-                while (data[i] != '\0' &&i < 20 && !BLE::tx_frame.is_full())
+                while (!BLE::tx_frame.is_full())
                 {
                     BLE::tx_frame.add(data[i++]);
                 }
@@ -64,12 +64,36 @@ public:
 
                 while (BLE::state != BLE::State::IDLE);
                 uint8_t y = 0;
-                while (y < 20 && !BLE::rx_frame.is_empty())
+                while (!BLE::rx_frame.is_empty())
                 {
                     data[y++] = BLE::rx_frame.poll();
                 }
                 in(data);
             }
+        }
+
+        template <typename Out>
+        static void send(Out&& out)
+        {
+            char data[20] = { 0 };
+            out(data);
+            while (BLE::is_busy());
+            if (BLE::is_connected())
+            {
+                BLE::state = BLE::State::PREPARING;
+                uint8_t i = 0;
+                while (i < 20 && !BLE::tx_frame.is_full())
+                {
+                    BLE::tx_frame.add(data[i++]);
+                }
+                BLE::state = BLE::State::READY;
+            }
+            while (!BLE::start());
+        }
+
+        static void notify()
+        {
+
         }
     };
 
@@ -97,18 +121,41 @@ public:
             }
         }
     };
-};
 
-namespace dragberry
-{
-namespace os
-{
-template<typename Execution>
-static void run(Execution &&execution)
-{
-    execution();
-}
-}
-}
+private:
+    static volatile uint8_t current_app_index;
+
+    static Application* current_app;
+
+public:
+    template<typename Execution>
+    static void run(Execution &&execution)
+    {
+        execution();
+    }
+
+    static void set_app(Application* app)
+    {
+        current_app = app;
+    }
+
+    static void process_event()
+    {
+        uint8_t app_index = BLE::rx_frame.poll();
+        uint8_t command = BLE::rx_frame.poll();
+        if (app_index != 0)
+        {
+            if (app_index != current_app_index)
+            {
+                current_app->terminate();
+                current_app_index = app_index;
+            }
+            else if (command == '0')
+            {
+                current_app->terminate();
+            }
+        }
+    }
+};
 
 #endif

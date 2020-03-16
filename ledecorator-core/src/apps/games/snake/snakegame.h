@@ -2,11 +2,14 @@
 #define SNAKEGAME_H_
 
 #include "walls.hpp"
+#include "../../../dragberry/os/application.hpp"
 #include "../../../dragberry/os.hpp"
 #include "../../../dragberry/os/display.hpp"
 #include "../../../util/arraylist.hpp"
 
-class SnakeGame : public Timer
+class SnakeGame :
+        public Application,
+        public Timer
 {
 public:
     uint8_t period = 0;
@@ -75,11 +78,9 @@ private:
     const static uint8_t MAX_SPEED = 40;
     const static uint8_t MIN_SPEED = 1;
 
-    volatile uint16_t time;
-
     uint8_t steps = 0;
 
-    uint8_t current_speed = MIN_SPEED;
+    uint8_t current_speed = 20;
 
     volatile uint8_t remaining_time = 0;
 

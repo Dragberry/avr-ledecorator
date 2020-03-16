@@ -32,9 +32,10 @@ class MainActivity : AppCompatActivity() {
 
     private var leftButton: Button? = null
     private var rightButton: Button? = null
+    private var okButton: Button? = null
 
     enum class Action {
-        NO_ACTION, TURN_LEFT, TURN_RIGHT
+        NO_ACTION, TURN_LEFT, TURN_RIGHT, RESET
     }
 
     @Volatile
@@ -69,6 +70,13 @@ class MainActivity : AppCompatActivity() {
                 action = Action.TURN_RIGHT
             }
         }
+        okButton = findViewById<Button>(R.id.okButton).apply {
+            setOnClickListener {
+                Log.i(TAG, "OK")
+                action = Action.RESET
+            }
+        }
+
     }
 
     override fun onPause() {
@@ -77,10 +85,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun connect() {
+        Log.i(TAG, "Connecting...")
         bluetoothGatt = bluetoothDevice?.connectGatt(this@MainActivity, true, GattCallback())
     }
 
     private fun disconnect() {
+        Log.i(TAG, "Disconnecting...")
         bluetoothGatt?.close()
         bluetoothGatt?.disconnect()
         bluetoothGatt = null
@@ -111,6 +121,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        override fun onCharacteristicRead(
+            gatt: BluetoothGatt?,
+            characteristic: BluetoothGattCharacteristic?,
+            status: Int
+        ) {
+            Log.i(TAG, "onCharacteristicRead: $gatt | characteristic: ${characteristic?.value?.toString(StandardCharsets.US_ASCII)}")
+        }
+
         override fun onCharacteristicChanged(
             gatt: BluetoothGatt?,
             characteristic: BluetoothGattCharacteristic?
@@ -120,13 +138,16 @@ class MainActivity : AppCompatActivity() {
                 value =
                     when (action) {
                         Action.TURN_RIGHT -> {
-                            "bbbbbbbbbbbbbbbbbbbb"
+                            "11b00000000000000000"
                         }
                         Action.TURN_LEFT -> {
-                            "aaaaaaaaaaaaaaaaaaaa"
+                            "11a00000000000000000"
+                        }
+                        Action.RESET -> {
+                            "10000000000000000000"
                         }
                         else ->
-                            "00000000000000000000"
+                            "11000000000000000000"
                     }.toByteArray(StandardCharsets.US_ASCII)
             })
             action = Action.NO_ACTION
