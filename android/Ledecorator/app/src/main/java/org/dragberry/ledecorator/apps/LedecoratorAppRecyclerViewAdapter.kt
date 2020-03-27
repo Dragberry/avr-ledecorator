@@ -5,25 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import kotlinx.android.synthetic.main.fragment_ledecoratorapp.view.*
 import org.dragberry.ledecorator.R
 
 
-import org.dragberry.ledecorator.apps.LedecoratorAppFragment.LedecoratorAppInteractionListener
-
-import kotlinx.android.synthetic.main.fragment_ledecoratorapp.view.*
-
 class LedecoratorAppRecyclerViewAdapter(
-    private val mValues: List<LedecoratorApp>,
-    private val mListener: LedecoratorAppInteractionListener?
-) : RecyclerView.Adapter<LedecoratorAppRecyclerViewAdapter.ViewHolder>() {
-
-    private val mOnClickListener: View.OnClickListener
-
-    init {
-        mOnClickListener = View.OnClickListener {
-            mListener?.onLedecoratorAppInteraction(it.tag as LedecoratorApp)
-        }
-    }
+    private val appList: List<LedecoratorApp>
+) :
+    RecyclerView.Adapter<LedecoratorAppRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -32,20 +21,30 @@ class LedecoratorAppRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = mValues[position]
-        holder.mIdView.text = item.code.toString(16)
-        holder.mContentView.text = item.name
+        val item = appList[position]
+        holder.appNameTextView.text = item.name
+        holder.appCodeTextView.text = "0x0${item.code.toString(16)}"
+        holder.appStatusTextView.apply {
+            if (item.active) {
+                text = "Active"
+                visibility = View.VISIBLE
+            } else {
+                text = "Inactive"
+                visibility = View.INVISIBLE
+            }
+        }
 
-        with(holder.mView) {
+        with(holder.view) {
             tag = item
-            setOnClickListener(mOnClickListener)
+//            setOnClickListener(mOnClickListener)
         }
     }
 
-    override fun getItemCount(): Int = mValues.size
+    override fun getItemCount(): Int = appList.size
 
-    inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mIdView: TextView = mView.item_number
-        val mContentView: TextView = mView.content
+    inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        val appNameTextView: TextView = view.ledecoratorAppNameTextView
+        val appCodeTextView: TextView = view.ledecoratorAppCodeTextView
+        val appStatusTextView: TextView = view.ledecoratorAppStatusTextView
     }
 }

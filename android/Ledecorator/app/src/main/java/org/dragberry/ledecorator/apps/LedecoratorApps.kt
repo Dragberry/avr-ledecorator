@@ -15,5 +15,6 @@ object LedecoratorApps {
 @Parcelize
 class LedecoratorApp(
     val code: Byte,
-    val name: String
+    val name: String,
+    var active: Boolean = false
 ) : Parcelable

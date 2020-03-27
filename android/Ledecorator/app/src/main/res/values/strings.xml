@@ -1,8 +1,12 @@
 <resources>
     <string name="app_name">Ledecorator</string>
     <string name="scan">Scan</string>
+    <string name="status_no_device">NO DEVICE</string>
     <string name="status_disconnected">DISCONNECTED</string>
+    <string name="status_disconnecting">DISCONNECTING…</string>
     <string name="status_connected">CONNECTED</string>
+    <string name="status_connecting">CONNECTING…</string>
+    <string name="status_connection_error">ERROR: %1$s</string>
     <string name="scan_devices">Scan Devices</string>
     <string name="cancel">Cancel</string>
     <string name="refresh">Refresh</string>
@@ -10,4 +14,7 @@
     <string name="connect">Connect</string>
     <string name="select">Select</string>
     <string name="stop">Stop</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

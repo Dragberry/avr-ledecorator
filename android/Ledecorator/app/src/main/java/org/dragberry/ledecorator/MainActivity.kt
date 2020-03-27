@@ -1,200 +1,205 @@
 package org.dragberry.ledecorator
 
-import android.app.Activity
 import android.bluetooth.*
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanResult
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.util.Log
-import android.view.View
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.Switch
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import org.dragberry.ledecorator.apps.LedecoratorApp
 import org.dragberry.ledecorator.apps.LedecoratorAppFragment
-import java.nio.charset.StandardCharsets
+import org.dragberry.ledecorator.bluetooth.*
+import org.dragberry.ledecorator.bluetooth.fragment.BleDeviceSelectionFragment
 import java.util.*
-
-
-private const val GENERIC_CHARACTERISTIC = "00001801-0000-1000-8000-00805f9b34fb"
 
 private const val TAG = "MainActivity"
 
-private const val SELECT_BLE_DEVICE_REQUEST = 1
+private const val ACTIVE_LEDECORATOR_APP = "ActiveLedecoratorApp"
 
-class MainActivity : AppCompatActivity(), LedecoratorAppFragment.LedecoratorAppInteractionListener {
+class MainActivity :
+    AppCompatActivity(),
+    BluetoothServiceHolder {
 
-    private val GENERIC_CHARACTERISTIC_UUID = UUID.fromString(GENERIC_CHARACTERISTIC)
-
-    private lateinit var selectedBleDeviceStatusTextView: TextView
-    private lateinit var selectedBleDeviceTextView: TextView
-    private lateinit var connectBleDeviceButton: Switch
-
-    private var bluetoothGatt: BluetoothGatt? = null
-    private var bluetoothDevice: BluetoothDevice? = null
-
-    private var leftButton: Button? = null
-    private var rightButton: Button? = null
-    private var okButton: Button? = null
-
-    enum class Action {
-        NO_ACTION, TURN_LEFT, TURN_RIGHT, RESET
+    override val bluetoothService: BluetoothService by lazy {
+        BluetoothService(this)
     }
-
-    @Volatile
-    private var action = Action.NO_ACTION
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        selectedBleDeviceStatusTextView = findViewById(R.id.selectedBleDeviceStatusTextView)
-        selectedBleDeviceTextView = findViewById(R.id.selectedBleDeviceTextView)
-        connectBleDeviceButton = findViewById<Switch>(R.id.connectBleDeviceButton).apply {
-            visibility = View.INVISIBLE
-            setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    connect()
-                } else {
-                    disconnect()
-                }
-            }
-        }
-
-        leftButton = findViewById<Button>(R.id.leftButton).apply {
-            setOnClickListener {
-                Log.i(TAG, "LEFT")
-                action = Action.TURN_LEFT
-            }
-        }
-        rightButton = findViewById<Button>(R.id.rightButton).apply {
-            setOnClickListener {
-                Log.i(TAG, "RIGHT")
-                action = Action.TURN_RIGHT
-            }
-        }
-        okButton = findViewById<Button>(R.id.okButton).apply {
-            setOnClickListener {
-                Log.i(TAG, "OK")
-                action = Action.RESET
-            }
-        }
-
     }
 
-    override fun onPause() {
-        connectBleDeviceButton.isChecked = false
-        super.onPause()
-    }
-
-    private fun connect() {
-        Log.i(TAG, "Connecting...")
-        bluetoothGatt = bluetoothDevice?.connectGatt(this@MainActivity, true, GattCallback())
-
-        findViewById<LinearLayout>(R.id.mainFragmentLayout)?.apply {
+    fun startBleDeviceSelection() {
+        supportFragmentManager.findFragmentById(R.id.mainFragmentLayout).apply {
             supportFragmentManager
                 .beginTransaction()
-                .add(R.id.mainFragmentLayout, LedecoratorAppFragment.newInstance())
+                .replace(
+                    R.id.mainFragmentLayout,
+                    BleDeviceSelectionFragment(),
+                    ACTIVE_LEDECORATOR_APP
+                )
                 .commit()
         }
     }
 
-    private fun disconnect() {
-        Log.i(TAG, "Disconnecting...")
-        bluetoothGatt?.close()
-        bluetoothGatt?.disconnect()
-        bluetoothGatt = null
+    fun showApps() {
+        supportFragmentManager.findFragmentById(R.id.mainFragmentLayout).apply {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(
+                    R.id.mainFragmentLayout,
+                    LedecoratorAppFragment.newInstance(),
+                    ACTIVE_LEDECORATOR_APP
+                )
+                .commit()
+        }
     }
 
-    inner class GattCallback : BluetoothGattCallback() {
+    inner class BluetoothService(
+        private val context: Context
+    ) {
 
-        override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
-            Log.i(TAG, "onConnectionStateChange: $gatt | status: $status | newState: $newState")
-            when (newState) {
-                BluetoothProfile.STATE_CONNECTED -> {
-                    selectedBleDeviceStatusTextView.text = getString(R.string.status_connected)
-                    bluetoothGatt?.discoverServices()
-                }
-                else -> {
-                    selectedBleDeviceStatusTextView.text = getString(R.string.status_disconnected)
-                }
+        private val serviceUUID = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb")
+
+        private val characteristicUUID = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb")
+
+        private val tag = "BluetoothService"
+
+        private val enableBTRequest = 100
+
+        private val enableFineLocationRequest = 1001
+
+        private var deviceSelectedCallback: (BluetoothDevice?.() -> Unit)? = null
+
+        private var scanning = false
+
+        private val scanningHandler: Handler = Handler()
+
+        var deviceScanCallback: Handler? = null
+
+        private var bluetoothDevice: BluetoothDevice? = null
+
+        private var bluetoothGatt: BluetoothGatt? = null
+
+        private val bluetoothManager: BluetoothManager? by lazy {
+            getSystemService(android.bluetooth.BluetoothManager::class.java)?.apply {
+                startActivityForResult(
+                    Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE),
+                    enableBTRequest
+                )
+                startActivityForResult(
+                    Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE),
+                    enableFineLocationRequest
+                )
             }
         }
 
-        override fun onCharacteristicRead(
-            gatt: BluetoothGatt?,
-            characteristic: BluetoothGattCharacteristic?,
-            status: Int
-        ) {
-            Log.i(TAG, "onCharacteristicRead: $gatt | characteristic: ${characteristic?.value?.toString(StandardCharsets.US_ASCII)}")
+        fun startDeviceSelection(deviceSelectedCallback: BluetoothDevice?.() -> Unit) {
+            this.deviceSelectedCallback = deviceSelectedCallback
+            startBleDeviceSelection()
         }
 
-        override fun onCharacteristicChanged(
-            gatt: BluetoothGatt?,
-            characteristic: BluetoothGattCharacteristic?
-        ) {
-            Log.i(TAG, "onCharacteristicChanged: $gatt | characteristic: ${characteristic?.value?.toString(StandardCharsets.US_ASCII)}")
-            gatt?.writeCharacteristic(characteristic?.apply {
-                value =
-                    when (action) {
-                        Action.TURN_RIGHT -> {
-                            "11b00000000000000000"
-                        }
-                        Action.TURN_LEFT -> {
-                            "11a00000000000000000"
-                        }
-                        Action.RESET -> {
-                            "10000000000000000000"
-                        }
-                        else ->
-                            "11000000000000000000"
-                    }.toByteArray(StandardCharsets.US_ASCII)
-            })
-            action = Action.NO_ACTION
+        fun completeDeviceSelection(selectedBluetoothDevice: BluetoothDevice?) {
+            bluetoothDevice = selectedBluetoothDevice
+            stopScan()
+            deviceSelectedCallback?.invoke(bluetoothDevice)
         }
 
-        override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
-            Log.i(TAG, "onServicesDiscovered: ${gatt} | status: $status")
-
-            gatt?.getService(UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb"))?.apply {
-                getCharacteristic(UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb"))?.apply {
-                    gatt.setCharacteristicNotification(this, true)
-                }
+        fun toggleScan() {
+            if (scanning) {
+                stopScan()
+            } else {
+                scanningHandler.postDelayed({ stopScan() }, 10000)
+                // TODO: Gatt disconnect
+                startScan()
             }
         }
 
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SELECT_BLE_DEVICE_REQUEST)
+        private val scanCallback: ScanCallback = object : ScanCallback()
         {
-            if (resultCode == Activity.RESULT_OK)
-            {
-                Log.i(MainActivity::class.java.name, "Result is OK")
-                bluetoothDevice = data?.getParcelableExtra(BluetoothDevice::class.java.name)
-
-                if (bluetoothDevice != null) {
-                    connectBleDeviceButton.visibility = View.VISIBLE
-                    selectedBleDeviceTextView.text = bluetoothDevice?.name ?: bluetoothDevice?.address
-                } else {
-                    connectBleDeviceButton.visibility = View.GONE
-                    selectedBleDeviceTextView.text = null
+            override fun onScanResult(callbackType: Int, result: ScanResult?) {
+                Log.i(tag, "On scan result: $callbackType : $result")
+                result?.apply {
+                    deviceScanCallback?.apply {
+                        obtainMessage(LEDECORATOR_ON_SCAN_RESULT, result.device).sendToTarget()
+                    }
                 }
             }
         }
+
+        private fun startScan() {
+            Log.i(TAG, "Start scanning...")
+            bluetoothManager?.apply {
+                scanning = true
+                adapter.bluetoothLeScanner.startScan(scanCallback)
+                deviceScanCallback?.apply {
+                    obtainMessage(LEDECORATOR_SCAN_STARTED).sendToTarget()
+                }
+            }
+        }
+
+        private fun stopScan() {
+            Log.i(TAG, "Stop scanning")
+            bluetoothManager?.apply {
+                scanningHandler.removeCallbacksAndMessages(null)
+                scanning = false
+                adapter.bluetoothLeScanner.stopScan(scanCallback)
+                deviceScanCallback?.apply {
+                    obtainMessage(LEDECORATOR_SCAN_STOPPED).sendToTarget()
+                }
+            }
+        }
+
+        fun connect(handler: Handler) {
+            bluetoothGatt = bluetoothDevice?.let {
+                Log.i(tag, "Connection to ${it.name ?: it.address}")
+                it.connectGatt(context, false, object : BluetoothGattCallback() {
+
+                    override fun onConnectionStateChange(
+                        gatt: BluetoothGatt?,
+                        status: Int,
+                        newState: Int
+                    ) {
+                        Log.i(tag, "onConnectionStateChange: $gatt | status: $status | newState: $newState")
+                        if (status == 0) {
+                            when (newState) {
+                                BluetoothProfile.STATE_CONNECTED -> {
+                                    bluetoothGatt?.discoverServices()
+                                }
+                                BluetoothProfile.STATE_DISCONNECTED -> {
+                                    handler.obtainMessage(LEDECORATOR_STATE_DISCONNECTED).sendToTarget()
+                                }
+                            }
+                        } else {
+                            handler.obtainMessage(LEDECORATOR_STATE_CONNECTION_ERROR, status).sendToTarget()
+                        }
+                    }
+
+                    override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
+                        bluetoothGatt?.apply {
+                            getService(serviceUUID)?.apply {
+                                getCharacteristic(characteristicUUID)?.apply {
+                                    setCharacteristicNotification(this, true)
+                                }
+                            }
+                        }
+                        handler.obtainMessage(LEDECORATOR_STATE_CONNECTED, gatt).sendToTarget()
+                        showApps()
+                    }
+
+                })
+            }
+        }
+
+        fun disconnect(handler: Handler) {
+
+        }
     }
+}
 
-    fun selectBleDevice(view: View)
-    {
-        val intent = Intent(this, SelectBleDeviceActivity::class.java)
-
-        startActivityForResult(intent, SELECT_BLE_DEVICE_REQUEST)
-
-    }
-
-    override fun onLedecoratorAppInteraction(app: LedecoratorApp?) {
-
-    }
+interface BluetoothServiceHolder {
+    val bluetoothService: MainActivity.BluetoothService
 }
