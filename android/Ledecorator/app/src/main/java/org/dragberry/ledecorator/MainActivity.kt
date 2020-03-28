@@ -58,6 +58,15 @@ class MainActivity :
         }
     }
 
+    fun hideApps() {
+        supportFragmentManager.findFragmentByTag(ACTIVE_LEDECORATOR_APP)?.apply {
+            supportFragmentManager
+                .beginTransaction()
+                .remove(this)
+                .commit()
+        }
+    }
+
     inner class BluetoothService(
         private val context: Context
     ) {
@@ -153,49 +162,58 @@ class MainActivity :
             }
         }
 
-        fun connect(handler: Handler) {
-            bluetoothGatt = bluetoothDevice?.let {
-                Log.i(tag, "Connection to ${it.name ?: it.address}")
-                it.connectGatt(context, false, object : BluetoothGattCallback() {
+        var connectionHandler: Handler? = null
 
-                    override fun onConnectionStateChange(
-                        gatt: BluetoothGatt?,
-                        status: Int,
-                        newState: Int
-                    ) {
-                        Log.i(tag, "onConnectionStateChange: $gatt | status: $status | newState: $newState")
-                        if (status == 0) {
-                            when (newState) {
-                                BluetoothProfile.STATE_CONNECTED -> {
-                                    bluetoothGatt?.discoverServices()
-                                }
-                                BluetoothProfile.STATE_DISCONNECTED -> {
-                                    handler.obtainMessage(LEDECORATOR_STATE_DISCONNECTED).sendToTarget()
-                                }
-                            }
-                        } else {
-                            handler.obtainMessage(LEDECORATOR_STATE_CONNECTION_ERROR, status).sendToTarget()
+        private val gattCallback = object : BluetoothGattCallback() {
+            override fun onConnectionStateChange(
+                gatt: BluetoothGatt?,
+                status: Int,
+                newState: Int
+            ) {
+                Log.i(tag, "onConnectionStateChange: $gatt | status: $status | newState: $newState")
+                if (status == 0) {
+                    when (newState) {
+                        BluetoothProfile.STATE_CONNECTED -> {
+                            bluetoothGatt?.discoverServices()
                         }
-                    }
-
-                    override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
-                        bluetoothGatt?.apply {
-                            getService(serviceUUID)?.apply {
-                                getCharacteristic(characteristicUUID)?.apply {
-                                    setCharacteristicNotification(this, true)
-                                }
+                        BluetoothProfile.STATE_DISCONNECTED -> {
+                            hideApps()
+                            connectionHandler?.apply {
+                                obtainMessage(LEDECORATOR_STATE_DISCONNECTED).sendToTarget()
                             }
                         }
-                        handler.obtainMessage(LEDECORATOR_STATE_CONNECTED, gatt).sendToTarget()
-                        showApps()
                     }
+                } else {
+                    connectionHandler?.apply {
+                        obtainMessage(LEDECORATOR_STATE_CONNECTION_ERROR, status).sendToTarget()
+                    }
+                }
+            }
 
-                })
+            override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
+                bluetoothGatt?.apply {
+                    getService(serviceUUID)?.apply {
+                        getCharacteristic(characteristicUUID)?.apply {
+                            setCharacteristicNotification(this, true)
+                        }
+                    }
+                }
+                connectionHandler?.apply {
+                    obtainMessage(LEDECORATOR_STATE_CONNECTED, gatt).sendToTarget()
+                }
+                showApps()
             }
         }
 
-        fun disconnect(handler: Handler) {
+        fun connect() {
+            bluetoothGatt = bluetoothDevice?.let {
+                it.connectGatt(context, false, gattCallback)
+            }
+        }
 
+        fun disconnect() {
+            bluetoothGatt?.disconnect()
+            bluetoothGatt = null
         }
     }
 }

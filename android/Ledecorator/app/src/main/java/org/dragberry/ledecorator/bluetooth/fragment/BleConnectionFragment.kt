@@ -60,8 +60,10 @@ class BleConnectionFragment : Fragment(), Handler.Callback {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is BluetoothServiceHolder) {
-            bluetoothService = context.bluetoothService
             handler = Handler(this)
+            bluetoothService = context.bluetoothService.apply {
+                connectionHandler = handler
+            }
         } else {
             throw RuntimeException("$context must implement BluetoothServiceHolder")
         }
@@ -71,6 +73,7 @@ class BleConnectionFragment : Fragment(), Handler.Callback {
         super.onDetach()
         handler?.removeCallbacksAndMessages(null)
         handler = null
+        bluetoothService?.connectionHandler = null
         bluetoothService = null
     }
 
@@ -93,9 +96,7 @@ class BleConnectionFragment : Fragment(), Handler.Callback {
         selectBleDeviceButton.isEnabled = false
         connectBleDeviceSwitch.isEnabled = false
         selectedBleDeviceStatusTextView.text = getString(R.string.status_connecting)
-        handler?.let {
-            bluetoothService?.connect(it)
-        }
+        bluetoothService?.connect()
     }
 
     private fun onConnected() {
@@ -108,9 +109,7 @@ class BleConnectionFragment : Fragment(), Handler.Callback {
         selectBleDeviceButton.isEnabled = false
         connectBleDeviceSwitch.isEnabled = false
         selectedBleDeviceStatusTextView.text = getString(R.string.status_disconnecting)
-        handler?.let {
-            bluetoothService?.disconnect(it)
-        }
+        bluetoothService?.disconnect()
     }
 
     private fun onDisconnected() {
