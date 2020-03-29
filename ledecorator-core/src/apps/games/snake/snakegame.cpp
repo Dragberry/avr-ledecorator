@@ -88,12 +88,13 @@ bool SnakeGame::move()
     System::io::exchange(
         [&](char* frame) -> void
         {
-            char value[4];
-            strcat(frame, "[X=");
-            strcat(frame, itoa(head.x, value, 10));
-            strcat(frame, ";Y=");
-            strcat(frame, itoa(head.y, value, 10));
-            strcat(frame, "]");
+
+            uint8_t i = 0;
+            while (i < 20)
+            {
+                frame[i] = ('a' + i);
+                i++;
+            }
         },
         [&](char* frame) -> void
         {

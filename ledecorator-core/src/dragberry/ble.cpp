@@ -46,7 +46,7 @@ BLE::UartHandler BLE::uart_handler = BLE::UartHandler();
 
 bool BLE::is_connected()
 {
-    return connected;
+    return check_bit(PIND, PD3);
 }
 
 bool BLE::is_busy()

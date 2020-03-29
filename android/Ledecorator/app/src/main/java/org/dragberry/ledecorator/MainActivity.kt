@@ -3,33 +3,42 @@ package org.dragberry.ledecorator
 import android.bluetooth.*
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.os.Message
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import org.dragberry.ledecorator.apps.LedecoratorAppFragment
-import org.dragberry.ledecorator.bluetooth.*
+import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame
+import org.dragberry.ledecorator.bluetooth.DataFrameHandler
 import org.dragberry.ledecorator.bluetooth.fragment.BleDeviceSelectionFragment
+import java.nio.charset.StandardCharsets
 import java.util.*
 
 private const val TAG = "MainActivity"
 
 private const val ACTIVE_LEDECORATOR_APP = "ActiveLedecoratorApp"
 
+private const val ENABLE_BT_REQUEST = 100
+
+private const val ENABLE_FINE_LOCATION_REQUEST = 101
+
 class MainActivity :
     AppCompatActivity(),
     BluetoothServiceHolder {
 
     override val bluetoothService: BluetoothService by lazy {
-        BluetoothService(this)
+        BluetoothService()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        bluetoothService.disconnect()
     }
 
     fun startBleDeviceSelection() {
@@ -67,19 +76,13 @@ class MainActivity :
         }
     }
 
-    inner class BluetoothService(
-        private val context: Context
-    ) {
+    inner class BluetoothService {
 
         private val serviceUUID = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb")
 
         private val characteristicUUID = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb")
 
         private val tag = "BluetoothService"
-
-        private val enableBTRequest = 100
-
-        private val enableFineLocationRequest = 1001
 
         private var deviceSelectedCallback: (BluetoothDevice?.() -> Unit)? = null
 
@@ -97,14 +100,18 @@ class MainActivity :
             getSystemService(android.bluetooth.BluetoothManager::class.java)?.apply {
                 startActivityForResult(
                     Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE),
-                    enableBTRequest
+                    ENABLE_BT_REQUEST
                 )
                 startActivityForResult(
                     Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE),
-                    enableFineLocationRequest
+                    ENABLE_FINE_LOCATION_REQUEST
                 )
             }
         }
+
+        private val defaultDataFrameHandler: (ByteArray.() -> ByteArray) = { BleInterchangeFrame.IDLE }
+
+        private var dataFrameHandler: (ByteArray.() -> ByteArray) = defaultDataFrameHandler
 
         fun startDeviceSelection(deviceSelectedCallback: BluetoothDevice?.() -> Unit) {
             this.deviceSelectedCallback = deviceSelectedCallback
@@ -122,7 +129,6 @@ class MainActivity :
                 stopScan()
             } else {
                 scanningHandler.postDelayed({ stopScan() }, 10000)
-                // TODO: Gatt disconnect
                 startScan()
             }
         }
@@ -165,6 +171,7 @@ class MainActivity :
         var connectionHandler: Handler? = null
 
         private val gattCallback = object : BluetoothGattCallback() {
+
             override fun onConnectionStateChange(
                 gatt: BluetoothGatt?,
                 status: Int,
@@ -191,7 +198,8 @@ class MainActivity :
             }
 
             override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
-                bluetoothGatt?.apply {
+                Log.i(tag, "onServicesDiscovered ${gatt?.services} - $status")
+                gatt?.apply {
                     getService(serviceUUID)?.apply {
                         getCharacteristic(characteristicUUID)?.apply {
                             setCharacteristicNotification(this, true)
@@ -203,18 +211,33 @@ class MainActivity :
                 }
                 showApps()
             }
-        }
 
-        fun connect() {
-            bluetoothGatt = bluetoothDevice?.let {
-                it.connectGatt(context, false, gattCallback)
+            override fun onCharacteristicChanged(
+                gatt: BluetoothGatt?,
+                characteristic: BluetoothGattCharacteristic?
+            ) {
+                Log.i(tag, "onCharacteristicChanged")
+
+                gatt?.writeCharacteristic(characteristic?.apply {
+                    value = dataFrameHandler(value)
+                })
             }
         }
 
+        fun connect() {
+            bluetoothGatt = bluetoothDevice?.connectGatt(this@MainActivity, false, gattCallback)
+        }
+
         fun disconnect() {
+            stopScan()
             bluetoothGatt?.disconnect()
             bluetoothGatt = null
         }
+
+        fun onDataFrame(handler: (ByteArray.() -> ByteArray)?) {
+            dataFrameHandler = handler ?: defaultDataFrameHandler
+        }
+
     }
 }
 

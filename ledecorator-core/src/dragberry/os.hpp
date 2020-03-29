@@ -15,14 +15,6 @@ public:
     virtual void on_timer_event();
 };
 
-class IOHandler
-{
-public:
-    virtual ~IOHandler();
-
-    virtual void on_input_event(RingBuffer<uint8_t, 20>* frame);
-};
-
 class System
 {
 private:
@@ -63,38 +55,15 @@ public:
                 while (!BLE::start());
 
                 while (BLE::state != BLE::State::IDLE);
-                uint8_t y = 0;
+                i = 0;
                 while (!BLE::rx_frame.is_empty())
                 {
-                    data[y++] = BLE::rx_frame.poll();
+                    data[i++] = BLE::rx_frame.poll();
                 }
                 in(data);
             }
         }
 
-        template <typename Out>
-        static void send(Out&& out)
-        {
-            char data[20] = { 0 };
-            out(data);
-            while (BLE::is_busy());
-            if (BLE::is_connected())
-            {
-                BLE::state = BLE::State::PREPARING;
-                uint8_t i = 0;
-                while (i < 20 && !BLE::tx_frame.is_full())
-                {
-                    BLE::tx_frame.add(data[i++]);
-                }
-                BLE::state = BLE::State::READY;
-            }
-            while (!BLE::start());
-        }
-
-        static void notify()
-        {
-
-        }
     };
 
     class out

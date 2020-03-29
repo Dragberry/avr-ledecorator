@@ -67,6 +67,7 @@ void System::init()
 
     cbi(DDRD, PD3);
     sbi(PORTD, PD3);
+
     sbi(EICRA, ISC10);
     cbi(EICRA, ISC11);
     sbi(EIMSK, INT1);

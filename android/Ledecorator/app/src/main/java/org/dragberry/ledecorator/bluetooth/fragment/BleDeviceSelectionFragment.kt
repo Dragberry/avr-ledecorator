@@ -17,10 +17,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import org.dragberry.ledecorator.BluetoothServiceHolder
-import org.dragberry.ledecorator.MainActivity
-import org.dragberry.ledecorator.R
-import org.dragberry.ledecorator.bluetooth.*
+import org.dragberry.ledecorator.*
 
 private const val TAG = "BleDeviceSelectionFragment"
 
@@ -85,11 +82,13 @@ class BleDeviceSelectionFragment : Fragment(), Handler.Callback {
                 val device: BluetoothDevice = msg.obj as BluetoothDevice
                 if (bleDeviceList.find { it.address == device.address } == null) {
                     bleDeviceList.add(device)
+                    bleDeviceListAdapter.notifyDataSetChanged()
                 }
-                bleDeviceListAdapter.notifyDataSetChanged()
             }
             LEDECORATOR_SCAN_STARTED -> {
+                bleDeviceList.clear()
                 scanBleDevicesButton.text = getString(R.string.stop)
+                bleDeviceListAdapter.resetSelection()
                 bleDeviceListAdapter.notifyDataSetChanged()
             }
             LEDECORATOR_SCAN_STOPPED -> {
@@ -101,6 +100,10 @@ class BleDeviceSelectionFragment : Fragment(), Handler.Callback {
 
     private inner class BleDeviceListAdapter(private var selectedIndex: Int = -1) :
         ListAdapter<BluetoothDevice, BleDeviceListAdapter.BleDeviceViewHolder>(BleDeviceDiffCallback()) {
+
+        fun resetSelection() {
+            selectedIndex = -1
+        }
 
         inner class BleDeviceViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
@@ -142,7 +145,7 @@ class BleDeviceSelectionFragment : Fragment(), Handler.Callback {
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BleDeviceViewHolder =
-            BleDeviceViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.ble_device_view, parent, false))
+            BleDeviceViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.fragment_ble_device_selection_item, parent, false))
 
         override fun onBindViewHolder(holder: BleDeviceViewHolder, position: Int) {
             holder.bind(getItem(position))

@@ -7,6 +7,6 @@ class BleInterchangeFrame {
     companion object {
 
         @JvmStatic
-        val IDLE = "11000000000000000000".toByteArray(StandardCharsets.US_ASCII)
+        val IDLE = "11111111111111111111".toByteArray(StandardCharsets.US_ASCII)
     }
 }

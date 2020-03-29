@@ -13,10 +13,7 @@ import android.widget.Button
 import android.widget.Switch
 import android.widget.TextView
 import kotlinx.android.synthetic.main.fragment_ble_device_selection_item.*
-import org.dragberry.ledecorator.BluetoothServiceHolder
-import org.dragberry.ledecorator.MainActivity
-import org.dragberry.ledecorator.R
-import org.dragberry.ledecorator.bluetooth.*
+import org.dragberry.ledecorator.*
 
 private const val TAG = "BleConnectionFragment"
 
@@ -59,6 +56,7 @@ class BleConnectionFragment : Fragment(), Handler.Callback {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        Log.i(TAG, "onAttach")
         if (context is BluetoothServiceHolder) {
             handler = Handler(this)
             bluetoothService = context.bluetoothService.apply {
@@ -71,6 +69,7 @@ class BleConnectionFragment : Fragment(), Handler.Callback {
 
     override fun onDetach() {
         super.onDetach()
+        Log.i(TAG, "onDetach")
         handler?.removeCallbacksAndMessages(null)
         handler = null
         bluetoothService?.connectionHandler = null
