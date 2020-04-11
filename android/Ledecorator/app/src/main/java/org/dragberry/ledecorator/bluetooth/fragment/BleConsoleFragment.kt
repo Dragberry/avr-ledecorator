@@ -28,6 +28,8 @@ import java.util.*
 
 private const val TAG = "BleConsoleFragment"
 
+private const val BUFFER_SIZE = 10
+
 class BleConsoleFragment : Fragment(), Handler.Callback {
 
     private var bluetoothService: MainActivity.BluetoothService? = null
@@ -64,7 +66,7 @@ class BleConsoleFragment : Fragment(), Handler.Callback {
                 }.toString()
 
                 consoleBuffer.add(Record(LocalTime.now(), string))
-                if (consoleBuffer.size > 50) {
+                if (consoleBuffer.size > BUFFER_SIZE) {
                     consoleBuffer.pop()
                 }
                 handler?.apply {

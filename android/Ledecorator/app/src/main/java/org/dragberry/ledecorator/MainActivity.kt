@@ -8,7 +8,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import org.dragberry.ledecorator.apps.LedecoratorApp
 import org.dragberry.ledecorator.apps.LedecoratorAppFragment
+import org.dragberry.ledecorator.apps.snake.SnakeGameFragment
 import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame
 import org.dragberry.ledecorator.bluetooth.fragment.BleDeviceSelectionFragment
 import java.nio.charset.StandardCharsets
@@ -53,20 +55,34 @@ class MainActivity :
         }
     }
 
-    fun showApps() {
+    fun showApp() {
         supportFragmentManager.findFragmentById(R.id.mainFragmentLayout).apply {
             supportFragmentManager
                 .beginTransaction()
                 .replace(
                     R.id.mainFragmentLayout,
-                    LedecoratorAppFragment.newInstance(),
+                    LedecoratorAppFragment { replaceApp(this) },
                     ACTIVE_LEDECORATOR_APP
                 )
                 .commit()
         }
     }
 
-    fun hideApps() {
+    private fun replaceApp(ledecoratorApp: LedecoratorApp) {
+        supportFragmentManager.findFragmentByTag(ACTIVE_LEDECORATOR_APP)?.apply {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(
+                    R.id.mainFragmentLayout,
+                    SnakeGameFragment(),
+                    ACTIVE_LEDECORATOR_APP
+                )
+                .addToBackStack(null)
+                .commit()
+        }
+    }
+
+    fun hideApp() {
         supportFragmentManager.findFragmentByTag(ACTIVE_LEDECORATOR_APP)?.apply {
             supportFragmentManager
                 .beginTransaction()
@@ -108,11 +124,7 @@ class MainActivity :
             }
         }
 
-        private val defaultDataFrameHandler: (ByteArray.() -> Unit) = { }
-
-        private var dataFrameHandlers: MutableMap<String, ByteArray.() -> Unit> = linkedMapOf(
-            "DEFAULT" to defaultDataFrameHandler
-        )
+        private var dataFrameHandlers: MutableMap<String, ByteArray.() -> Unit> = linkedMapOf()
 
         fun startDeviceSelection(deviceSelectedCallback: BluetoothDevice?.() -> Unit) {
             this.deviceSelectedCallback = deviceSelectedCallback
@@ -185,7 +197,7 @@ class MainActivity :
                             bluetoothGatt?.discoverServices()
                         }
                         BluetoothProfile.STATE_DISCONNECTED -> {
-                            hideApps()
+                            hideApp()
                             connectionHandler?.apply {
                                 obtainMessage(LEDECORATOR_STATE_DISCONNECTED).sendToTarget()
                             }
@@ -210,7 +222,7 @@ class MainActivity :
                 connectionHandler?.apply {
                     obtainMessage(LEDECORATOR_STATE_CONNECTED, gatt).sendToTarget()
                 }
-                showApps()
+                showApp()
             }
 
             override fun onCharacteristicChanged(
@@ -220,12 +232,8 @@ class MainActivity :
                 characteristic?.apply {
                     Log.i(tag, "onCharacteristicChanged: ${value.size} : ${value.toString(StandardCharsets.US_ASCII)}")
                     dataFrameHandlers.forEach { (_, handler) -> handler(value) }
-                    if (responseDataFrame != null) {
-                        sendDataFrame(responseDataFrame!!)
-                    } else {
-                        sendDataFrame(BleInterchangeFrame.IDLE)
-                    }
-                    responseDataFrame = null
+                    sendDataFrame(responseDataFrame)
+                    responseDataFrame = BleInterchangeFrame.IDLE
                 }
             }
         }
@@ -239,7 +247,7 @@ class MainActivity :
             bluetoothGatt?.disconnect()
         }
 
-        var responseDataFrame: ByteArray? = null
+        var responseDataFrame: ByteArray = BleInterchangeFrame.IDLE
 
         fun sendDataFrame(dataFrame: ByteArray) {
             bluetoothGatt?.getService(serviceUUID)?.apply {

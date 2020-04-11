@@ -16,5 +16,6 @@ object LedecoratorApps {
 class LedecoratorApp(
     val code: Byte,
     val name: String,
-    var active: Boolean = false
+    var active: Boolean = false,
+    var selected: Boolean = false
 ) : Parcelable
