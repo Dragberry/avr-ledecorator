@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import kotlinx.android.synthetic.main.fragment_ledecoratorapp.view.*
+import kotlinx.android.synthetic.main.fragment_ledecorator_apps_item.view.*
 import org.dragberry.ledecorator.R
 
 
@@ -16,7 +16,7 @@ class LedecoratorAppRecyclerViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.fragment_ledecoratorapp, parent, false)
+            .inflate(R.layout.fragment_ledecorator_apps_item, parent, false)
         return ViewHolder(view)
     }
 

@@ -49,7 +49,7 @@ class LedecoratorAppFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_ledecoratorapp_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_ledecorator_apps, container, false)
         if (view is RecyclerView) {
             with(view) {
                 layoutManager = LinearLayoutManager(context)
