@@ -1,12 +1,29 @@
 package org.dragberry.ledecorator.bluetooth
 
-import java.nio.charset.StandardCharsets
-
 class BleInterchangeFrame {
 
     companion object {
 
         @JvmStatic
-        val IDLE = "11111111111111111111".toByteArray(StandardCharsets.US_ASCII)
+        val FRAME_START = 1.toByte()
+
+        @JvmStatic
+        val FRAME_END = 4.toByte()
+
+        @JvmStatic
+        val APP_IDLE = 'I'.toByte()
+
+        @JvmStatic
+        val APP_SNAKE = 'S'.toByte()
+
+        @JvmStatic
+        val IDLE = ByteArray(20) {
+            when (it) {
+                0 -> FRAME_START
+                1 -> APP_IDLE
+                19 -> FRAME_END
+                else -> 0
+            }.toByte()
+        }
     }
 }

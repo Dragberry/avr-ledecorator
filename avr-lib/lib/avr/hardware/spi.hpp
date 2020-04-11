@@ -17,6 +17,8 @@ namespace SPI
 
 	void send_byte(const uint8_t byte);
 
+	void send_single_byte(const uint8_t byte);
+
 	void reset();
 
 	void latch();

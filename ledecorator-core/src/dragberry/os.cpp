@@ -2,6 +2,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "lib/avr/hardware/uart.hpp"
+#include "lib/avr/hardware/spi.hpp"
 
 #include <util/delay.h>
 
@@ -11,7 +12,7 @@ Timer *System::timer = nullptr;
 
 uint16_t System::period = 0;
 
-volatile uint8_t System::current_app_index = 1;
+volatile uint8_t System::current_app_index = System::APP_SNAKE;
 
 Application* System::current_app = nullptr;
 
@@ -36,6 +37,7 @@ void System::on_system_timer_event()
 {
     if (time % (period == 0 ? 32 : period) == period / 2)
     {
+        SPI::send_single_byte(BLE::is_connected());
         if (BLE::is_connected())
         {
             BLE::run();
@@ -44,6 +46,7 @@ void System::on_system_timer_event()
         {
             BLE::stop();
         }
+
     }
     if (timer != nullptr)
     {
@@ -52,7 +55,7 @@ void System::on_system_timer_event()
             timer->on_timer_event();
         }
     }
-    if (++time == 40000)
+    if (++time == 64000)
     {
         time = 0;
     }
@@ -62,16 +65,16 @@ void System::init()
 {
     UartBus::init();
 
-    cbi(DDRC, PC3);
-    sbi(PORTC, PC3);
+    SPI::init();
 
+    // BLE Listener input
     cbi(DDRD, PD3);
     sbi(PORTD, PD3);
-
+    // BLE Listener interruption
     sbi(EICRA, ISC10);
     cbi(EICRA, ISC11);
     sbi(EIMSK, INT1);
-
+    // Main timer
     cbi(TCCR0B, WGM02);
     sbi(TCCR0A, WGM01);
     cbi(TCCR0A, WGM00);
@@ -83,6 +86,8 @@ void System::init()
     sbi(TIMSK0, OCIE0A);
 
     outb(OCR0A, 49);
+
+    BLE::check_connection();
 }
 
 ISR(TIMER0_COMPA_vect)

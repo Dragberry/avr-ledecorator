@@ -12,7 +12,7 @@ private:
     static const uint8_t BIT_INFINITY_MODE = 1;
 
 protected:
-    volatile bool state;
+    volatile uint8_t state;
 
     volatile uint16_t time_to_live;
 
@@ -61,6 +61,7 @@ public:
     void terminate()
     {
         sbi(state, BIT_TERMINATION);
+
     }
 };
 

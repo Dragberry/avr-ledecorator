@@ -1,16 +1,21 @@
 #include "string.h"
 #include "ble.hpp"
 #include "os.hpp"
+#include "lib/avr/hardware/spi.hpp"
+
+#include "util/delay.h"
 
 const uint8_t BLE::TIMEOUT = 50;
 
-uint8_t BLE::lifetime = 0;
+volatile uint8_t BLE::lifetime = 0;
 
-uint8_t BLE::counter = 0;
+char BLE::tx_buffer[20] = { 0 };
 
-Frame BLE::rx_frame;
+volatile uint8_t BLE::tx_index = 0;
 
-Frame BLE::tx_frame;
+char BLE::rx_buffer[20] = { 0 };
+
+volatile uint8_t BLE::rx_index = 0;
 
 volatile bool BLE::connected = false;
 
@@ -20,25 +25,31 @@ BLE::UartHandler::~UartHandler()
 {
 }
 
-void BLE::UartHandler::on_uart_rx_event(const uint8_t byte)
+void BLE::UartHandler::on_uart_udre_event()
 {
-    rx_frame.add(byte);
-    if (rx_frame.is_full())
+    if (tx_index < 20)
     {
-        System::process_event();
-        stop();
+        UartBus::send_byte(tx_buffer[tx_index++]);
+        if (tx_index == 20)
+        {
+            rx_index = 0;
+            state = RECEIVING;
+            UartBus::set_rx_handler(&uart_handler);
+            UartBus::set_udre_handler();
+        }
     }
 }
 
-void BLE::UartHandler::on_uart_udre_event()
+void BLE::UartHandler::on_uart_rx_event(const uint8_t byte)
 {
-    if (!tx_frame.is_empty())
+    if (rx_index < 20)
     {
-        UartBus::send_byte(tx_frame.poll());
-    }
-    else
-    {
-        state = RECEIVING;
+        rx_buffer[rx_index++] = byte;
+        if (rx_index == 20)
+        {
+            System::process_event();
+            stop();
+        }
     }
 }
 
@@ -46,7 +57,13 @@ BLE::UartHandler BLE::uart_handler = BLE::UartHandler();
 
 bool BLE::is_connected()
 {
-    return check_bit(PIND, PD3);
+    return connected;
+}
+
+void BLE::check_connection()
+{
+    _delay_ms(1000);
+    BLE::connected = check_bit(PIND, PD3);
 }
 
 bool BLE::is_busy()
@@ -66,12 +83,10 @@ bool BLE::start()
 {
     return UartBus::acquire(PC1, UartBus::BaudRate::B_230_400, []() -> void
     {
-        UartBus::set_rx_handler(&uart_handler);
-        UartBus::set_udre_handler(&uart_handler);
-        UartBus::send_byte(tx_frame.poll());
+        tx_index = 0;
         lifetime = TIMEOUT;
         state = TRANSMITTING;
-        rx_frame.clear();
+        UartBus::set_udre_handler(&uart_handler);
     });
 }
 
@@ -88,7 +103,7 @@ void BLE::run()
         timeout();
         break;
     case State::READY:
-        start();
+//        start();
         break;
     default:
         break;
@@ -106,24 +121,26 @@ void BLE::stop()
 
 void BLE::idle()
 {
-    state = State::PREPARING;
-    char data[20] = { 0 };
-    strcat(data, "[idle=");
-    char value[4];
-    strcat(data, itoa(counter++, value, 10));
-    strcat(data, "]");
-
-    uint8_t i = 0;
-    while(i < 20)
-    {
-       tx_frame.add(data[i++]);
-    }
-
-    state = State::READY;
+//    state = State::PREPARING;
+//    uint8_t i = 0;
+//    while(i < 20)
+//    {
+//        if (i == 19)
+//        {
+//            BLE::tx_frame.offer('\n');
+//        }
+//        else
+//        {
+//            BLE::tx_frame.offer(i + 'a');
+//        }
+//        i++;
+//    }
+//    rx_frame.clear();
+//    state = State::READY;
 }
 
 ISR(INT1_vect)
 {
-    BLE::connected = check_bit(PIND, PD3);
+    BLE::check_connection();
 }
 

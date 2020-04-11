@@ -9,10 +9,10 @@ import kotlinx.android.synthetic.main.fragment_ledecorator_apps_item.view.*
 import org.dragberry.ledecorator.R
 
 
-class LedecoratorAppRecyclerViewAdapter(
+class LedecoratorAppsRecyclerViewAdapter(
     private val appList: List<LedecoratorApp>
 ) :
-    RecyclerView.Adapter<LedecoratorAppRecyclerViewAdapter.ViewHolder>() {
+    RecyclerView.Adapter<LedecoratorAppsRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)

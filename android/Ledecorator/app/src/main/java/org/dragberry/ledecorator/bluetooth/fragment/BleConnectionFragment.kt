@@ -120,6 +120,7 @@ class BleConnectionFragment : Fragment(), Handler.Callback {
     private fun onConnectionError(error: String) {
         selectBleDeviceButton.isEnabled = true
         connectBleDeviceSwitch.isEnabled = true
+        connectBleDeviceSwitch.isChecked = false
         selectedBleDeviceStatusTextView.text = getString(R.string.status_connection_error, error)
     }
 

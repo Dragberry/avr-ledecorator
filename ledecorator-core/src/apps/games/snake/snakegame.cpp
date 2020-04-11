@@ -13,7 +13,7 @@ SnakeGame::SnakeGame() :
         tail{ 0 },
         food(ArrayList<Point, 5>())
 {
-            this->time_to_live = 750;
+            this->time_to_live = 65535;
 }
 
 void SnakeGame::runner()
@@ -88,22 +88,23 @@ bool SnakeGame::move()
     System::io::exchange(
         [&](char* frame) -> void
         {
-
-            uint8_t i = 0;
-            while (i < 20)
-            {
-                frame[i] = ('a' + i);
-                i++;
-            }
+            frame[1] = System::APP_SNAKE;
+            frame[2] = head.x;
+            frame[3] = head.y;
+            frame[4] = tail.x;
+            frame[5] = tail.y;
+            frame[6] = current_speed;
+            frame[7] = (char)(time >> 8);
+            frame[8] = (char) time;
         },
         [&](char* frame) -> void
         {
-            switch (frame[0])
+            switch (frame[2])
             {
-                case 'a':
+                case 'L':
                     direction = turn_left(direction);
                     break;
-                case 'b':
+                case 'R':
                     direction = turn_right(direction);
                     break;
                 default:

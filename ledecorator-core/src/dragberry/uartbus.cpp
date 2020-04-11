@@ -27,6 +27,7 @@ void UartBus::set_baud_rate(UartBus::BaudRate baud_rate)
 
 bool UartBus::acquire(uint8_t device, UartBus::BaudRate baud_rate, void (*on_success)())
 {
+    cli();
     if (is_busy)
     {
         return false;
@@ -35,19 +36,22 @@ bool UartBus::acquire(uint8_t device, UartBus::BaudRate baud_rate, void (*on_suc
     set_baud_rate(baud_rate);
     sbi(PORTC, device);
     on_success();
+    sei();
     return true;
 }
 
 void UartBus::free(uint8_t device)
 {
+    cli();
+    while (!check_bit(UART_UCSRA, UART_TXC));
+    uint8_t counter = 0;
+    while (++counter);
     set_rx_handler();
     set_tx_handler();
     set_udre_handler();
-    while (!check_bit(UART_UCSRA, UART_TXC));
-    uint16_t counter = 0;
-    while (++counter < 756);
     cbi(PORTC, device);
     is_busy = false;
+    sei();
 }
 
 UartBus::RxHandler::~RxHandler()
@@ -77,12 +81,21 @@ UartBus::TxHandler* UartBus::tx_handler = nullptr;
 
 void UartBus::set_tx_handler(UartBus::TxHandler* handler)
 {
-//    UART::set_tx_handler(handler);
+    tx_handler = handler;
+    if (handler != nullptr)
+    {
+        sbi(UART_UCSRB, UART_TXCIE);
+    }
+    else
+    {
+        cbi(UART_UCSRB, UART_TXCIE);
+    }
 }
 
 UartBus::UdreHandler::~UdreHandler()
 {
 }
+
 
 UartBus::UdreHandler* UartBus::udre_handler = nullptr;
 
@@ -104,10 +117,10 @@ ISR(USART_RX_vect)
     UartBus::rx_handler->on_uart_rx_event(UART_UDR);
 }
 
-//ISR(USART_TX_vect)
-//{
-//    UART::tx_handler->on_uart_tx_event();
-//}
+ISR(USART_TX_vect)
+{
+    UartBus::tx_handler->on_uart_tx_event();
+}
 
 ISR(USART_UDRE_vect)
 {

@@ -9,9 +9,9 @@ struct RingBuffer
 {
 private:
     Type buffer[capacity] = {};
-    uint8_t head = 0;
-    uint8_t tail = 0;
-    uint8_t size = 0;
+    volatile uint8_t head = 0;
+    volatile uint8_t tail = 0;
+    volatile uint8_t size = 0;
 
     inline
     void add_inner(const Type item)
@@ -101,9 +101,7 @@ public:
         }
         if (!is_valid)
         {
-            head = 0;
-            tail = 0;
-            size = 0;
+            clear();
         }
         return !is_valid;
     }

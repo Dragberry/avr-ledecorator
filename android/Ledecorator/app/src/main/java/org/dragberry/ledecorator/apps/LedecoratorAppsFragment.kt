@@ -2,6 +2,8 @@ package org.dragberry.ledecorator.apps
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,26 +15,33 @@ import org.dragberry.ledecorator.BluetoothServiceHolder
 import org.dragberry.ledecorator.MainActivity
 import org.dragberry.ledecorator.R
 import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame
-import java.lang.RuntimeException
-import java.nio.charset.StandardCharsets
 
 private const val TAG = "LedecoratorAppFragment"
 
-class LedecoratorAppFragment : Fragment() {
+class LedecoratorAppFragment : Fragment(), Handler.Callback {
 
     private var bluetoothService: MainActivity.BluetoothService? = null
 
-    private val ledecoratorAppRecyclerViewAdapter: LedecoratorAppRecyclerViewAdapter =
-        LedecoratorAppRecyclerViewAdapter(LedecoratorApps.APPS)
+    private val ledecoratorAppRecyclerViewAdapter: LedecoratorAppsRecyclerViewAdapter =
+        LedecoratorAppsRecyclerViewAdapter(LedecoratorApps.APPS)
 
+    private var handler: Handler? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        handler = Handler(this)
         if (context is BluetoothServiceHolder) {
             bluetoothService = context.bluetoothService
-            bluetoothService?.onDataFrame {
-                Log.i(TAG, toString(StandardCharsets.US_ASCII))
-                BleInterchangeFrame.IDLE
+            bluetoothService?.onDataFrame(TAG) {
+                if (BleInterchangeFrame.FRAME_START == get(0) && BleInterchangeFrame.FRAME_END == get(19)) {
+                    LedecoratorApps.APPS.forEach {
+                        it.active = it.code == get(1)
+                    }
+                    handler?.apply {
+                        obtainMessage(33).sendToTarget()
+                    }
+                }
+                bluetoothService?.responseDataFrame = BleInterchangeFrame.IDLE
             }
         } else {
             throw RuntimeException("$context must implement BluetoothServiceHolder")
@@ -41,8 +50,10 @@ class LedecoratorAppFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        bluetoothService?.onDataFrame(null)
+        bluetoothService?.onDataFrame(TAG, null)
         bluetoothService = null
+        handler?.removeCallbacksAndMessages(null)
+        handler = null
     }
 
     override fun onCreateView(
@@ -50,14 +61,24 @@ class LedecoratorAppFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_ledecorator_apps, container, false)
-        if (view is RecyclerView) {
-            with(view) {
+        if (view != null) {
+            view.findViewById<RecyclerView>(R.id.fragment_ledecorator_apps_list)?.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = ledecoratorAppRecyclerViewAdapter
             }
         }
         return view
     }
+
+    override fun handleMessage(msg: Message): Boolean {
+        when (msg.what) {
+            33 -> {
+                ledecoratorAppRecyclerViewAdapter.notifyDataSetChanged()
+            }
+        }
+        return true
+    }
+
 
     companion object {
 

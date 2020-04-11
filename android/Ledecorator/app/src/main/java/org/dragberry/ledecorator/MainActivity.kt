@@ -10,7 +10,6 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import org.dragberry.ledecorator.apps.LedecoratorAppFragment
 import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame
-import org.dragberry.ledecorator.bluetooth.DataFrameHandler
 import org.dragberry.ledecorator.bluetooth.fragment.BleDeviceSelectionFragment
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -109,9 +108,11 @@ class MainActivity :
             }
         }
 
-        private val defaultDataFrameHandler: (ByteArray.() -> ByteArray) = { BleInterchangeFrame.IDLE }
+        private val defaultDataFrameHandler: (ByteArray.() -> Unit) = { }
 
-        private var dataFrameHandler: (ByteArray.() -> ByteArray) = defaultDataFrameHandler
+        private var dataFrameHandlers: MutableMap<String, ByteArray.() -> Unit> = linkedMapOf(
+            "DEFAULT" to defaultDataFrameHandler
+        )
 
         fun startDeviceSelection(deviceSelectedCallback: BluetoothDevice?.() -> Unit) {
             this.deviceSelectedCallback = deviceSelectedCallback
@@ -216,26 +217,45 @@ class MainActivity :
                 gatt: BluetoothGatt?,
                 characteristic: BluetoothGattCharacteristic?
             ) {
-                Log.i(tag, "onCharacteristicChanged")
-
-                gatt?.writeCharacteristic(characteristic?.apply {
-                    value = dataFrameHandler(value)
-                })
+                characteristic?.apply {
+                    Log.i(tag, "onCharacteristicChanged: ${value.size} : ${value.toString(StandardCharsets.US_ASCII)}")
+                    dataFrameHandlers.forEach { (_, handler) -> handler(value) }
+                    if (responseDataFrame != null) {
+                        sendDataFrame(responseDataFrame!!)
+                    } else {
+                        sendDataFrame(BleInterchangeFrame.IDLE)
+                    }
+                    responseDataFrame = null
+                }
             }
         }
 
         fun connect() {
-            bluetoothGatt = bluetoothDevice?.connectGatt(this@MainActivity, false, gattCallback)
+            bluetoothGatt = bluetoothDevice?.connectGatt(this@MainActivity, true, gattCallback)
         }
 
         fun disconnect() {
             stopScan()
             bluetoothGatt?.disconnect()
-            bluetoothGatt = null
         }
 
-        fun onDataFrame(handler: (ByteArray.() -> ByteArray)?) {
-            dataFrameHandler = handler ?: defaultDataFrameHandler
+        var responseDataFrame: ByteArray? = null
+
+        fun sendDataFrame(dataFrame: ByteArray) {
+            bluetoothGatt?.getService(serviceUUID)?.apply {
+                val characteristics = getCharacteristic(characteristicUUID)?.apply {
+                    value = dataFrame
+                }
+                bluetoothGatt?.writeCharacteristic(characteristics)
+            }
+        }
+
+        fun onDataFrame(tag: String, handler: (ByteArray.() -> Unit)?) {
+            if (handler != null) {
+                dataFrameHandlers[tag] = handler
+            } else {
+                dataFrameHandlers.remove(tag)
+            }
         }
 
     }

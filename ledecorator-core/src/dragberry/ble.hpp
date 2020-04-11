@@ -10,16 +10,18 @@ class BLE
 private:
     static const uint8_t TIMEOUT;
 
-    static uint8_t lifetime;
-
-    static uint8_t counter;
+    volatile static uint8_t lifetime;
 
 public:
     volatile static bool connected;
 
-    static Frame tx_frame;
+    static char tx_buffer[20];
 
-    static Frame rx_frame;
+    volatile static uint8_t tx_index;
+
+    static char rx_buffer[20];
+
+    volatile static uint8_t rx_index;
 
 private:
     static class UartHandler :
@@ -50,6 +52,8 @@ public:
     static bool is_busy();
 
     static bool is_connected();
+
+    static void check_connection();
 
     static bool start();
 

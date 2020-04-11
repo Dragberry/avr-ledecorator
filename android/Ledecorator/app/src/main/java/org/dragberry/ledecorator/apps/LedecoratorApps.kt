@@ -5,10 +5,10 @@ import kotlinx.android.parcel.Parcelize
 
 object LedecoratorApps {
     val APPS = listOf(
-        LedecoratorApp(1, "Snake Game"),
-        LedecoratorApp(2, "Weather App"),
-        LedecoratorApp(3, "Life Game"),
-        LedecoratorApp(4, "Clock App")
+        LedecoratorApp('S'.toByte(), "Snake Game"),
+        LedecoratorApp('W'.toByte(), "Weather App"),
+        LedecoratorApp('L'.toByte(), "Life Game"),
+        LedecoratorApp('C'.toByte(), "Clock App")
     )
 }
 

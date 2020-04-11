@@ -20,6 +20,13 @@ void SPI::send_byte(const uint8_t byte)
 	while (!(SPSR & BV(SPIF)));
 }
 
+void SPI::send_single_byte(const uint8_t byte)
+{
+    reset();
+    send_byte(byte);
+    latch();
+}
+
 void SPI::reset()
 {
 	cbi(SPI_PORT, SPI_SS);

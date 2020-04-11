@@ -6,6 +6,7 @@
 #include "os/display.hpp"
 #include "ble.hpp"
 #include "../util/ringbuffer.hpp"
+#include "lib/avr/hardware/spi.hpp"
 
 class Timer
 {
@@ -17,6 +18,13 @@ public:
 
 class System
 {
+public:
+    static const char APP_IDLE = 'I';
+    static const char APP_SNAKE = 'S';
+    static const char APP_WEATHER = 'W';
+
+    static const char COMMAND_TERMINATE = 'T';
+
 private:
     static volatile uint16_t time;
 
@@ -35,32 +43,39 @@ public:
 
     class io
     {
+    private:
+        static const char FRAME_START = 1;
+
+        static const char FRAME_END = 4;
+
     public:
         template <typename Out, typename In>
         static void exchange(Out&& out, In&& in)
         {
             if (BLE::is_connected())
             {
-                char data[20] = { 0 };
-                out(data);
-
                 while (BLE::is_busy());
                 BLE::state = BLE::State::PREPARING;
+
                 uint8_t i = 0;
-                while (!BLE::tx_frame.is_full())
+                while (i < 20)
                 {
-                    BLE::tx_frame.add(data[i++]);
+                    BLE::tx_buffer[i] = '\0';
+                    BLE::rx_buffer[i] = '\0';
+                    i++;
                 }
+                BLE::tx_buffer[0] = FRAME_START;
+                BLE::tx_buffer[19] = FRAME_END;
+                out(BLE::tx_buffer);
+
                 BLE::state = BLE::State::READY;
                 while (!BLE::start());
 
                 while (BLE::state != BLE::State::IDLE);
-                i = 0;
-                while (!BLE::rx_frame.is_empty())
+                if (BLE::rx_buffer[0] == FRAME_START && BLE::rx_buffer[19] == FRAME_END)
                 {
-                    data[i++] = BLE::rx_frame.poll();
+                    in(BLE::rx_buffer);
                 }
-                in(data);
             }
         }
 
@@ -74,7 +89,7 @@ public:
         {
             while (BLE::is_busy());
             BLE::state = BLE::State::PREPARING;
-            frame_builder(BLE::tx_frame);
+//            frame_builder(BLE::tx_frame);
             BLE::state = BLE::State::READY;
             while (!BLE::start());
         }
@@ -85,7 +100,7 @@ public:
             if (!BLE::is_busy())
             {
                 BLE::state = BLE::State::PREPARING;
-                frame_builder(BLE::tx_frame);
+//                frame_builder(BLE::tx_frame);
                 BLE::state = BLE::State::READY;
             }
         }
@@ -110,16 +125,16 @@ public:
 
     static void process_event()
     {
-        uint8_t app_index = BLE::rx_frame.poll();
-        uint8_t command = BLE::rx_frame.poll();
-        if (app_index != 0)
+        uint8_t app_index = BLE::tx_buffer[0];
+        uint8_t command = BLE::tx_buffer[1];
+        if (app_index != APP_IDLE)
         {
             if (app_index != current_app_index)
             {
                 current_app->terminate();
                 current_app_index = app_index;
             }
-            else if (command == '0')
+            else if (command == COMMAND_TERMINATE)
             {
                 current_app->terminate();
             }
