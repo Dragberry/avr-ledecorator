@@ -44,8 +44,6 @@ void UartBus::free(uint8_t device)
 {
     cli();
     while (!check_bit(UART_UCSRA, UART_TXC));
-    uint8_t counter = 0;
-    while (++counter);
     set_rx_handler();
     set_tx_handler();
     set_udre_handler();

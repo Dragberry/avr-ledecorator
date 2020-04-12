@@ -141,8 +141,6 @@ private:
 public:
 	SnakeGame();
 
-    static void runner();
-
     void run();
 
     void on_timer_event();

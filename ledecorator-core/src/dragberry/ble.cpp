@@ -62,7 +62,7 @@ bool BLE::is_connected()
 
 void BLE::check_connection()
 {
-    _delay_ms(1000);
+    _delay_ms(100);
     BLE::connected = check_bit(PIND, PD3);
 }
 
@@ -94,16 +94,9 @@ void BLE::run()
 {
     switch(state)
     {
-    case State::IDLE:
-//        idle();
-//        start();
-        break;
     case State::TRANSMITTING:
     case State::RECEIVING:
         timeout();
-        break;
-    case State::READY:
-//        start();
         break;
     default:
         break;
@@ -119,28 +112,9 @@ void BLE::stop()
     }
 }
 
-void BLE::idle()
-{
-//    state = State::PREPARING;
-//    uint8_t i = 0;
-//    while(i < 20)
-//    {
-//        if (i == 19)
-//        {
-//            BLE::tx_frame.offer('\n');
-//        }
-//        else
-//        {
-//            BLE::tx_frame.offer(i + 'a');
-//        }
-//        i++;
-//    }
-//    rx_frame.clear();
-//    state = State::READY;
-}
-
 ISR(INT1_vect)
 {
     BLE::check_connection();
+    System::current_app->ignore_ttl(BLE::connected);
 }
 

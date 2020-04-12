@@ -16,14 +16,23 @@ public:
     virtual void on_timer_event();
 };
 
+struct Execution
+{
+    const char code;
+    void (* const exec)();
+};
+
 class System
 {
 public:
     static const char APP_IDLE = 'I';
     static const char APP_SNAKE = 'S';
     static const char APP_WEATHER = 'W';
+    static const char APP_CLOCK = 'С';
 
-    static const char COMMAND_TERMINATE = 'T';
+    static const char COMMAND_RESTART = 'R';
+
+    volatile static uint8_t counter;
 
 private:
     static volatile uint16_t time;
@@ -33,13 +42,13 @@ private:
     static Timer *timer;
 
 public:
-    static void init();
-
     static void register_timer(Timer* timer, uint8_t period);
 
     static void deregister_timer(Timer* timer);
 
     static void on_system_timer_event();
+
+    static void init();
 
     class io
     {
@@ -107,39 +116,18 @@ public:
     };
 
 private:
-    static volatile uint8_t current_app_index;
+    static volatile uint8_t curr_app_code;
 
-    static Application* current_app;
+    static volatile uint8_t next_app_code;
+
+    static Execution programms[];
 
 public:
-    template<typename Execution>
-    static void run(Execution &&execution)
-    {
-        execution();
-    }
+    static Application* current_app;
 
-    static void set_app(Application* app)
-    {
-        current_app = app;
-    }
+    static void run();
 
-    static void process_event()
-    {
-        uint8_t app_index = BLE::tx_buffer[0];
-        uint8_t command = BLE::tx_buffer[1];
-        if (app_index != APP_IDLE)
-        {
-            if (app_index != current_app_index)
-            {
-                current_app->terminate();
-                current_app_index = app_index;
-            }
-            else if (command == COMMAND_TERMINATE)
-            {
-                current_app->terminate();
-            }
-        }
-    }
+    static void process_event();
 };
 
 #endif

@@ -13,14 +13,7 @@ SnakeGame::SnakeGame() :
         tail{ 0 },
         food(ArrayList<Point, 5>())
 {
-            this->time_to_live = 65535;
-}
-
-void SnakeGame::runner()
-{
-    SnakeGame snake_game_app;
-    System::set_app(&snake_game_app);
-    snake_game_app.run();
+            this->time_to_live = 150;
 }
 
 void SnakeGame::run()
@@ -91,8 +84,8 @@ bool SnakeGame::move()
         },
         [&](char* frame) -> void
         {
-            mode = frame[2];
-            action = frame[3];
+            mode = frame[3];
+            action = frame[4];
         }
     );
 

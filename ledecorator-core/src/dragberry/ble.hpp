@@ -59,8 +59,6 @@ public:
     static void run();
 
     static void stop();
-
-    static void idle();
 };
 
 #endif

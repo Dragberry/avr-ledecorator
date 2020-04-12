@@ -38,9 +38,9 @@ public:
         return time;
     }
 
-    void set_ttl(uint16_t time_to_live)
+    void ignore_ttl(bool ignore)
     {
-        if (time_to_live == 0)
+        if (ignore)
         {
             sbi(state, BIT_INFINITY_MODE);
         }
@@ -48,7 +48,6 @@ public:
         {
             cbi(state, BIT_INFINITY_MODE);
         }
-        this->time_to_live = time_to_live;
     }
 
     bool is_going_on()
