@@ -59,6 +59,11 @@ class BleConsoleFragment : Fragment(), Handler.Callback {
                             append("\tSpeed[${data[6]}]\n")
                             append("\tTime[${BleUtils.uint16(data[7], data[8])}]")
                         }
+                        BleInterchangeFrame.APP_CLOCK -> {
+                            append("Clock:\n")
+                            append("\t${data[2]}:${data[3]}:${data[4]} ${data[5]}/${data[6]}/${data[7]}\n")
+                            append("\tTime[${BleUtils.uint16(data[8], data[9])}]")
+                        }
                         else -> {
                           append("Unknown")
                         }

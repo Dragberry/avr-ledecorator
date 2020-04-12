@@ -10,6 +10,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import org.dragberry.ledecorator.apps.LedecoratorApp
 import org.dragberry.ledecorator.apps.LedecoratorAppFragment
+import org.dragberry.ledecorator.apps.clock.ClockAppFragment
 import org.dragberry.ledecorator.apps.snake.SnakeGameFragment
 import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame
 import org.dragberry.ledecorator.bluetooth.fragment.BleDeviceSelectionFragment
@@ -74,7 +75,11 @@ class MainActivity :
                 .beginTransaction()
                 .replace(
                     R.id.mainFragmentLayout,
-                    SnakeGameFragment(),
+                    when (ledecoratorApp.code) {
+                        'S'.toByte() -> SnakeGameFragment()
+                        'C'.toByte() -> ClockAppFragment()
+                        else -> LedecoratorAppFragment { replaceApp(this) }
+                    },
                     ACTIVE_LEDECORATOR_APP
                 )
                 .addToBackStack(null)

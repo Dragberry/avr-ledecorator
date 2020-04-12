@@ -45,11 +45,15 @@ public:
 
     void seconds(const uint8_t seconds);
 
+    uint8_t seconds() const;
+
     uint8_t seconds_d() const;
 
     uint8_t seconds_u() const;
 
     void minutes(const uint8_t minutes);
+
+    uint8_t minutes() const;
 
     uint8_t minutes_d() const;
 
@@ -57,11 +61,15 @@ public:
 
     void hours(const uint8_t hours);
 
+    uint8_t hours() const;
+
     uint8_t hours_d() const;
 
     uint8_t hours_u() const;
 
     void days(const uint8_t days);
+
+    uint8_t days() const;
 
     uint8_t days_d() const;
 
@@ -69,11 +77,15 @@ public:
 
     void months(const uint8_t months);
 
+    uint8_t months() const;
+
     uint8_t months_d() const;
 
     uint8_t months_u() const;
 
     void years(const uint8_t years);
+
+    uint8_t years() const;
 
     uint8_t years_d() const;
 

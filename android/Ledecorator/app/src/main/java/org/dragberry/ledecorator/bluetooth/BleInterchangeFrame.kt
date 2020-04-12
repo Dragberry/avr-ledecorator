@@ -14,6 +14,9 @@ class BleInterchangeFrame {
         val APP_IDLE = 'I'.toByte()
 
         @JvmStatic
+        val APP_CLOCK = 'C'.toByte()
+
+        @JvmStatic
         val APP_SNAKE = 'S'.toByte()
 
         @JvmStatic

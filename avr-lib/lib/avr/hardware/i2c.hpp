@@ -164,11 +164,13 @@ namespace I2C {
             uint8_t length
             )
     {
+        cli();
         Status status = master_send_ni(device_addr, 1, &register_addr);
         if (status == Status::OK)
         {
             status = master_receive_ni(device_addr, length, data);
         }
+        sei();
         return status == Status::OK ? OK : DEV_NOT_FOUND;
     }
 
@@ -189,7 +191,10 @@ namespace I2C {
             full_data[idx] = data[idx - 1];
             idx++;
         }
-        return I2C::master_send_ni(device_addr, length + 1, full_data) == Status::OK ? OK : DEV_NOT_FOUND;
+        cli();
+        Status status = I2C::master_send_ni(device_addr, length + 1, full_data);
+        sei();
+        return status == Status::OK ? OK : DEV_NOT_FOUND;
     }
 
 	//! Get the current high-level state of the I2C interface

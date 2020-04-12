@@ -10,6 +10,7 @@ object LedecoratorApps {
         LedecoratorApp('L'.toByte(), "Life Game"),
         LedecoratorApp('C'.toByte(), "Clock App")
     )
+
 }
 
 @Parcelize

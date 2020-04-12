@@ -68,6 +68,11 @@ void Clock::seconds(const uint8_t seconds)
     data[0] = (seconds % 10) | (((seconds / 10) & 0x07) << 4);
 }
 
+uint8_t Clock::seconds() const
+{
+    return seconds_d() * 10 + seconds_u();
+}
+
 uint8_t Clock::seconds_d() const
 {
     return ((data[0] & 0x70) >> 4);
@@ -81,6 +86,11 @@ uint8_t Clock::seconds_u() const
 void Clock::minutes(const uint8_t minutes)
 {
     data[1] = (minutes % 10) | (((minutes / 10) & 0x07) << 4);
+}
+
+uint8_t Clock::minutes() const
+{
+    return minutes_d() * 10 + minutes_u();
 }
 
 uint8_t Clock::minutes_d() const
@@ -99,6 +109,11 @@ void Clock::hours(const uint8_t hours)
     data[2] = (hours % 10) | (((hours / 10) & 0x03) << 4);
 }
 
+uint8_t Clock::hours() const
+{
+    return hours_d() * 10 + hours_u();
+}
+
 uint8_t Clock::hours_d() const
 {
     return ((data[2] & 0x30) >> 4);
@@ -112,6 +127,11 @@ uint8_t Clock::hours_u() const
 void Clock::days(const uint8_t days)
 {
     data[4] = (days % 10) | (((days / 10) & 0x03) << 4);
+}
+
+uint8_t Clock::days() const
+{
+    return days_d() * 10 + days_u();
 }
 
 uint8_t Clock::days_d() const
@@ -129,6 +149,11 @@ void Clock::months(const uint8_t months)
     data[5] = (months % 10) | (((months / 10) & 0x01) << 4);
 }
 
+uint8_t Clock::months() const
+{
+    return months_d() * 10 + months_u();
+}
+
 uint8_t Clock::months_d() const
 {
     return ((data[5] & 0x10) >> 4);
@@ -142,6 +167,11 @@ uint8_t Clock::months_u() const
 void Clock::years(const uint8_t years)
 {
     data[6] = (years % 10) | (((years / 10) & 0x07) << 4);
+}
+
+uint8_t Clock::years() const
+{
+    return years_d() * 10 + years_u();
 }
 
 uint8_t Clock::years_d() const

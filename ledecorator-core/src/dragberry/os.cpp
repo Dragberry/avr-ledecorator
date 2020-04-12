@@ -23,9 +23,18 @@ Application* System::current_app = nullptr;
 Execution System::programms[] = {
     { APP_SNAKE, []() -> void
         {
-            SnakeGame snake_game_app;
-            current_app = &snake_game_app;
-            snake_game_app.run();
+            SnakeGame app;
+            current_app = &app;
+            app.run();
+            current_app = nullptr;
+        }
+    },
+    { APP_CLOCK, []() -> void
+        {
+            ClockApp app;
+            current_app = &app;
+            app.run();
+            current_app = nullptr;
         }
     }
 };
@@ -45,8 +54,6 @@ void System::deregister_timer(Timer *timer)
     System::timer = nullptr;
     System::period = 0;
 }
-
-volatile uint8_t System::counter = 1;
 
 inline
 void System::on_system_timer_event()
@@ -109,7 +116,7 @@ void System::init()
 
 void System::run()
 {
-    static const uint8_t APPS = 1;
+    static const uint8_t APPS = 2;
 
     uint8_t execution_index = 0;
     while (true)

@@ -18,4 +18,5 @@
     <string name="ledecorator_app_mode_auto">Auto</string>
     <string name="ledecorator_app_status_active">Active</string>
     <string name="ledecorator_app_status_inactive">Inactive</string>
+    <string name="update">Update</string>
 </resources>

@@ -25,12 +25,8 @@ ClockApp::ClockApp() :
 
     date_string.color = YELLOW;
     date_string.set_string(date_string_value);
-}
 
-void ClockApp::runner()
-{
-    ClockApp app;
-    app.run();
+    this->time_to_live = CLOCK_APP_TIME;
 }
 
 ClockApp::~ClockApp()
@@ -48,33 +44,69 @@ void ClockApp::run()
         return;
     }
 
-//    clock.days(18);
-//    clock.months(1);
-//    clock.years(20);
-//    clock.update();
-
     System::register_timer(this, 10);
-    while (time < CLOCK_APP_TIME)
+    while (is_going_on())
     {
         if (update_required)
         {
-            System::out::send_assured([&](RingBuffer<uint8_t, 20>& frame) -> void
+            clock.refresh();
+            if (time % 10 == 0)
             {
-                char str[20] = { 0 };
-                strcat(str, hh_mm_string_value);
-                strcat(str, ":");
-                strcat(str, ss_string_value);
-                strcat(str, " ");
-                strcat(str, date_string_value);
+                System::io::exchange(
+                    [&](char* frame) -> void
+                    {
+                        frame[1] = System::APP_CLOCK;
+                        frame[2] = clock.hours();
+                        frame[3] = clock.minutes();
+                        frame[4] = clock.seconds();
+                        frame[5] = clock.days();
+                        frame[6] = clock.months();
+                        frame[7] = clock.years();
+                        frame[8] = (char)(time >> 8);
+                        frame[9] = (char) time;
+                    },
+                    [&](char* frame) -> void
+                    {
+                        if (frame[3] == 'U')
+                        {
+                            clock.hours(frame[4]);
+                            clock.minutes(frame[5]);
+                            clock.seconds(frame[6]);
+                            clock.days(frame[7]);
+                            clock.months(frame[8]);
+                            clock.years(frame[9]);
+                            clock.update();
+                        }
+                    }
+                );
+            }
 
-                uint8_t i = 0;
-                while (str[i] != '\0')
-                {
-                    frame.add(str[i++]);
-                }
+            if (clock.status == DS1307::Status::OK)
+            {
+                *(hh_mm_string_value + 0) = clock.hours_d() + '0';
+                *(hh_mm_string_value + 1) = clock.hours_u() + '0';
 
-                frame.add('\n');
-            });
+                *(hh_mm_string_value + 3) = clock.minutes_d() + '0';
+                *(hh_mm_string_value + 4) = clock.minutes_u() + '0';
+
+                hh_mm_string.set_string(hh_mm_string_value);
+
+                *(ss_string_value + 0) = clock.seconds_d() + '0';
+                *(ss_string_value + 1) = clock.seconds_u() + '0';
+
+                ss_string.set_string(ss_string_value);
+
+                *(date_string_value + 0) = clock.days_d() + '0';
+                *(date_string_value + 1) = clock.days_u() + '0';
+
+                *(date_string_value + 3) = clock.months_d() + '0';
+                *(date_string_value + 4) = clock.months_u() + '0';
+
+                *(date_string_value + 6) = clock.years_d() + '0';
+                *(date_string_value + 7) = clock.years_u() + '0';
+
+                date_string.set_string(date_string_value);
+            }
 
             dragberry::os::display::clear_screen(BLACK);
             hh_mm_string.draw();
@@ -89,33 +121,6 @@ void ClockApp::run()
 
 void ClockApp::on_timer_event()
 {
-    time++;
-    clock.refresh();
-    if (clock.status == DS1307::Status::OK)
-    {
-        *(hh_mm_string_value + 0) = clock.hours_d() + '0';
-        *(hh_mm_string_value + 1) = clock.hours_u() + '0';
-
-        *(hh_mm_string_value + 3) = clock.minutes_d() + '0';
-        *(hh_mm_string_value + 4) = clock.minutes_u() + '0';
-
-        hh_mm_string.set_string(hh_mm_string_value);
-
-        *(ss_string_value + 0) = clock.seconds_d() + '0';
-        *(ss_string_value + 1) = clock.seconds_u() + '0';
-
-        ss_string.set_string(ss_string_value);
-
-        *(date_string_value + 0) = clock.days_d() + '0';
-        *(date_string_value + 1) = clock.days_u() + '0';
-
-        *(date_string_value + 3) = clock.months_d() + '0';
-        *(date_string_value + 4) = clock.months_u() + '0';
-
-        *(date_string_value + 6) = clock.years_d() + '0';
-        *(date_string_value + 7) = clock.years_u() + '0';
-
-        date_string.set_string(date_string_value);
-    }
+    increment_time();
     update_required = true;
 }

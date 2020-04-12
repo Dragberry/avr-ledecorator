@@ -11,10 +11,11 @@
 
 using namespace dragberry::os;
 
-class ClockApp : public Timer
+class ClockApp :
+        public Application,
+        public Timer
 {
 private:
-    volatile uint16_t time = 0;
     volatile bool update_required = false;
 
     DS1307::Clock clock;
@@ -35,8 +36,6 @@ public:
     ClockApp();
 
     ~ClockApp();
-
-    static void runner();
 
     void run();
 

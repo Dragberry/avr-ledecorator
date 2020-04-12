@@ -62,7 +62,7 @@ bool BLE::is_connected()
 
 void BLE::check_connection()
 {
-    _delay_ms(100);
+    _delay_ms(25);
     BLE::connected = check_bit(PIND, PD3);
 }
 
@@ -115,6 +115,9 @@ void BLE::stop()
 ISR(INT1_vect)
 {
     BLE::check_connection();
-    System::current_app->ignore_ttl(BLE::connected);
+    if (System::current_app != nullptr)
+    {
+        System::current_app->ignore_ttl(BLE::connected);
+    }
 }
 

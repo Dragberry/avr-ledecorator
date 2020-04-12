@@ -28,11 +28,10 @@ public:
     static const char APP_IDLE = 'I';
     static const char APP_SNAKE = 'S';
     static const char APP_WEATHER = 'W';
-    static const char APP_CLOCK = 'С';
+    static const char APP_CLOCK = 'C';
 
+    static const char COMMAND_IDLE = 'I';
     static const char COMMAND_RESTART = 'R';
-
-    volatile static uint8_t counter;
 
 private:
     static volatile uint16_t time;
