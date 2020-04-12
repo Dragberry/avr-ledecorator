@@ -2,7 +2,6 @@
 #define BLE_HPP_
 
 #include <stdint.h>
-#include "frame.hpp"
 #include "uartbus.hpp"
 
 class BLE

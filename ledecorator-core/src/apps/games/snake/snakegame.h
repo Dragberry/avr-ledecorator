@@ -188,7 +188,7 @@ private:
 
     SnakeDirection turn_right(SnakeDirection direction);
 
-    void make_decision();
+    void make_decision(SnakeDirection direction);
 
     void possible_step(SnakeDirection direction, PossibleStep& step);
 

@@ -75,16 +75,8 @@ void SnakeGame::on_timer_event()
 
 bool SnakeGame::move()
 {
-//    make_decision();
-//    PossibleStep next_step = possible_steps[0];
-//    if (next_step.priority == SnakeGame::PossibleStep::Priority::IMPOSSIBLE)
-//    {
-//        return false;
-//    }
-//
-//    Point next = get_next(head, next_step.direction);
-
-    volatile SnakeDirection direction = get_direction(head);
+    volatile char mode = 'A';
+    volatile char action = 'N';
     System::io::exchange(
         [&](char* frame) -> void
         {
@@ -99,19 +91,38 @@ bool SnakeGame::move()
         },
         [&](char* frame) -> void
         {
-            switch (frame[2])
-            {
-                case 'L':
-                    direction = turn_left(direction);
-                    break;
-                case 'R':
-                    direction = turn_right(direction);
-                    break;
-                default:
-                    break;
-            }
+            mode = frame[2];
+            action = frame[3];
         }
     );
+
+    SnakeDirection direction = get_direction(head);
+    if (mode == 'M')
+    {
+        switch (action)
+        {
+        case 'L':
+            direction = turn_left(direction);
+            break;
+        case 'R':
+            direction = turn_right(direction);
+            break;
+        default:
+            break;
+        }
+    }
+    else
+    {
+        make_decision(direction);
+        PossibleStep next_step = possible_steps[0];
+        if (next_step.priority == SnakeGame::PossibleStep::Priority::IMPOSSIBLE)
+        {
+            return false;
+        }
+
+        direction = next_step.direction;
+    }
+
     Point next = get_next(head, direction);
 
     uint8_t data = field[next.y][next.x];
@@ -143,32 +154,30 @@ bool SnakeGame::move()
     return true;
 }
 
-void SnakeGame::make_decision()
+void SnakeGame::make_decision(SnakeDirection direction)
 {
-//
-//    direction = get_direction(head);
-//    possible_step(direction, possible_steps[0]);
-//    possible_step(turn_left(direction), possible_steps[1]);
-//    possible_step(turn_right(direction), possible_steps[2]);
-//
-//    sort(possible_steps, 3, [](PossibleStep& i, PossibleStep& j) -> bool {
-//        if (i.priority > j.priority)
-//        {
-//            return true;
-//        }
-//        if (i.priority == j.priority)
-//        {
-//            if (i.distance > j.distance)
-//            {
-//                return true;
-//            }
-//            else if(i.distance == j.distance)
-//            {
-//                return rand() % 2;
-//            }
-//        }
-//        return false;
-//    });
+    possible_step(direction, possible_steps[0]);
+    possible_step(turn_left(direction), possible_steps[1]);
+    possible_step(turn_right(direction), possible_steps[2]);
+
+    sort(possible_steps, 3, [](PossibleStep& i, PossibleStep& j) -> bool {
+        if (i.priority > j.priority)
+        {
+            return true;
+        }
+        if (i.priority == j.priority)
+        {
+            if (i.distance > j.distance)
+            {
+                return true;
+            }
+            else if(i.distance == j.distance)
+            {
+                return rand() % 2;
+            }
+        }
+        return false;
+    });
 }
 
 void SnakeGame::possible_step(SnakeDirection direction, PossibleStep& step)
