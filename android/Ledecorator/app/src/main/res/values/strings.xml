@@ -14,6 +14,8 @@
     <string name="connect">Connect</string>
     <string name="select">Select</string>
     <string name="stop">Stop</string>
+    <string name="ledecorator_app_mode_manual">Manual</string>
+    <string name="ledecorator_app_mode_auto">Auto</string>
     <string name="ledecorator_app_status_active">Active</string>
     <string name="ledecorator_app_status_inactive">Inactive</string>
 </resources>
