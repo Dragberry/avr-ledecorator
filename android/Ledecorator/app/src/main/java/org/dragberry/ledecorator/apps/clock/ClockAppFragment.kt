@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import org.dragberry.ledecorator.BluetoothServiceHolder
 import org.dragberry.ledecorator.MainActivity
 import org.dragberry.ledecorator.R
-import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame
 import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.APP_CLOCK
 import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.COMMAND_IDLE
 import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.FRAME_END

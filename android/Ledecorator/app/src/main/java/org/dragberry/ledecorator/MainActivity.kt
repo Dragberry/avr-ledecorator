@@ -235,8 +235,9 @@ class MainActivity :
                 characteristic: BluetoothGattCharacteristic?
             ) {
                 characteristic?.apply {
-                    Log.i(tag, "onCharacteristicChanged: ${value.size} : ${value.toString(StandardCharsets.US_ASCII)}")
+                    Log.i(tag, "Received: ${value.size} : ${value.toString(StandardCharsets.US_ASCII)}")
                     dataFrameHandlers.forEach { (_, handler) -> handler(value) }
+                    Log.i(tag, "Sent: ${responseDataFrame.toString(StandardCharsets.US_ASCII)}")
                     sendDataFrame(responseDataFrame)
                     responseDataFrame = BleInterchangeFrame.IDLE
                 }

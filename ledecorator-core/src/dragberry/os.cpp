@@ -146,8 +146,8 @@ void System::run()
 
 void System::process_event()
 {
-    uint8_t app_code = BLE::tx_buffer[1];
-    uint8_t command = BLE::tx_buffer[2];
+    uint8_t app_code = BLE::rx_buffer[1];
+    uint8_t command = BLE::rx_buffer[2];
     if (app_code != APP_IDLE)
     {
        if (app_code != curr_app_code)
