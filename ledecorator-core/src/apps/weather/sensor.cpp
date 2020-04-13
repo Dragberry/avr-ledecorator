@@ -107,6 +107,14 @@ const char* Sensor::get_value()
     return string_value;
 }
 
+void Sensor::decompose(char* dest)
+{
+    dest[0] = (char)int_value;
+    dest[1] = (char)(int_value >> 8);
+    dest[2] = (char)(int_value >> 16);
+    dest[3] = (char)(int_value >> 24);
+}
+
 void Sensor::draw_chart()
 {
     chart.draw(8, 8, 1, 0);

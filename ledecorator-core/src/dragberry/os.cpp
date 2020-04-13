@@ -20,18 +20,28 @@ volatile uint8_t System::next_app_code = 0;
 
 Application* System::current_app = nullptr;
 
+static const uint8_t EXECS = 1;
+
 Execution System::programms[] = {
-    { APP_SNAKE, []() -> void
+//    { APP_SNAKE, []() -> void
+//        {
+//            SnakeGame app;
+//            current_app = &app;
+//            app.run();
+//            current_app = nullptr;
+//        }
+//    },
+//    { APP_CLOCK, []() -> void
+//        {
+//            ClockApp app;
+//            current_app = &app;
+//            app.run();
+//            current_app = nullptr;
+//        }
+//    },
+    { APP_WEATHER, []() -> void
         {
-            SnakeGame app;
-            current_app = &app;
-            app.run();
-            current_app = nullptr;
-        }
-    },
-    { APP_CLOCK, []() -> void
-        {
-            ClockApp app;
+            WeatherApp app;
             current_app = &app;
             app.run();
             current_app = nullptr;
@@ -43,7 +53,7 @@ Timer::~Timer()
 {
 }
 
-void System::register_timer(Timer *timer, uint8_t period)
+void System::register_timer(Timer *timer, uint16_t period)
 {
     System::period = period * 4;
     System::timer = timer;
@@ -116,15 +126,13 @@ void System::init()
 
 void System::run()
 {
-    static const uint8_t APPS = 2;
-
     uint8_t execution_index = 0;
     while (true)
     {
         if (next_app_code != 0)
         {
             uint8_t i = 0;
-            while (i < APPS)
+            while (i < EXECS)
             {
                 if (programms[i].code == next_app_code)
                 {
@@ -137,7 +145,7 @@ void System::run()
         }
         curr_app_code = programms[execution_index].code;
         programms[execution_index].exec();
-        if (++execution_index >= APPS)
+        if (++execution_index >= EXECS)
         {
             execution_index = 0;
         }
@@ -155,9 +163,20 @@ void System::process_event()
            current_app->terminate();
            next_app_code = app_code;
        }
-       else if (command == COMMAND_RESTART)
+       else
        {
-           current_app->terminate();
+           switch (command)
+           {
+           case COMMAND_INFINITE:
+           case COMMAND_FINITE:
+               current_app->ignore_ttl(command == COMMAND_INFINITE);
+               break;
+           case COMMAND_RESTART:
+               current_app->terminate();
+               break;
+           default:
+               break;
+           }
        }
     }
 }

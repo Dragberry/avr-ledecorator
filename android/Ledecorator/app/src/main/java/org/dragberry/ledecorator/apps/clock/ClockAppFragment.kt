@@ -11,7 +11,7 @@ import org.dragberry.ledecorator.BluetoothServiceHolder
 import org.dragberry.ledecorator.MainActivity
 import org.dragberry.ledecorator.R
 import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.APP_CLOCK
-import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.COMMAND_IDLE
+import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.COMMAND_INFINITE
 import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.FRAME_END
 import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.FRAME_START
 import java.time.LocalDateTime
@@ -54,7 +54,7 @@ class ClockAppFragment : Fragment() {
                         when (it) {
                             0 -> FRAME_START
                             1 -> APP_CLOCK
-                            2 -> COMMAND_IDLE
+                            2 -> COMMAND_INFINITE
                             3 -> 'U'.toByte()
                             4 -> datetime.hour.toByte()
                             5 -> datetime.minute.toByte()

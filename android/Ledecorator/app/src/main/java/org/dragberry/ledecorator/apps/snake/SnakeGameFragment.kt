@@ -12,7 +12,7 @@ import org.dragberry.ledecorator.BluetoothServiceHolder
 import org.dragberry.ledecorator.MainActivity
 import org.dragberry.ledecorator.R
 import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.APP_SNAKE
-import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.COMMAND_IDLE
+import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.COMMAND_INFINITE
 import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.FRAME_END
 import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.FRAME_START
 
@@ -81,7 +81,7 @@ class SnakeGameFragment : Fragment() {
                     when (it) {
                         0 -> FRAME_START
                         1 -> APP_SNAKE
-                        2 -> COMMAND_IDLE
+                        2 -> COMMAND_INFINITE
                         3 -> {
                             when (mode) {
                                 Mode.AUTO -> 'A'

@@ -18,6 +18,12 @@ protected:
 
     volatile uint16_t time;
 
+    void decompose_time(char* dest)
+    {
+        dest[0] = (char)time;
+        dest[1] = (char)(time >> 8);
+    }
+
 public:
     Application() :
         state(0x00),
@@ -62,6 +68,7 @@ public:
         sbi(state, BIT_TERMINATION);
 
     }
+
 };
 
 #endif

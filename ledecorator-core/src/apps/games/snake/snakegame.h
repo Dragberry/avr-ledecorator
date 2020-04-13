@@ -12,8 +12,11 @@ class SnakeGame :
         public Timer
 {
 public:
-    uint8_t period = 0;
 private:
+    static const uint16_t TIME_TO_LIVE = 750;
+
+    uint8_t period = 0;
+
     static const uint8_t FIELD_COLOR        = 0b00000100;
     static const uint8_t SNAKE_COLOR        = WHITE;
     static const uint8_t SNAKE_HEAD_COLOR   = YELLOW;

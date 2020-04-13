@@ -30,7 +30,8 @@ public:
     static const char APP_WEATHER = 'W';
     static const char APP_CLOCK = 'C';
 
-    static const char COMMAND_IDLE = 'I';
+    static const char COMMAND_INFINITE = 'I';
+    static const char COMMAND_FINITE = 'F';
     static const char COMMAND_RESTART = 'R';
 
 private:
@@ -41,7 +42,7 @@ private:
     static Timer *timer;
 
 public:
-    static void register_timer(Timer* timer, uint8_t period);
+    static void register_timer(Timer* timer, uint16_t period);
 
     static void deregister_timer(Timer* timer);
 

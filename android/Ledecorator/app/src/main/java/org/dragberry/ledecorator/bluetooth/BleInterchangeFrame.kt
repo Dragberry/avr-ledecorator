@@ -20,7 +20,13 @@ class BleInterchangeFrame {
         val APP_SNAKE = 'S'.toByte()
 
         @JvmStatic
-        val COMMAND_IDLE = 'I'.toByte()
+        val APP_WEATHER = 'W'.toByte()
+
+        @JvmStatic
+        val COMMAND_INFINITE = 'I'.toByte()
+
+        @JvmStatic
+        val COMMAND_FINITE = 'F'.toByte()
 
         @JvmStatic
         val COMMAND_RESTART = 'R'.toByte()
@@ -30,7 +36,7 @@ class BleInterchangeFrame {
             when (it) {
                 0 -> FRAME_START
                 1 -> APP_IDLE
-                2 -> COMMAND_IDLE
+                2 -> COMMAND_INFINITE
                 19 -> FRAME_END
                 else -> 0
             }.toByte()

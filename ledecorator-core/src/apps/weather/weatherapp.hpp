@@ -10,14 +10,16 @@
 
 #define BMP280_ADDR 0xEC
 
-class WeatherApp : public Timer
+class WeatherApp :
+        public Application,
+        public Timer
 {
 private:
+    static const uint8_t TIME_TO_LIVE = 36; // 0.1 second
+
     DS1307::Clock clock;
     BME280::Interface interface;
     BME280::Device device;
-
-    volatile uint16_t time = 0;
 
     TemperatureSensor temperature_sensor;
     PressureSensor pressure_sensor;
@@ -35,8 +37,6 @@ public:
     WeatherApp();
 
     ~WeatherApp();
-
-    static void runner();
 
     void run();
 

@@ -7,8 +7,6 @@
 #include "../../dragberry/os/drawablestring3x5.hpp"
 #include "../../hardware/ds1307/ds1307.hpp"
 
-#define CLOCK_APP_TIME 200
-
 using namespace dragberry::os;
 
 class ClockApp :
@@ -16,6 +14,8 @@ class ClockApp :
         public Timer
 {
 private:
+    static const uint8_t TIME_TO_LIVE = 200;
+
     volatile bool update_required = false;
 
     DS1307::Clock clock;

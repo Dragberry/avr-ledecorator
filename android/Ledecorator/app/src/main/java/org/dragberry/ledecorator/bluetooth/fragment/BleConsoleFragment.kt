@@ -54,15 +54,21 @@ class BleConsoleFragment : Fragment(), Handler.Callback {
                     when (data[1]) {
                         BleInterchangeFrame.APP_SNAKE -> {
                             append("Snake:\n")
-                            append("\tHead[X=${data[2]};Y=${data[3]}]\n")
-                            append("\tTail[X=${data[4]};Y=${data[5]}]\n")
-                            append("\tSpeed[${data[6]}]\n")
-                            append("\tTime[${BleUtils.uint16(data[7], data[8])}]")
+                            append("\tTime:\t${BleUtils.uint16(data[7], data[8])}\n")
+                            append("\tHead:\t[X=${data[2]};Y=${data[3]}]\n")
+                            append("\tTail:\t[X=${data[4]};Y=${data[5]}]\n")
+                            append("\tSpeed:\t${data[6]}")
                         }
                         BleInterchangeFrame.APP_CLOCK -> {
                             append("Clock:\n")
-                            append("\t${data[2]}:${data[3]}:${data[4]} ${data[5]}/${data[6]}/${data[7]}\n")
-                            append("\tTime[${BleUtils.uint16(data[8], data[9])}]")
+                            append("\tTime:\t${BleUtils.uint16(data[8], data[9])}\n")
+                            append("\t${data[2]}:${data[3]}:${data[4]} ${data[5]}/${data[6]}/${data[7]}")
+                        }
+                        BleInterchangeFrame.APP_WEATHER -> {
+                            append("Weather:\n")
+                            append("\tTime:\t${BleUtils.uint16(data[2], data[3])}\n")
+                            append("\tTemperature:\t${BleUtils.int32(data[4], data[5], data[6], data[7]) / 100.0} C\n")
+                            append("\tPressure:\t${BleUtils.int32(data[8], data[9], data[10], data[11]) / 133} mmHg")
                         }
                         else -> {
                           append("Unknown")

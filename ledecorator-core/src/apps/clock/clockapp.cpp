@@ -26,7 +26,7 @@ ClockApp::ClockApp() :
     date_string.color = YELLOW;
     date_string.set_string(date_string_value);
 
-    this->time_to_live = CLOCK_APP_TIME;
+    time_to_live = TIME_TO_LIVE;
 }
 
 ClockApp::~ClockApp()

@@ -89,6 +89,7 @@ public:
 
     const char* get_value();
 
+    void decompose(char* dest);
 private:
     void draw_chart();
 };

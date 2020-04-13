@@ -13,7 +13,7 @@ SnakeGame::SnakeGame() :
         tail{ 0 },
         food(ArrayList<Point, 5>())
 {
-            this->time_to_live = 150;
+            time_to_live = TIME_TO_LIVE;
 }
 
 void SnakeGame::run()
