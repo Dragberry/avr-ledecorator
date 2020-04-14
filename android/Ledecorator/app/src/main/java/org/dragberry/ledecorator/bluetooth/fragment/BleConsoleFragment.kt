@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +21,6 @@ import org.dragberry.ledecorator.MainActivity
 import org.dragberry.ledecorator.R
 import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame
 import org.dragberry.ledecorator.bluetooth.BleUtils
-import java.nio.charset.StandardCharsets
 import java.time.LocalTime
 import java.util.*
 

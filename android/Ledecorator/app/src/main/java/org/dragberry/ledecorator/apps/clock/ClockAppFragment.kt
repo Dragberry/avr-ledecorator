@@ -17,9 +17,9 @@ private const val TAG = "ClockAppFragment"
 
 class ClockAppFragment : AbstractAppFragment() {
 
-    private var updateButton: Button? = null
-
     override val fragmentId: String = TAG
+
+    private var updateButton: Button? = null
 
     @Volatile
     private var updateRequested: Boolean = false
