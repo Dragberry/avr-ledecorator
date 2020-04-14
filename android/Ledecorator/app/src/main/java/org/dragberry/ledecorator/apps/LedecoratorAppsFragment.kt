@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.fragment_ledecorator_apps_item.view.*
 import org.dragberry.ledecorator.BluetoothServiceHolder
 import org.dragberry.ledecorator.MainActivity
 import org.dragberry.ledecorator.R
+import org.dragberry.ledecorator.bluetooth.Commands
 import org.dragberry.ledecorator.bluetooth.DataFrames
 
 private const val TAG = "LedecoratorAppFragment"
@@ -44,7 +45,7 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
             bluetoothService?.onDataFrame(TAG) {
                 if (DataFrames.check(this)) {
                     LedecoratorApps.APPS.forEachIndexed { i, it ->
-                        it.active = it.code == get(1)
+                        it.active = it.command == Commands.App.valueOf(get(1))
                         it.selected = i == selectedAppIndex
                     }
                     handler?.apply {
@@ -109,19 +110,19 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = appList[position]
-            holder.appNameTextView.text = item.name
-            holder.appCodeTextView.text = "0x0${item.code.toString(16)}"
-            holder.appStatusTextView.apply {
-                if (item.active) {
-                    text = getString(R.string.ledecorator_app_status_active)
-                    visibility = View.VISIBLE
-                } else {
-                    text = getString(R.string.ledecorator_app_status_active)
-                    visibility = View.INVISIBLE
-                }
-            }
-
             holder.apply {
+                appNameTextView.text = item.name
+                appCodeTextView.text = "'${item.command.code}'"
+                appStatusTextView.apply {
+                    if (item.active) {
+                        text = getString(R.string.ledecorator_app_status_active)
+                        visibility = View.VISIBLE
+                    } else {
+                        text = getString(R.string.ledecorator_app_status_active)
+                        visibility = View.INVISIBLE
+                    }
+                }
+
                 view.setBackgroundColor(if (selectedIndex == holder.adapterPosition) Color.GREEN else Color.WHITE)
                 view.setOnClickListener {
                     if (selectedIndex != holder.adapterPosition) {
@@ -138,11 +139,11 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
     private class DiffCallback : DiffUtil.ItemCallback<LedecoratorApp>() {
 
         override fun areItemsTheSame(oldItem: LedecoratorApp, newItem: LedecoratorApp): Boolean {
-            return oldItem.code == newItem.code
+            return oldItem.command == newItem.command
         }
 
         override fun areContentsTheSame(oldItem: LedecoratorApp, newItem: LedecoratorApp): Boolean {
-            return oldItem.code == newItem.code
+            return oldItem.command == newItem.command
         }
     }
 }

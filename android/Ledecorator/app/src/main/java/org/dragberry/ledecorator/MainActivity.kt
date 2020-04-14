@@ -12,6 +12,8 @@ import org.dragberry.ledecorator.apps.LedecoratorApp
 import org.dragberry.ledecorator.apps.LedecoratorAppFragment
 import org.dragberry.ledecorator.apps.clock.ClockAppFragment
 import org.dragberry.ledecorator.apps.snake.SnakeGameFragment
+import org.dragberry.ledecorator.apps.weather.WeatherAppFragment
+import org.dragberry.ledecorator.bluetooth.Commands
 import org.dragberry.ledecorator.bluetooth.DataFrames
 import org.dragberry.ledecorator.bluetooth.fragment.BleDeviceSelectionFragment
 import java.nio.charset.StandardCharsets
@@ -75,9 +77,10 @@ class MainActivity :
                 .beginTransaction()
                 .replace(
                     R.id.mainFragmentLayout,
-                    when (ledecoratorApp.code) {
-                        'S'.toByte() -> SnakeGameFragment()
-                        'C'.toByte() -> ClockAppFragment()
+                    when (ledecoratorApp.command) {
+                        Commands.App.SNAKE -> SnakeGameFragment()
+                        Commands.App.CLOCK -> ClockAppFragment()
+                        Commands.App.WEATHER -> WeatherAppFragment()
                         else -> LedecoratorAppFragment { replaceApp(this) }
                     },
                     ACTIVE_LEDECORATOR_APP

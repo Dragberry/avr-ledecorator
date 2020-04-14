@@ -6,7 +6,7 @@ class Commands {
     enum class App(code: Char, private val logger: (sb: StringBuilder, data: ByteArray) -> Unit) {
         IDLE('I', { _, _ -> }),
         SNAKE('S', { sb , data ->
-            sb.append("\tTime:\t${org.dragberry.ledecorator.bluetooth.BleUtils.uint16(data[7], data[8])}\n")
+            sb.append("\tTime:\t${BleUtils.uint16(data[7], data[8])}\n")
             sb.append("\tHead:\t[X=${data[2]};Y=${data[3]}]\n")
             sb.append("\tTail:\t[X=${data[4]};Y=${data[5]}]\n")
             sb.append("\tSpeed:\t${data[6]}")
@@ -43,10 +43,6 @@ class Commands {
         END(4);
 
         val code: Byte = code.toByte()
-
-        companion object {
-            fun valueOf(code: Byte): Frame? = values().first { it.code == code }
-        }
     }
 
     enum class System(code: Char) {
@@ -55,13 +51,7 @@ class Commands {
         RESTART('R');
 
         val code: Byte = code.toByte()
-
-        companion object {
-            fun valueOf(code: Byte): System? = values().first { it.code == code }
-        }
     }
-
-
 }
 
 class DataFrames {
