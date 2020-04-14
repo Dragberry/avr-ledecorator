@@ -8,10 +8,7 @@ import android.widget.Button
 import android.widget.Switch
 import org.dragberry.ledecorator.R
 import org.dragberry.ledecorator.apps.AbstractAppFragment
-import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.APP_SNAKE
-import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.COMMAND_INFINITE
-import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.FRAME_END
-import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.FRAME_START
+import org.dragberry.ledecorator.bluetooth.Commands.*
 
 private const val TAG = "SnakeGameFragment"
 
@@ -76,12 +73,12 @@ class SnakeGameFragment : AbstractAppFragment() {
         return if (mode == Mode.MANUAL) {
             ByteArray(20) {
                 when (it) {
-                    0 -> FRAME_START
-                    1 -> APP_SNAKE
-                    2 -> COMMAND_INFINITE
+                    0 -> Frame.START.code
+                    1 -> App.SNAKE.code
+                    2 -> System.INFINITE.code
                     3 -> mode.value
                     4 -> action.value
-                    19 -> FRAME_END
+                    19 -> Frame.END.code
                     else -> 0
                 }
             }.apply {
@@ -96,11 +93,11 @@ class SnakeGameFragment : AbstractAppFragment() {
         @JvmStatic
         private val SNAKE_IDLE = ByteArray(20) {
             when (it) {
-                0 -> FRAME_START
-                1 -> APP_SNAKE
-                2 -> COMMAND_INFINITE
+                0 -> Frame.START.code
+                1 -> App.SNAKE.code
+                2 -> System.INFINITE.code
                 3 -> Mode.AUTO.value
-                19 -> FRAME_END
+                19 -> Frame.END.code
                 else -> 0
             }
         }

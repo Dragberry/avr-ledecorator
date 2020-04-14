@@ -7,10 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import org.dragberry.ledecorator.R
 import org.dragberry.ledecorator.apps.AbstractAppFragment
-import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.APP_CLOCK
-import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.COMMAND_INFINITE
-import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.FRAME_END
-import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.FRAME_START
+import org.dragberry.ledecorator.bluetooth.Commands.*
 import java.time.LocalDateTime
 
 private const val TAG = "ClockAppFragment"
@@ -46,9 +43,9 @@ class ClockAppFragment : AbstractAppFragment() {
             ByteArray(20) {
                 val datetime = LocalDateTime.now()
                 when (it) {
-                    0 -> FRAME_START
-                    1 -> APP_CLOCK
-                    2 -> COMMAND_INFINITE
+                    0 -> Frame.START.code
+                    1 -> App.CLOCK.code
+                    2 -> System.INFINITE.code
                     3 -> CLOCK_UPDATE
                     4 -> datetime.hour.toByte()
                     5 -> datetime.minute.toByte()
@@ -56,7 +53,7 @@ class ClockAppFragment : AbstractAppFragment() {
                     7 -> datetime.dayOfMonth.toByte()
                     8 -> datetime.monthValue.toByte()
                     9 -> (datetime.year % 100).toByte()
-                    19 -> FRAME_END
+                    19 -> Frame.END.code
                     else -> 0
                 }
             }
@@ -71,10 +68,10 @@ class ClockAppFragment : AbstractAppFragment() {
         @JvmStatic
         private val CLOCK_IDLE = ByteArray(20) {
             when (it) {
-                0 -> FRAME_START
-                1 -> APP_CLOCK
-                2 -> COMMAND_INFINITE
-                19 -> FRAME_END
+                0 -> Frame.START.code
+                1 -> App.CLOCK.code
+                2 -> System.INFINITE.code
+                19 -> Frame.END.code
                 else -> 0
             }
         }

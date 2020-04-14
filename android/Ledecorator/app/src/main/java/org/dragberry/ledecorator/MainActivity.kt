@@ -12,7 +12,7 @@ import org.dragberry.ledecorator.apps.LedecoratorApp
 import org.dragberry.ledecorator.apps.LedecoratorAppFragment
 import org.dragberry.ledecorator.apps.clock.ClockAppFragment
 import org.dragberry.ledecorator.apps.snake.SnakeGameFragment
-import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame
+import org.dragberry.ledecorator.bluetooth.DataFrames
 import org.dragberry.ledecorator.bluetooth.fragment.BleDeviceSelectionFragment
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -239,7 +239,7 @@ class MainActivity :
                     dataFrameHandlers.forEach { (_, handler) -> handler(value) }
                     Log.i(tag, "Sent: ${responseDataFrame.toString(StandardCharsets.US_ASCII)}")
                     sendDataFrame(responseDataFrame)
-                    responseDataFrame = BleInterchangeFrame.IDLE
+                    responseDataFrame = DataFrames.IDLE
                 }
             }
         }
@@ -253,7 +253,7 @@ class MainActivity :
             bluetoothGatt?.disconnect()
         }
 
-        var responseDataFrame: ByteArray = BleInterchangeFrame.IDLE
+        var responseDataFrame: ByteArray = DataFrames.IDLE
 
         fun sendDataFrame(dataFrame: ByteArray) {
             bluetoothGatt?.getService(serviceUUID)?.apply {

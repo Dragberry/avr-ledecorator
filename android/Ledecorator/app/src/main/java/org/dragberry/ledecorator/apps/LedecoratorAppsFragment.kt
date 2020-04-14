@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +18,7 @@ import kotlinx.android.synthetic.main.fragment_ledecorator_apps_item.view.*
 import org.dragberry.ledecorator.BluetoothServiceHolder
 import org.dragberry.ledecorator.MainActivity
 import org.dragberry.ledecorator.R
-import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame
+import org.dragberry.ledecorator.bluetooth.DataFrames
 
 private const val TAG = "LedecoratorAppFragment"
 
@@ -43,7 +42,7 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
         if (context is BluetoothServiceHolder) {
             bluetoothService = context.bluetoothService
             bluetoothService?.onDataFrame(TAG) {
-                if (BleInterchangeFrame.FRAME_START == get(0) && BleInterchangeFrame.FRAME_END == get(19)) {
+                if (DataFrames.check(this)) {
                     LedecoratorApps.APPS.forEachIndexed { i, it ->
                         it.active = it.code == get(1)
                         it.selected = i == selectedAppIndex
@@ -52,7 +51,7 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
                         obtainMessage(FRAME_RECEIVED).sendToTarget()
                     }
                 }
-                bluetoothService?.responseDataFrame = BleInterchangeFrame.IDLE
+                bluetoothService?.responseDataFrame = DataFrames.IDLE
             }
         } else {
             throw RuntimeException("$context must implement ${BluetoothServiceHolder::javaClass.name}")

@@ -19,8 +19,7 @@ import org.dragberry.ledecorator.BluetoothServiceHolder
 import org.dragberry.ledecorator.LEDECORATOR_DATAFRAME_RECIEVED
 import org.dragberry.ledecorator.MainActivity
 import org.dragberry.ledecorator.R
-import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame
-import org.dragberry.ledecorator.bluetooth.BleUtils
+import org.dragberry.ledecorator.bluetooth.Commands
 import java.time.LocalTime
 import java.util.*
 
@@ -47,34 +46,7 @@ class BleConsoleFragment : Fragment(), Handler.Callback {
             bluetoothService = context.bluetoothService
             bluetoothService?.onDataFrame(TAG) {
                 val data: ByteArray = this
-
-                val string: String = StringBuffer().apply {
-                    when (data[1]) {
-                        BleInterchangeFrame.APP_SNAKE -> {
-                            append("Snake:\n")
-                            append("\tTime:\t${BleUtils.uint16(data[7], data[8])}\n")
-                            append("\tHead:\t[X=${data[2]};Y=${data[3]}]\n")
-                            append("\tTail:\t[X=${data[4]};Y=${data[5]}]\n")
-                            append("\tSpeed:\t${data[6]}")
-                        }
-                        BleInterchangeFrame.APP_CLOCK -> {
-                            append("Clock:\n")
-                            append("\tTime:\t${BleUtils.uint16(data[8], data[9])}\n")
-                            append("\t${data[2]}:${data[3]}:${data[4]} ${data[5]}/${data[6]}/${data[7]}")
-                        }
-                        BleInterchangeFrame.APP_WEATHER -> {
-                            append("Weather:\n")
-                            append("\tTime:\t${BleUtils.uint16(data[2], data[3])}\n")
-                            append("\tTemperature:\t${BleUtils.int32(data[4], data[5], data[6], data[7]) / 100.0} C\n")
-                            append("\tPressure:\t${BleUtils.int32(data[8], data[9], data[10], data[11]) / 133} mmHg")
-                        }
-                        else -> {
-                          append("Unknown")
-                        }
-                    }
-                }.toString()
-
-                consoleBuffer.add(Record(LocalTime.now(), string))
+                consoleBuffer.add(Record(LocalTime.now(), Commands.App.valueOf(data[1]).toString(data)))
                 if (consoleBuffer.size > BUFFER_SIZE) {
                     consoleBuffer.pop()
                 }
