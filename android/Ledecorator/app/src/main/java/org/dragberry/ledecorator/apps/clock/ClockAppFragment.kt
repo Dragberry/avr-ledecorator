@@ -1,15 +1,12 @@
 package org.dragberry.ledecorator.apps.clock
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.fragment.app.Fragment
-import org.dragberry.ledecorator.BluetoothServiceHolder
-import org.dragberry.ledecorator.MainActivity
 import org.dragberry.ledecorator.R
+import org.dragberry.ledecorator.apps.AbstractAppFragment
 import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.APP_CLOCK
 import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.COMMAND_INFINITE
 import org.dragberry.ledecorator.bluetooth.BleInterchangeFrame.Companion.FRAME_END
@@ -18,11 +15,11 @@ import java.time.LocalDateTime
 
 private const val TAG = "ClockAppFragment"
 
-class ClockAppFragment : Fragment() {
-
-    private var bluetoothService: MainActivity.BluetoothService? = null
+class ClockAppFragment : AbstractAppFragment() {
 
     private var updateButton: Button? = null
+
+    override val fragmentId: String = TAG
 
     @Volatile
     private var updateRequested: Boolean = false
@@ -42,41 +39,44 @@ class ClockAppFragment : Fragment() {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is BluetoothServiceHolder) {
-            bluetoothService = context.bluetoothService
-            bluetoothService?.onDataFrame(TAG) {
-                if (updateRequested)
-                {
-                    bluetoothService?.responseDataFrame = ByteArray(20) {
-                        val datetime = LocalDateTime.now()
-                        when (it) {
-                            0 -> FRAME_START
-                            1 -> APP_CLOCK
-                            2 -> COMMAND_INFINITE
-                            3 -> 'U'.toByte()
-                            4 -> datetime.hour.toByte()
-                            5 -> datetime.minute.toByte()
-                            6 -> datetime.second.toByte()
-                            7 -> datetime.dayOfMonth.toByte()
-                            8 -> datetime.monthValue.toByte()
-                            9 -> (datetime.year % 100).toByte()
-                            19 -> FRAME_END
-                            else -> 0
-                        }
-                    }
-                    updateRequested = false
+    override fun onDataFrame(bytes: ByteArray): ByteArray {
+        return if (updateRequested)
+        {
+            updateRequested = false
+            ByteArray(20) {
+                val datetime = LocalDateTime.now()
+                when (it) {
+                    0 -> FRAME_START
+                    1 -> APP_CLOCK
+                    2 -> COMMAND_INFINITE
+                    3 -> CLOCK_UPDATE
+                    4 -> datetime.hour.toByte()
+                    5 -> datetime.minute.toByte()
+                    6 -> datetime.second.toByte()
+                    7 -> datetime.dayOfMonth.toByte()
+                    8 -> datetime.monthValue.toByte()
+                    9 -> (datetime.year % 100).toByte()
+                    19 -> FRAME_END
+                    else -> 0
                 }
             }
         } else {
-            throw RuntimeException("$context must implement ${BluetoothServiceHolder::javaClass.name}")
+            CLOCK_IDLE
         }
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        bluetoothService?.onDataFrame(TAG, null)
-        bluetoothService = null
+    companion object {
+        private const val CLOCK_UPDATE = 'U'.toByte()
+
+        @JvmStatic
+        private val CLOCK_IDLE = ByteArray(20) {
+            when (it) {
+                0 -> FRAME_START
+                1 -> APP_CLOCK
+                2 -> COMMAND_INFINITE
+                19 -> FRAME_END
+                else -> 0
+            }
+        }
     }
 }

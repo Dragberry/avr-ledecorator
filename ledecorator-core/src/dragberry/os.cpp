@@ -20,25 +20,25 @@ volatile uint8_t System::next_app_code = 0;
 
 Application* System::current_app = nullptr;
 
-static const uint8_t EXECS = 1;
+static const uint8_t EXECS = 3;
 
 Execution System::programms[] = {
-//    { APP_SNAKE, []() -> void
-//        {
-//            SnakeGame app;
-//            current_app = &app;
-//            app.run();
-//            current_app = nullptr;
-//        }
-//    },
-//    { APP_CLOCK, []() -> void
-//        {
-//            ClockApp app;
-//            current_app = &app;
-//            app.run();
-//            current_app = nullptr;
-//        }
-//    },
+    { APP_SNAKE, []() -> void
+        {
+            SnakeGame app;
+            current_app = &app;
+            app.run();
+            current_app = nullptr;
+        }
+    },
+    { APP_CLOCK, []() -> void
+        {
+            ClockApp app;
+            current_app = &app;
+            app.run();
+            current_app = nullptr;
+        }
+    },
     { APP_WEATHER, []() -> void
         {
             WeatherApp app;
@@ -68,7 +68,7 @@ void System::deregister_timer(Timer *timer)
 inline
 void System::on_system_timer_event()
 {
-    if (time % (period == 0 ? 32 : period) == period / 2)
+    if (time % 32 == 0)
     {
         if (BLE::is_connected())
         {

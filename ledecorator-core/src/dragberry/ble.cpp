@@ -5,7 +5,7 @@
 
 #include "util/delay.h"
 
-const uint8_t BLE::TIMEOUT = 50;
+const uint8_t BLE::TIMEOUT = 5;
 
 volatile uint8_t BLE::lifetime = 0;
 

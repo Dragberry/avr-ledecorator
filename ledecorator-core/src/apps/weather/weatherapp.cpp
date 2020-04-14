@@ -126,9 +126,9 @@ uint32_t WeatherApp::get_time()
 {
     clock.refresh();
     uint32_t time = 0;
-    time += (clock.seconds());
-    time += ((clock.minutes()) * 60);
-    time += ((clock.hours()) * 360);
-    time += ((clock.days()) * 86400);
+    time += clock.seconds();
+    time += (clock.minutes() * 60);
+    time += (clock.hours() * 360);
+    time += (clock.days() * 86400);
     return time;
 }
