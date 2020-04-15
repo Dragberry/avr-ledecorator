@@ -11,36 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/weatherCarouselButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Carousel"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/weatherChartsButton"
-            app:layout_constraintStart_toEndOf="@+id/weatherCurrentValueButton"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/weatherCurrentValueButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:text="Current"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/weatherChartsButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="32dp"
-            android:text="Charts"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/weatherSensorList"
             android:layout_width="match_parent"
@@ -53,6 +23,35 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:context=".apps.WeatherAppFragment"
             tools:listitem="@layout/fragment_ledecorator_apps_item" />
+
+        <RadioGroup
+            android:id="@+id/weatherModeRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <RadioButton
+                android:id="@+id/weatherModeValueRadio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Value" />
+
+            <RadioButton
+                android:id="@+id/weatherModeCarouselRadio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Carousel" />
+
+            <RadioButton
+                android:id="@+id/weatherModeChartsRadio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Charts" />
+        </RadioGroup>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

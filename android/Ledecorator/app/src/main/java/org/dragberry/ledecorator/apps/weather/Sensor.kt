@@ -2,14 +2,17 @@ package org.dragberry.ledecorator.apps.weather
 
 import org.dragberry.ledecorator.bluetooth.BleUtils
 
-abstract class Sensor<T : Number>(val name: String, val unit: String) {
+abstract class Sensor<T : Number>(code: Char, val name: String, val unit: String) {
+
+    val code: Byte = code.toByte()
+
     lateinit var value: T
         protected set
 
     abstract fun setValue(data: ByteArray)
 }
 
-class TemperatureSensor(name: String, unit: String) : Sensor<Double>(name, unit) {
+class TemperatureSensor(name: String, unit: String) : Sensor<Double>('T', name, unit) {
     init {
         value = 0.0
     }
@@ -19,7 +22,7 @@ class TemperatureSensor(name: String, unit: String) : Sensor<Double>(name, unit)
     }
 }
 
-class PressureSensor(name: String, unit: String) : Sensor<Int>(name, unit) {
+class PressureSensor(name: String, unit: String) : Sensor<Int>('P', name, unit) {
     init {
         value = 0
     }

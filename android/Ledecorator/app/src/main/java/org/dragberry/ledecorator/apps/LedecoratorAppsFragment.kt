@@ -123,7 +123,12 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
                     }
                 }
 
-                view.setBackgroundColor(if (selectedIndex == holder.adapterPosition) Color.GREEN else Color.WHITE)
+                view.setBackgroundColor(
+                    if (selectedIndex == holder.adapterPosition)
+                        Color.GREEN
+                    else
+                        Color.WHITE
+                )
                 view.setOnClickListener {
                     if (selectedIndex != holder.adapterPosition) {
                         notifyItemChanged(selectedIndex)

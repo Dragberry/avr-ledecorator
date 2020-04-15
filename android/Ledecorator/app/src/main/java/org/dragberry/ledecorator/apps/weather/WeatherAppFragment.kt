@@ -1,11 +1,13 @@
 package org.dragberry.ledecorator.apps.weather
 
 
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +27,17 @@ class WeatherAppFragment : AbstractAppFragment() {
 
     override val fragmentId: String = TAG
 
+    private enum class Mode(code: Char) {
+        CAROUSEL('C'),
+        VALUE('V'),
+        CHARTS('H');
+
+        val code: Byte = code.toByte()
+    }
+
+    @Volatile
+    private var mode: Mode = Mode.CAROUSEL
+
     private val sensors: List<Sensor<*>> = listOf(
         TemperatureSensor("Temperature:", "℃"),
         PressureSensor("Pressure:", "mmHg")
@@ -41,6 +54,22 @@ class WeatherAppFragment : AbstractAppFragment() {
                 layoutManager = LinearLayoutManager(context)
                 adapter = sensorRecyclerViewAdapter
             }
+            findViewById<RadioGroup>(R.id.weatherModeRadioGroup)?.apply {
+                check(R.id.weatherModeValueRadio)
+                setOnCheckedChangeListener { _, checkedId ->
+                    when (checkedId) {
+                        R.id.weatherModeCarouselRadio -> {
+                            mode = Mode.CAROUSEL
+                        }
+                        R.id.weatherModeValueRadio -> {
+                            mode = Mode.VALUE
+                        }
+                        R.id.weatherModeChartsRadio -> {
+                            mode = Mode.CHARTS
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -49,7 +78,17 @@ class WeatherAppFragment : AbstractAppFragment() {
         handler?.apply {
             obtainMessage(UPDATE_SENSORS).sendToTarget()
         }
-        return WEATHER_IDLE
+        return ByteArray(20) {
+            when (it) {
+                0 -> Commands.Frame.START.code
+                1 -> Commands.App.WEATHER.code
+                2 -> Commands.System.INFINITE.code
+                3 -> sensorRecyclerViewAdapter.selectedSensorCode
+                4 -> mode.code
+                19 -> Commands.Frame.END.code
+                else -> 0
+            }
+        }
     }
 
     override fun handleMessage(msg: Message): Boolean {
@@ -62,11 +101,15 @@ class WeatherAppFragment : AbstractAppFragment() {
     inner class SensorRecyclerViewAdapter :
         ListAdapter<Sensor<*>, SensorRecyclerViewAdapter.ViewHolder>(DiffCallback()) {
 
+        private var selectedIndex: Int = -1
+
+        var selectedSensorCode: Byte = IDLE_SENSOR_CODE
+
         init {
             submitList(sensors)
         }
 
-        inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
             val nameTextView: TextView = view.weatherSensorNameTextView
             val valueTextView: TextView = view.weatherSensorValueTextView
             val unitTextView: TextView = view.weatherSensorUnitTextView
@@ -81,7 +124,25 @@ class WeatherAppFragment : AbstractAppFragment() {
                 nameTextView.text = item.name
                 valueTextView.text = item.value.toString()
                 unitTextView.text = item.unit
+
+                view.setBackgroundColor(
+                    if (selectedIndex == holder.adapterPosition)
+                        Color.GREEN
+                    else
+                        Color.WHITE
+                )
+                view.setOnClickListener {
+                    if (selectedIndex != holder.adapterPosition) {
+                        selectedIndex = holder.adapterPosition
+                        selectedSensorCode = item.code
+                    } else {
+                        selectedIndex = -1
+                        selectedSensorCode = IDLE_SENSOR_CODE
+                    }
+                    notifyItemChanged(selectedIndex)
+                }
             }
+
         }
     }
 
@@ -97,15 +158,8 @@ class WeatherAppFragment : AbstractAppFragment() {
     }
 
     companion object {
+
         @JvmStatic
-        private val WEATHER_IDLE = ByteArray(20) {
-            when (it) {
-                0 -> Commands.Frame.START.code
-                1 -> Commands.App.WEATHER.code
-                2 -> Commands.System.INFINITE.code
-                19 -> Commands.Frame.END.code
-                else -> 0
-            }
-        }
+        private val IDLE_SENSOR_CODE: Byte = 'I'.toByte()
     }
 }
