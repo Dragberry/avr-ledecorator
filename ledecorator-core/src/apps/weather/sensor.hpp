@@ -14,6 +14,13 @@ using namespace dragberry::os;
 
 class Sensor
 {
+public:
+    const enum Code {
+        TEMPERATURE = 'T',
+        PRESSURE    = 'P',
+        IDLE        = 'I',
+    } code;
+
 private:
     static const uint8_t PROGMEM IMG_Y_AXIS_DATA[16];
 
@@ -66,6 +73,7 @@ public:
 
 public:
     Sensor(
+            const Code code,
             const Image* pictogram,
             const RingBuffer<int16_t, 6>* database,
             const uint32_t* last_updated_time

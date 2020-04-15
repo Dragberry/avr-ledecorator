@@ -4,10 +4,12 @@
 #include "sensor.hpp"
 
 Sensor::Sensor(
+        const Code code,
         const Image* pictogram,
         const RingBuffer<int16_t, 6>* database,
         const uint32_t* last_updated_time
         ) :
+        code(code),
         pictogram(pictogram),
         database(database),
         last_updated_time(last_updated_time)

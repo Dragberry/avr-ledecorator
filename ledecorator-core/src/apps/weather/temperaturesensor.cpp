@@ -4,7 +4,7 @@
 const char TemperatureSensor::UNIT[] = "C";
 
 TemperatureSensor::TemperatureSensor() :
-        Sensor(&IMG_TEMPERATURE, &TEMPERATURE_DB, &LAST_UPDATED_TIME)
+        Sensor(Sensor::Code::TEMPERATURE, &IMG_TEMPERATURE, &TEMPERATURE_DB, &LAST_UPDATED_TIME)
 {
     unit_string.set_string(UNIT);
 }

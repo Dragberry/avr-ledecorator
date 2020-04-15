@@ -53,7 +53,11 @@ void WeatherApp::run()
                 temperature_sensor.decompose(frame + 4);
                 pressure_sensor.decompose(frame + 8);
             },
-            [&](char* frame) -> void { }
+            [&](char* frame) -> void
+            {
+                active_sensor_code = (Sensor::Code) frame[3];
+                mode = (WeatherApp::Mode) frame[4];
+            }
         );
     }
 
@@ -85,32 +89,89 @@ void WeatherApp::init()
     System::register_timer(this, 100);
 }
 
-void WeatherApp::on_timer_event()
+static const uint8_t SENSOR_TTL = 16;
+static const uint8_t VALUE_TTL = 8;
+static const uint8_t CHART_TTL = 2;
+
+void WeatherApp::play()
 {
-    increment_time();
-    uint16_t sensor_up_time = time % 12;
-    if (sensor_up_time == 0)
+    if (time % SENSOR_TTL == 0)
     {
-        if (++active_sensor_index == 2)
+        if (++active_sensor_index == SENSORS)
         {
             active_sensor_index = 0;
         }
         active_sensor = sensors[active_sensor_index];
     }
-    else
+    play_sensor();
+}
+
+void WeatherApp::play_sensor()
+{
+    uint16_t sensor_up_time = time % SENSOR_TTL;
+    switch (mode)
     {
-        if (sensor_up_time < 6)
+    case Mode::VALUE:
+        play_sensor_value();
+        break;
+    case Mode::CHARTS:
+        play_sensor_charts();
+        break;
+    default:
+        if (sensor_up_time < VALUE_TTL)
         {
-            active_sensor->display_mode = Sensor::DisplayMode::VALUE;
-        }
-        else if (sensor_up_time < 9)
-        {
-            active_sensor->display_mode = Sensor::DisplayMode::CHART_Y_AXIS;
+            play_sensor_value();
         }
         else
         {
-            active_sensor->display_mode = Sensor::DisplayMode::CHART_X_AXIS;
+            play_sensor_charts();
         }
+        break;
+    }
+}
+
+void WeatherApp::play_sensor_value()
+{
+    active_sensor->display_mode = Sensor::DisplayMode::VALUE;
+}
+
+void WeatherApp::play_sensor_charts()
+{
+    uint16_t chart_idx = ((time % SENSOR_TTL) - VALUE_TTL) / CHART_TTL;
+    if (chart_idx % 2)
+    {
+        active_sensor->display_mode = Sensor::DisplayMode::CHART_Y_AXIS;
+    }
+    else
+    {
+        active_sensor->display_mode = Sensor::DisplayMode::CHART_X_AXIS;
+    }
+}
+
+void WeatherApp::on_timer_event()
+{
+    increment_time();
+    uint8_t i = 0;
+    switch (active_sensor_code)
+    {
+    case Sensor::Code::TEMPERATURE:
+    case Sensor::Code::PRESSURE:
+        active_sensor_index = 0;
+        while (i < SENSORS)
+        {
+            if (sensors[i]->code == active_sensor_code)
+            {
+                active_sensor = sensors[i];
+                active_sensor_index = i;
+                break;
+            }
+            i++;
+        }
+        play_sensor();
+        break;
+    default:
+        play();
+        break;
     }
 }
 

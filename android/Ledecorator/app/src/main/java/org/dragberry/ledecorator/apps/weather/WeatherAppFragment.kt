@@ -55,7 +55,7 @@ class WeatherAppFragment : AbstractAppFragment() {
                 adapter = sensorRecyclerViewAdapter
             }
             findViewById<RadioGroup>(R.id.weatherModeRadioGroup)?.apply {
-                check(R.id.weatherModeValueRadio)
+                check(R.id.weatherModeCarouselRadio)
                 setOnCheckedChangeListener { _, checkedId ->
                     when (checkedId) {
                         R.id.weatherModeCarouselRadio -> {

@@ -5,7 +5,7 @@
 const char PressureSensor::UNIT[] = "MM";
 
 PressureSensor::PressureSensor() :
-        Sensor(&IMG_PRESSURE, &PRESSURE_DB, &LAST_UPDATED_TIME)
+        Sensor(Sensor::Code::PRESSURE, &IMG_PRESSURE, &PRESSURE_DB, &LAST_UPDATED_TIME)
 {
     unit_string.set_string(UNIT);
 }
