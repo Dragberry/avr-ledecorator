@@ -4,13 +4,11 @@
 #include "entities.hpp"
 #include "lifegame.hpp"
 
-#define LIFE_GAME_TIME 300
-
 LifeGame::LifeGame()
 {
     is_random = rand() % 2;
 	color_life = dragberry::io::read();
-	color_dead = dragberry::io::read();;
+	color_dead = dragberry::io::read();
 	alive_indicator = ALIVE_INDICATOR_01;
 	if (is_random)
 	{
@@ -24,13 +22,11 @@ LifeGame::LifeGame()
 	}
 
 	is_step_required = 0;
-	time = 0;
-	System::register_timer(this, 10);
+	time_to_live = TIME_TO_LIVE;
 }
 
 LifeGame::~LifeGame()
 {
-    System::deregister_timer(this);
 }
 
 void LifeGame::random_field()
@@ -132,20 +128,15 @@ void LifeGame::step_up()
 
 }
 
-void LifeGame::runner()
-{
-	LifeGame app;
-	app.run();
-}
-
 void LifeGame::on_timer_event()
 {
-	time++;
+	increment_time();
 	is_step_required = true;
 }
 
 void LifeGame::run()
 {
+    System::register_timer(this, 10);
 	is_step_required = true;
 	dragberry::os::display::clear_screen(BLACK);
 	dragberry::os::display::update_assured();
@@ -155,23 +146,24 @@ void LifeGame::run()
 		{
 			build_scene();
 			step_up();
-			System::out::send_assured([&](RingBuffer<uint8_t, 20>& frame) -> void
-            {
-                char str[20] = { 0 };
-                strcat(str, "Time: ");
-                char value[8];
-                strcat(str, ltoa(time, value, 10));
 
-                uint8_t i = 0;
-                while (str[i] != '\0')
-                {
-                    frame.add(str[i++]);
-                }
+			if (time % 10 == 0) {
+                System::io::exchange(
+                    [&](char* frame) -> void
+                    {
+                        frame[1] = System::APP_LIFE;
+                        decompose_time(frame + 2);
+                        frame[4] = color_life;
+                        frame[5] = color_dead;
+                        frame[6] = is_random;
+                    },
+                    [&](char* frame) -> void { }
+                );
+			}
 
-                frame.add('\n');
-            });
 			is_step_required = false;
 		}
 	}
-	while (time <= LIFE_GAME_TIME);
+	while (is_going_on());
+	System::deregister_timer(this);
 }

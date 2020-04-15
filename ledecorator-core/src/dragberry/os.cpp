@@ -20,9 +20,9 @@ volatile uint8_t System::next_app_code = 0;
 
 Application* System::current_app = nullptr;
 
-static const uint8_t EXECS = 3;
+static const uint8_t EXECS = 4;
 
-Execution System::programms[] = {
+Execution System::programms[EXECS] = {
     { APP_SNAKE, []() -> void
         {
             SnakeGame app;
@@ -42,6 +42,14 @@ Execution System::programms[] = {
     { APP_WEATHER, []() -> void
         {
             WeatherApp app;
+            current_app = &app;
+            app.run();
+            current_app = nullptr;
+        }
+    },
+    { APP_LIFE, []() -> void
+        {
+            LifeGame app;
             current_app = &app;
             app.run();
             current_app = nullptr;

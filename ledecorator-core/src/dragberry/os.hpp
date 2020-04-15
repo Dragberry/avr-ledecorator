@@ -29,6 +29,7 @@ public:
     static const char APP_SNAKE = 'S';
     static const char APP_WEATHER = 'W';
     static const char APP_CLOCK = 'C';
+    static const char APP_LIFE = 'L';
 
     static const char COMMAND_INFINITE = 'I';
     static const char COMMAND_FINITE = 'F';

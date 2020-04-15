@@ -10,9 +10,13 @@
 #define ALIVE_INDICATOR_01 0b00000001
 #define ALIVE_INDICATOR_10 0b00000010
 
-class LifeGame : public Timer
+class LifeGame :
+        public Application,
+        public Timer
 {
 private:
+    static const uint16_t TIME_TO_LIVE = 300;
+
 	uint8_t color_life;
 	uint8_t color_dead;
 
@@ -20,7 +24,6 @@ private:
 
 	uint8_t field[SCREEN_HEIGHT][SCREEN_WIDTH] = { };
 
-	volatile uint16_t time;
 	volatile bool is_step_required;
 
 	bool is_random;
@@ -38,8 +41,6 @@ private:
 	void step_up();
 
 public:
-	static void runner();
-
 	void run();
 
 	void on_timer_event();

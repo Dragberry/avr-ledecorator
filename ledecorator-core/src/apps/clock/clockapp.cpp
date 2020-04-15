@@ -50,7 +50,7 @@ void ClockApp::run()
         if (update_required)
         {
             clock.refresh();
-            if (time % 10 == 0)
+            if (time % 8 == 0)
             {
                 System::io::exchange(
                     [&](char* frame) -> void
