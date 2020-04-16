@@ -6,10 +6,10 @@ class Commands {
     enum class App(code: Char, private val logger: (sb: StringBuilder, data: ByteArray) -> Unit) {
         IDLE('I', { _, _ -> }),
         SNAKE('S', { sb , data ->
-            sb.append("\tTime:\t${BleUtils.uint16(data[7], data[8])}\n")
-            sb.append("\tHead:\t[X=${data[2]};Y=${data[3]}]\n")
-            sb.append("\tTail:\t[X=${data[4]};Y=${data[5]}]\n")
-            sb.append("\tSpeed:\t${data[6]}")
+            sb.append("\tTime:\t${BleUtils.uint16(data[2], data[3])}\n")
+            sb.append("\tHead:\t[X=${data[4]};Y=${data[5]}]\n")
+            sb.append("\tTail:\t[X=${data[6]};Y=${data[7]}]\n")
+            sb.append("\tSpeed:\t${data[8]}")
         }),
         WEATHER('W', { sb , data ->
             sb.append("\tTime:\t${BleUtils.uint16(data[2], data[3])}\n")
@@ -18,11 +18,17 @@ class Commands {
 
         }),
         CLOCK('C', { sb , data ->
-            sb.append("\tTime:\t${BleUtils.uint16(data[8], data[9])}\n")
-            sb.append("\t${data[2]}:${data[3]}:${data[4]} ${data[5]}/${data[6]}/${data[7]}")
+            sb.append("\tTime:\t${BleUtils.uint16(data[2], data[3])}\n")
+            sb.append("\t${data[4]}:${data[5]}:${data[6]} ${data[7]}/${data[8]}/${data[9]}")
 
         }),
-        LIFE('L', { _, _ -> });
+        LIFE('L', { sb , data ->
+            sb.append("\tTime:\t${BleUtils.uint16(data[2], data[3])}\n")
+            sb.append("\tSteps:\t${BleUtils.uint16(data[4], data[5])}\n")
+            sb.append("\tColor Live:\t${data[6]}\n")
+            sb.append("\tColor Dead:\t${data[7]}\n")
+            sb.append("\tRandom:\t${data[8].toInt() != 0}\n")
+        });
 
         val code: Byte = code.toByte()
 

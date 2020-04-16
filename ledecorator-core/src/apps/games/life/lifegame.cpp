@@ -21,6 +21,7 @@ LifeGame::LifeGame()
         place_entity<7, 5>(20, 0, alive_indicator, &Entities::SHIP_LARGE);
 	}
 
+	steps = 0;
 	is_step_required = 0;
 	time_to_live = TIME_TO_LIVE;
 }
@@ -144,24 +145,23 @@ void LifeGame::run()
 	{
 		if (is_step_required)
 		{
-			build_scene();
+            System::io::exchange(
+                [&](char* frame) -> void
+                {
+                    frame[1] = System::APP_LIFE;
+                    System::io::decompose(time, 2);
+                    System::io::decompose(steps, 4);
+                    frame[6] = color_life;
+                    frame[7] = color_dead;
+                    frame[8] = is_random;
+                },
+                [&](char* frame) -> void { }
+            );
+
+		    build_scene();
 			step_up();
-
-			if (time % 10 == 0) {
-                System::io::exchange(
-                    [&](char* frame) -> void
-                    {
-                        frame[1] = System::APP_LIFE;
-                        decompose_time(frame + 2);
-                        frame[4] = color_life;
-                        frame[5] = color_dead;
-                        frame[6] = is_random;
-                    },
-                    [&](char* frame) -> void { }
-                );
-			}
-
 			is_step_required = false;
+			steps++;
 		}
 	}
 	while (is_going_on());

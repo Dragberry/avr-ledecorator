@@ -27,7 +27,7 @@ void UartBus::set_baud_rate(UartBus::BaudRate baud_rate)
 
 bool UartBus::acquire(uint8_t device, UartBus::BaudRate baud_rate, void (*on_success)())
 {
-    cli();
+//    cli();
     if (is_busy)
     {
         return false;
@@ -36,20 +36,20 @@ bool UartBus::acquire(uint8_t device, UartBus::BaudRate baud_rate, void (*on_suc
     set_baud_rate(baud_rate);
     sbi(PORTC, device);
     on_success();
-    sei();
+//    sei();
     return true;
 }
 
 void UartBus::free(uint8_t device)
 {
-    cli();
+//    cli();
     while (!check_bit(UART_UCSRA, UART_TXC));
     set_rx_handler();
     set_tx_handler();
     set_udre_handler();
     cbi(PORTC, device);
     is_busy = false;
-    sei();
+//    sei();
 }
 
 UartBus::RxHandler::~RxHandler()

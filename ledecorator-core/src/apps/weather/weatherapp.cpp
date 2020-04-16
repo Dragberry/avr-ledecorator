@@ -49,9 +49,9 @@ void WeatherApp::run()
             [&](char* frame) -> void
             {
                 frame[1] = System::APP_WEATHER;
-                decompose_time(frame + 2);
-                temperature_sensor.decompose(frame + 4);
-                pressure_sensor.decompose(frame + 8);
+                System::io::decompose(time, 2);
+                System::io::decompose(temperature_sensor.get_value(), 4);
+                System::io::decompose(pressure_sensor.get_value(), 8);
             },
             [&](char* frame) -> void
             {

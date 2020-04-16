@@ -74,13 +74,12 @@ bool SnakeGame::move()
         [&](char* frame) -> void
         {
             frame[1] = System::APP_SNAKE;
-            frame[2] = head.x;
-            frame[3] = head.y;
-            frame[4] = tail.x;
-            frame[5] = tail.y;
-            frame[6] = current_speed;
-            frame[7] = (char)(time >> 8);
-            frame[8] = (char) time;
+            System::io::decompose(time, 2);
+            frame[4] = head.x;
+            frame[5] = head.y;
+            frame[6] = tail.x;
+            frame[7] = tail.y;
+            frame[8] = current_speed;
         },
         [&](char* frame) -> void
         {

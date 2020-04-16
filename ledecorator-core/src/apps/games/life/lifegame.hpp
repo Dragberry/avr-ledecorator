@@ -24,6 +24,8 @@ private:
 
 	uint8_t field[SCREEN_HEIGHT][SCREEN_WIDTH] = { };
 
+	uint16_t steps;
+
 	volatile bool is_step_required;
 
 	bool is_random;

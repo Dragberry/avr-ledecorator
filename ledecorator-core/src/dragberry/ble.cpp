@@ -115,9 +115,9 @@ void BLE::stop()
 ISR(INT1_vect)
 {
     BLE::check_connection();
-    if (System::current_app != nullptr)
+    if (System::current_app != nullptr && BLE::connected)
     {
-        System::current_app->ignore_ttl(BLE::connected);
+        System::current_app->ignore_ttl(false);
     }
 }
 

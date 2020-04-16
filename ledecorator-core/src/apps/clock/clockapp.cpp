@@ -56,14 +56,13 @@ void ClockApp::run()
                     [&](char* frame) -> void
                     {
                         frame[1] = System::APP_CLOCK;
-                        frame[2] = clock.hours();
-                        frame[3] = clock.minutes();
-                        frame[4] = clock.seconds();
-                        frame[5] = clock.days();
-                        frame[6] = clock.months();
-                        frame[7] = clock.years();
-                        frame[8] = (char)(time >> 8);
-                        frame[9] = (char) time;
+                        System::io::decompose(time, 2);
+                        frame[4] = clock.hours();
+                        frame[5] = clock.minutes();
+                        frame[6] = clock.seconds();
+                        frame[7] = clock.days();
+                        frame[8] = clock.months();
+                        frame[9] = clock.years();
                     },
                     [&](char* frame) -> void
                     {

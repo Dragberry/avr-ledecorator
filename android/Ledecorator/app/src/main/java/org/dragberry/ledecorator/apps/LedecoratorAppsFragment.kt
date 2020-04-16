@@ -112,28 +112,23 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
             val item = appList[position]
             holder.apply {
                 appNameTextView.text = item.name
-                appCodeTextView.text = "'${item.command.code}'"
+                appCodeTextView.text = item.command.code.toString()
                 appStatusTextView.apply {
                     if (item.active) {
                         text = getString(R.string.ledecorator_app_status_active)
                         visibility = View.VISIBLE
+                        holder.view.setBackgroundColor(Color.GREEN)
                     } else {
                         text = getString(R.string.ledecorator_app_status_active)
-                        visibility = View.INVISIBLE
+                        visibility = View.GONE
+                        holder.view.setBackgroundColor(Color.WHITE)
                     }
                 }
 
-                view.setBackgroundColor(
-                    if (selectedIndex == holder.adapterPosition)
-                        Color.GREEN
-                    else
-                        Color.WHITE
-                )
                 view.setOnClickListener {
                     if (selectedIndex != holder.adapterPosition) {
                         notifyItemChanged(selectedIndex)
                         selectedIndex = holder.adapterPosition
-                    } else {
                         onAppSelectedListener.invoke(item)
                     }
                 }

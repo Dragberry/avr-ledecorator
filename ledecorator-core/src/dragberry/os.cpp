@@ -189,6 +189,20 @@ void System::process_event()
     }
 }
 
+void System::io::decompose(const uint16_t& value, const uint8_t idx)
+{
+    BLE::tx_buffer[idx] = (char)value;
+    BLE::tx_buffer[idx + 1] = (char)(value >> 8);
+}
+
+void System::io::decompose(const int32_t& value, const uint8_t idx)
+{
+    BLE::tx_buffer[idx] = (char)value;
+    BLE::tx_buffer[idx + 1] = (char)(value >> 8);
+    BLE::tx_buffer[idx + 2] = (char)(value >> 16);
+    BLE::tx_buffer[idx + 3] = (char)(value >> 24);
+}
+
 ISR(TIMER0_COMPA_vect)
 {
     System::on_system_timer_event();

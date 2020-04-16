@@ -91,13 +91,17 @@ public:
 
     void save();
 
+    inline
+    int32_t get_value() const
+    {
+        return int_value;
+    }
+
     void set_value(int32_t int_value);
 
     void draw();
 
-    const char* get_value();
-
-    void decompose(char* dest);
+    const char* get_string_value();
 private:
     void draw_chart();
 };
