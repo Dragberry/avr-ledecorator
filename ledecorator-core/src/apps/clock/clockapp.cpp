@@ -115,7 +115,7 @@ void ClockApp::run()
             update_required = false;
         }
     }
-    System::deregister_timer(this);
+    System::deregister_timer();
 }
 
 void ClockApp::on_timer_event()

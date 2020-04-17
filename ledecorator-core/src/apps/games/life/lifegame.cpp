@@ -165,5 +165,5 @@ void LifeGame::run()
 		}
 	}
 	while (is_going_on());
-	System::deregister_timer(this);
+	System::deregister_timer();
 }

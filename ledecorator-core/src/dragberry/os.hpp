@@ -45,7 +45,7 @@ private:
 public:
     static void register_timer(Timer* timer, uint16_t period);
 
-    static void deregister_timer(Timer* timer);
+    static void deregister_timer();
 
     static void on_system_timer_event();
 

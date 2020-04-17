@@ -67,7 +67,7 @@ void WeatherApp::run()
     temperature_sensor.update(time);
     pressure_sensor.update(time);
     humidity_sensor.update(time);
-    System::deregister_timer(this);
+    System::deregister_timer();
 }
 
 void WeatherApp::init()

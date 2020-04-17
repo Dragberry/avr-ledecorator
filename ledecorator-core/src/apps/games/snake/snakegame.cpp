@@ -37,7 +37,7 @@ void SnakeGame::run()
             break;
         }
     } while (is_going_on());
-    System::deregister_timer(this);
+    System::deregister_timer();
 }
 
 bool SnakeGame::do_step()

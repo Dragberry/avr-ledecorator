@@ -67,7 +67,7 @@ void System::register_timer(Timer *timer, uint16_t period)
     System::timer = timer;
 }
 
-void System::deregister_timer(Timer *timer)
+void System::deregister_timer()
 {
     System::timer = nullptr;
     System::period = 0;
