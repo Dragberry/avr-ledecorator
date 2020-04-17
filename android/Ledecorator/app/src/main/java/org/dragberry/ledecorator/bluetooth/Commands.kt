@@ -32,6 +32,16 @@ class Commands {
 
         val code: Byte = code.toByte()
 
+        val frame: ByteArray = ByteArray(20) {
+            when (it) {
+                0 -> Frame.START.code
+                1 -> code.toByte()
+                2 -> (if (this.code == 'I'.toByte()) System.FINITE else System.INFINITE).code
+                19 -> Frame.END.code
+                else -> 0.toByte()
+            }
+        }
+
         fun toString(dataFrame: ByteArray): String {
             return StringBuilder().apply {
                 append(name).append("\n")
@@ -65,17 +75,6 @@ class DataFrames {
     companion object {
         fun check(bytes: ByteArray): Boolean {
             return Commands.Frame.START.code == bytes[0] && Commands.Frame.END.code == bytes[19]
-        }
-
-        @JvmStatic
-        val IDLE = ByteArray(20) {
-            when (it) {
-                0 -> Commands.Frame.START.code
-                1 -> Commands.App.IDLE.code
-                2 -> Commands.System.FINITE.code
-                19 -> Commands.Frame.END.code
-                else -> 0
-            }.toByte()
         }
     }
 }

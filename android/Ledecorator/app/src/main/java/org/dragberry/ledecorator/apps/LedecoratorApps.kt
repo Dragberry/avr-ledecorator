@@ -1,23 +1,24 @@
 package org.dragberry.ledecorator.apps
 
-import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import org.dragberry.ledecorator.apps.clock.ClockAppFragment
+import org.dragberry.ledecorator.apps.life.LifeGameFragment
+import org.dragberry.ledecorator.apps.snake.SnakeGameFragment
+import org.dragberry.ledecorator.apps.weather.WeatherAppFragment
 import org.dragberry.ledecorator.bluetooth.Commands
+import org.dragberry.ledecorator.bluetooth.Commands.App.*
 
 object LedecoratorApps {
     val APPS = listOf(
-        LedecoratorApp(Commands.App.SNAKE, "Snake Game"),
-        LedecoratorApp(Commands.App.WEATHER, "Weather App"),
-        LedecoratorApp(Commands.App.LIFE, "Life Game"),
-        LedecoratorApp(Commands.App.CLOCK, "Clock App")
+        LedecoratorApp(SNAKE, "Snake Game", { SnakeGameFragment() }),
+        LedecoratorApp(WEATHER, "Weather App", { WeatherAppFragment() }),
+        LedecoratorApp(LIFE, "Life Game", { LifeGameFragment() }),
+        LedecoratorApp(CLOCK, "Clock App", { ClockAppFragment() })
     )
-
 }
 
-@Parcelize
 class LedecoratorApp(
     val command: Commands.App,
     val name: String,
-    var active: Boolean = false,
-    var selected: Boolean = false
-) : Parcelable
+    val fragment: (() -> AbstractAppFragment),
+    var active: Boolean = false
+)

@@ -10,11 +10,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import org.dragberry.ledecorator.apps.LedecoratorApp
 import org.dragberry.ledecorator.apps.LedecoratorAppFragment
-import org.dragberry.ledecorator.apps.clock.ClockAppFragment
-import org.dragberry.ledecorator.apps.snake.SnakeGameFragment
-import org.dragberry.ledecorator.apps.weather.WeatherAppFragment
 import org.dragberry.ledecorator.bluetooth.Commands
-import org.dragberry.ledecorator.bluetooth.DataFrames
 import org.dragberry.ledecorator.bluetooth.fragment.BleDeviceSelectionFragment
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -67,6 +63,7 @@ class MainActivity :
                     LedecoratorAppFragment { replaceApp(this) },
                     ACTIVE_LEDECORATOR_APP
                 )
+                .addToBackStack(null)
                 .commit()
         }
     }
@@ -77,12 +74,7 @@ class MainActivity :
                 .beginTransaction()
                 .replace(
                     R.id.mainFragmentLayout,
-                    when (ledecoratorApp.command) {
-                        Commands.App.SNAKE -> SnakeGameFragment()
-                        Commands.App.CLOCK -> ClockAppFragment()
-                        Commands.App.WEATHER -> WeatherAppFragment()
-                        else -> LedecoratorAppFragment { replaceApp(this) }
-                    },
+                    ledecoratorApp.fragment.invoke(),
                     ACTIVE_LEDECORATOR_APP
                 )
                 .addToBackStack(null)
@@ -242,7 +234,7 @@ class MainActivity :
                     dataFrameHandlers.forEach { (_, handler) -> handler(value) }
                     Log.i(tag, "Sent: ${responseDataFrame.toString(StandardCharsets.US_ASCII)}")
                     sendDataFrame(responseDataFrame)
-                    responseDataFrame = DataFrames.IDLE
+                    responseDataFrame = Commands.App.IDLE.frame
                 }
             }
         }
@@ -256,7 +248,7 @@ class MainActivity :
             bluetoothGatt?.disconnect()
         }
 
-        var responseDataFrame: ByteArray = DataFrames.IDLE
+        var responseDataFrame: ByteArray = Commands.App.IDLE.frame
 
         fun sendDataFrame(dataFrame: ByteArray) {
             bluetoothGatt?.getService(serviceUUID)?.apply {

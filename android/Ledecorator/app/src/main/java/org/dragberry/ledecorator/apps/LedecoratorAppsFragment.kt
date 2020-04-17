@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +34,7 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
     private val ledecoratorAppRecyclerViewAdapter: LedecoratorAppsRecyclerViewAdapter =
         LedecoratorAppsRecyclerViewAdapter(LedecoratorApps.APPS)
 
-    private var selectedAppIndex: Int = -1
+    private var selectedApp: Commands.App = Commands.App.IDLE
 
     private var handler: Handler? = null
 
@@ -44,15 +45,22 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
             bluetoothService = context.bluetoothService
             bluetoothService?.onDataFrame(TAG) {
                 if (DataFrames.check(this)) {
-                    LedecoratorApps.APPS.forEachIndexed { i, it ->
-                        it.active = it.command == Commands.App.valueOf(get(1))
-                        it.selected = i == selectedAppIndex
+                    var updateRequired = false
+                    LedecoratorApps.APPS.forEach {
+                        val active = it.command == Commands.App.valueOf(get(1))
+                        if (it.active != active) {
+                            updateRequired = true
+                        }
+                        it.active = active
                     }
-                    handler?.apply {
-                        obtainMessage(FRAME_RECEIVED).sendToTarget()
+                    if (updateRequired) {
+                        handler?.apply {
+                            obtainMessage(FRAME_RECEIVED).sendToTarget()
+                        }
                     }
                 }
-                bluetoothService?.responseDataFrame = DataFrames.IDLE
+                Log.i(TAG, "${selectedApp}")
+                bluetoothService?.responseDataFrame = selectedApp.frame
             }
         } else {
             throw RuntimeException("$context must implement ${BluetoothServiceHolder::javaClass.name}")
@@ -117,7 +125,12 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
                     if (item.active) {
                         text = getString(R.string.ledecorator_app_status_active)
                         visibility = View.VISIBLE
-                        holder.view.setBackgroundColor(Color.GREEN)
+                        holder.view.setBackgroundColor(
+                            if (selectedApp == Commands.App.IDLE)
+                                Color.WHITE
+                            else
+                                Color.GREEN
+                        )
                     } else {
                         text = getString(R.string.ledecorator_app_status_active)
                         visibility = View.GONE
@@ -125,10 +138,20 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
                     }
                 }
 
+                view.setOnLongClickListener {
+                    if (selectedIndex == holder.adapterPosition) {
+                        selectedIndex = -1
+                        selectedApp = Commands.App.IDLE
+                        it.setBackgroundColor(Color.WHITE)
+                    }
+                    true
+                }
+
                 view.setOnClickListener {
                     if (selectedIndex != holder.adapterPosition) {
-                        notifyItemChanged(selectedIndex)
                         selectedIndex = holder.adapterPosition
+                        selectedApp = item.command
+                    } else {
                         onAppSelectedListener.invoke(item)
                     }
                 }

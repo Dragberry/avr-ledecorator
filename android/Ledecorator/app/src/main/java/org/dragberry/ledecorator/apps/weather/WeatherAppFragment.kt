@@ -23,9 +23,7 @@ private const val TAG = "WeatherAppFragment"
 
 private const val UPDATE_SENSORS = 5000
 
-class WeatherAppFragment : AbstractAppFragment() {
-
-    override val fragmentId: String = TAG
+class WeatherAppFragment : AbstractAppFragment(TAG) {
 
     private enum class Mode(code: Char) {
         CAROUSEL('C'),

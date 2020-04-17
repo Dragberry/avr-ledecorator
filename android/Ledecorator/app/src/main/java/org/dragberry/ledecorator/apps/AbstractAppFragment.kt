@@ -7,11 +7,9 @@ import androidx.fragment.app.Fragment
 import org.dragberry.ledecorator.BluetoothServiceHolder
 import org.dragberry.ledecorator.MainActivity
 
-abstract class AbstractAppFragment : Fragment(), Handler.Callback {
+abstract class AbstractAppFragment(private val fragmentId: String) : Fragment(), Handler.Callback {
 
     private var bluetoothService: MainActivity.BluetoothService? = null
-
-    protected abstract val fragmentId: String
 
     protected var handler: Handler? = null
 

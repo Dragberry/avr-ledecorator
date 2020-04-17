@@ -164,27 +164,24 @@ void System::process_event()
 {
     uint8_t app_code = BLE::rx_buffer[1];
     uint8_t command = BLE::rx_buffer[2];
-    if (app_code != APP_IDLE)
+    if (app_code != APP_IDLE && app_code != curr_app_code)
     {
-       if (app_code != curr_app_code)
+       current_app->terminate();
+       next_app_code = app_code;
+    }
+    else
+    {
+       switch (command)
        {
+       case COMMAND_INFINITE:
+       case COMMAND_FINITE:
+           current_app->ignore_ttl(command == COMMAND_INFINITE);
+           break;
+       case COMMAND_RESTART:
            current_app->terminate();
-           next_app_code = app_code;
-       }
-       else
-       {
-           switch (command)
-           {
-           case COMMAND_INFINITE:
-           case COMMAND_FINITE:
-               current_app->ignore_ttl(command == COMMAND_INFINITE);
-               break;
-           case COMMAND_RESTART:
-               current_app->terminate();
-               break;
-           default:
-               break;
-           }
+           break;
+       default:
+           break;
        }
     }
 }

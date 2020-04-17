@@ -12,9 +12,7 @@ import org.dragberry.ledecorator.bluetooth.Commands.*
 
 private const val TAG = "SnakeGameFragment"
 
-class SnakeGameFragment : AbstractAppFragment() {
-
-    override val fragmentId: String = TAG
+class SnakeGameFragment : AbstractAppFragment(TAG) {
 
     private var leftButton: Button? = null
     private var rightButton: Button? = null

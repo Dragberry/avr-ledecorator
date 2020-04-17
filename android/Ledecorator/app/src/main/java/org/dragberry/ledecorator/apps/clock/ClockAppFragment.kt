@@ -12,9 +12,7 @@ import java.time.LocalDateTime
 
 private const val TAG = "ClockAppFragment"
 
-class ClockAppFragment : AbstractAppFragment() {
-
-    override val fragmentId: String = TAG
+class ClockAppFragment : AbstractAppFragment(TAG) {
 
     private var updateButton: Button? = null
 
