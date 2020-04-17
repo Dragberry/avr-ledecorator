@@ -32,4 +32,14 @@ class PressureSensor(name: String, unit: String) : Sensor<Int>('P', name, unit) 
     }
 }
 
+class HumiditySensor(name: String, unit: String) : Sensor<Int>('H', name, unit) {
+    init {
+        value = 0
+    }
+
+    override fun setValue(data: ByteArray) {
+        value = BleUtils.int32(data[12], data[13], data[14], data[15]) / 1024
+    }
+}
+
 

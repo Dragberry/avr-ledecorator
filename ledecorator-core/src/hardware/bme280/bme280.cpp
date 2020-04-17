@@ -370,7 +370,7 @@ void BME280::Device::parse_sensor_data(const uint8_t *reg_data, Data& uncomp_dat
     data_xlsb = (uint32_t)reg_data[5] >> 4;
     uncomp_data.temperature = data_msb | data_lsb | data_xlsb;
 
-    /* Store the parsed register values for temperature data */
+    /* Store the parsed register values for humidity data */
     data_lsb = (uint32_t)reg_data[6] << 8;
     data_msb = (uint32_t)reg_data[7];
     uncomp_data.humidity = data_msb | data_lsb;
@@ -397,7 +397,7 @@ void BME280::Device::compensate_sensor_data(const uint8_t sensor_comp, Data& unc
     if (sensor_comp & BME280_HUM)
     {
         /* Compensate the humidity data */
-//        comp_data.humidity = compensate_humidity(uncomp_data);
+        comp_data.humidity = compensate_humidity(uncomp_data);
     }
 }
 
@@ -477,6 +477,39 @@ uint32_t BME280::Device::compensate_pressure(const Data& uncomp_data)
         pressure = pressure_min;
     }
     return pressure;
+}
+
+uint32_t BME280::Device::compensate_humidity(const Data& uncomp_data)
+{
+    int32_t var1;
+    int32_t var2;
+    int32_t var3;
+    int32_t var4;
+    int32_t var5;
+    uint32_t humidity;
+    uint32_t humidity_max = 102400;
+
+    var1 = calib_data.t_fine - ((int32_t)76800);
+    var2 = (int32_t)(uncomp_data.humidity * 16384);
+    var3 = (int32_t)(((int32_t)calib_data.dig_H4) * 1048576);
+    var4 = ((int32_t)calib_data.dig_H5) * var1;
+    var5 = (((var2 - var3) - var4) + (int32_t)16384) / 32768;
+    var2 = (var1 * ((int32_t)calib_data.dig_H6)) / 1024;
+    var3 = (var1 * ((int32_t)calib_data.dig_H3)) / 2048;
+    var4 = ((var2 * (var3 + (int32_t)32768)) / 1024) + (int32_t)2097152;
+    var2 = ((var4 * ((int32_t)calib_data.dig_H2)) + 8192) / 16384;
+    var3 = var5 * var2;
+    var4 = ((var3 / 32768) * (var3 / 32768)) / 128;
+    var5 = var3 - ((var4 * ((int32_t)calib_data.dig_H1)) / 16);
+    var5 = (var5 < 0 ? 0 : var5);
+    var5 = (var5 > 419430400 ? 419430400 : var5);
+    humidity = (uint32_t)(var5 / 4096);
+    if (humidity > humidity_max)
+    {
+       humidity = humidity_max;
+    }
+
+    return humidity;
 }
 
 

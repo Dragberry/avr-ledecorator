@@ -154,6 +154,8 @@ public:
 
     uint32_t compensate_pressure(const Data& uncomp_data);
 
+    uint32_t compensate_humidity(const Data& uncomp_data);
+
 private:
     void sleep();
 

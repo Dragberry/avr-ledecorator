@@ -38,6 +38,7 @@ void WeatherApp::run()
         {
             temperature_sensor.set_value(data.temperature);
             pressure_sensor.set_value(data.pressure);
+            humidity_sensor.set_value(data.humidity);
         });
 
         active_sensor->draw();
@@ -52,6 +53,7 @@ void WeatherApp::run()
                 System::io::decompose(time, 2);
                 System::io::decompose(temperature_sensor.get_value(), 4);
                 System::io::decompose(pressure_sensor.get_value(), 8);
+                System::io::decompose(humidity_sensor.get_value(), 12);
             },
             [&](char* frame) -> void
             {
@@ -64,6 +66,7 @@ void WeatherApp::run()
     uint32_t time = get_time();
     temperature_sensor.update(time);
     pressure_sensor.update(time);
+    humidity_sensor.update(time);
     System::deregister_timer(this);
 }
 
@@ -71,9 +74,11 @@ void WeatherApp::init()
 {
     temperature_sensor.load();
     pressure_sensor.load();
+    humidity_sensor.load();
     device.init([](BME280::Settings &settings) -> void
     {
         /* Recommended mode of operation: Indoor navigation */
+        settings.osr_h = BME280_OVERSAMPLING_1X;
         settings.osr_p = BME280_OVERSAMPLING_16X;
         settings.osr_t = BME280_OVERSAMPLING_2X;
         settings.filter = BME280_FILTER_COEFF_16;
@@ -82,6 +87,7 @@ void WeatherApp::init()
     device.set_sensor_settings(
             BME280_OSR_PRESS_SEL |
             BME280_OSR_TEMP_SEL |
+            BME280_OSR_HUM_SEL |
             BME280_FILTER_SEL |
             BME280_STANDBY_SEL
     );
@@ -156,6 +162,7 @@ void WeatherApp::on_timer_event()
     {
     case Sensor::Code::TEMPERATURE:
     case Sensor::Code::PRESSURE:
+    case Sensor::Code::HUMIDITY:
         active_sensor_index = 0;
         while (i < SENSORS)
         {

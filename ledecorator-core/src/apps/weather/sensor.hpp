@@ -18,6 +18,7 @@ public:
     const enum Code {
         TEMPERATURE = 'T',
         PRESSURE    = 'P',
+        HUMIDITY    = 'H',
         IDLE        = 'I',
     } code;
 

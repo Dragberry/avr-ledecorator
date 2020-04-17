@@ -1,6 +1,7 @@
 #ifndef WEATHERAPP_HPP_
 #define WEATHERAPP_HPP_
 
+#include "humiditysensor.hpp"
 #include "pressuresensor.hpp"
 #include "temperaturesensor.hpp"
 #include "../../hardware/bme280/bme280.hpp"
@@ -15,21 +16,23 @@ class WeatherApp :
         public Timer
 {
 private:
-    static const uint8_t TIME_TO_LIVE = 32; // 0.1 second
-
-    static const uint8_t SENSORS = 2;
+    static const uint8_t TIME_TO_LIVE = 48;
 
     DS1307::Clock clock;
     BME280::Interface interface;
     BME280::Device device;
 
+    static const uint8_t SENSORS = 3;
+
     TemperatureSensor temperature_sensor;
     PressureSensor pressure_sensor;
+    HumiditySensor humidity_sensor;
 
     Sensor* sensors[SENSORS] =
     {
         &temperature_sensor,
-        &pressure_sensor
+        &pressure_sensor,
+        &humidity_sensor,
     };
 
     volatile Sensor::Code active_sensor_code = Sensor::Code::IDLE;

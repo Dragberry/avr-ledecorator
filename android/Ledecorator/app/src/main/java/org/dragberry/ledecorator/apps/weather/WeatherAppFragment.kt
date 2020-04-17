@@ -38,7 +38,8 @@ class WeatherAppFragment : AbstractAppFragment(TAG) {
 
     private val sensors: List<Sensor<*>> = listOf(
         TemperatureSensor("Temperature:", "℃"),
-        PressureSensor("Pressure:", "mmHg")
+        PressureSensor("Pressure:", "mmHg"),
+        HumiditySensor("Humidity:", "%")
     )
 
     private val sensorRecyclerViewAdapter: SensorRecyclerViewAdapter = SensorRecyclerViewAdapter()
@@ -151,7 +152,7 @@ class WeatherAppFragment : AbstractAppFragment(TAG) {
         }
 
         override fun areContentsTheSame(oldItem: Sensor<*>, newItem: Sensor<*>): Boolean {
-            return oldItem.name == newItem.name
+            return oldItem.value.equals(newItem.value)
         }
     }
 

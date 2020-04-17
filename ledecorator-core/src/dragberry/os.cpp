@@ -20,25 +20,25 @@ volatile uint8_t System::next_app_code = 0;
 
 Application* System::current_app = nullptr;
 
-static const uint8_t EXECS = 4;
+static const uint8_t EXECS = 1;
 
 Execution System::programms[EXECS] = {
-    { APP_SNAKE, []() -> void
-        {
-            SnakeGame app;
-            current_app = &app;
-            app.run();
-            current_app = nullptr;
-        }
-    },
-    { APP_CLOCK, []() -> void
-        {
-            ClockApp app;
-            current_app = &app;
-            app.run();
-            current_app = nullptr;
-        }
-    },
+//    { APP_SNAKE, []() -> void
+//        {
+//            SnakeGame app;
+//            current_app = &app;
+//            app.run();
+//            current_app = nullptr;
+//        }
+//    },
+//    { APP_CLOCK, []() -> void
+//        {
+//            ClockApp app;
+//            current_app = &app;
+//            app.run();
+//            current_app = nullptr;
+//        }
+//    },
     { APP_WEATHER, []() -> void
         {
             WeatherApp app;
@@ -47,14 +47,14 @@ Execution System::programms[EXECS] = {
             current_app = nullptr;
         }
     },
-    { APP_LIFE, []() -> void
-        {
-            LifeGame app;
-            current_app = &app;
-            app.run();
-            current_app = nullptr;
-        }
-    }
+//    { APP_LIFE, []() -> void
+//        {
+//            LifeGame app;
+//            current_app = &app;
+//            app.run();
+//            current_app = nullptr;
+//        }
+//    }
 };
 
 Timer::~Timer()
