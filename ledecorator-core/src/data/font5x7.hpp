@@ -8,7 +8,7 @@
 class Font5x7
 {
 private:
-    static const uint8_t FIRST_INDEX = 43;
+    static const uint8_t FIRST_INDEX = 37;
     static const uint8_t LAST_INDEX = 92;
 
 public:
@@ -20,6 +20,8 @@ public:
     }
 private:
     static const BitMap<35> PROGMEM CHAR5X7_SPACE;
+
+    static const BitMap<35> PROGMEM CHAR5X7_PERCENT;
 
     static const BitMap<35> PROGMEM CHAR5X7_PLUS;
 
@@ -117,7 +119,7 @@ private:
 
     static const BitMap<35> PROGMEM CHAR5X7_Z;
 
-    static const BitMap<35>* const PROGMEM DATA[49];
+    static const BitMap<35>* const PROGMEM DATA[55];
 };
 
 #endif

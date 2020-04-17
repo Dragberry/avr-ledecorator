@@ -7,6 +7,14 @@ const BitMap<15> PROGMEM Font3x5::CHAR3X5_SPACE =
         0b00000000,
 };
 
+const BitMap<15> PROGMEM Font3x5::CHAR3X5_PERCENT =
+{
+        3, 5,
+        0b00110101,
+        0b01011000,
+};
+
+
 const BitMap<15> PROGMEM Font3x5::CHAR3X5_PLUS =
 {
         3, 5,
@@ -343,8 +351,14 @@ const BitMap<15> PROGMEM Font3x5::CHAR3X5_Z
         0b01001110,
 };
 
-const BitMap<15>* const PROGMEM Font3x5::DATA[49] =
+const BitMap<15>* const PROGMEM Font3x5::DATA[55] =
 {
+        &CHAR3X5_SPACE,
+        &CHAR3X5_PERCENT,
+        &CHAR3X5_SPACE,
+        &CHAR3X5_SPACE,
+        &CHAR3X5_SPACE,
+        &CHAR3X5_SPACE,
         &CHAR3X5_SPACE,
         &CHAR3X5_PLUS,
         &CHAR3X5_COMMA,
