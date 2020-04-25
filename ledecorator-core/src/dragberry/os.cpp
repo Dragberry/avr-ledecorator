@@ -1,7 +1,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
-#include "lib/avr/hardware/uart.hpp"
 #include "os.hpp"
 #include "../apps/clock/clockapp.hpp"
 #include "../apps/games/life/lifegame.hpp"

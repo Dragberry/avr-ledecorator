@@ -108,7 +108,7 @@ void display::update_assured()
 {
     #ifndef DISPLAY_DEBUG
         while (is_busy());
-        while (!UartBus::acquire(PC0, UartBus::BaudRate::B_2_500_000, []() -> void
+        while (!UartBus::acquire(PC0, UartBus::BaudRate::B_500_000, []() -> void
             {
                 UartBus::set_rx_handler(&transmitter);
                 buffers.swap();

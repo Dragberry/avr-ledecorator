@@ -2,7 +2,6 @@
 #define RINGBUFFER_HPP_
 
 #include <stdint.h>
-#include "lib/avr/hardware/uart.hpp"
 
 template <typename Type, uint8_t capacity>
 struct RingBuffer
