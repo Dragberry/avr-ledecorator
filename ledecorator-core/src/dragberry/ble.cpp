@@ -81,7 +81,7 @@ void BLE::timeout()
 
 bool BLE::start()
 {
-    return UartBus::acquire(PC1, UartBus::BaudRate::B_230_400, []() -> void
+    return UartBus::acquire(UartBus::Device::BLE, UartBus::BaudRate::B_230_400, []() -> void
     {
         tx_index = 0;
         lifetime = TIMEOUT;
@@ -107,7 +107,7 @@ void BLE::stop()
 {
     if (is_busy())
     {
-        UartBus::free(PC1);
+        UartBus::free(UartBus::Device::BLE);
         state = IDLE;
     }
 }

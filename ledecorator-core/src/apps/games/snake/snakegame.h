@@ -13,13 +13,23 @@ class SnakeGame :
 {
 public:
 private:
+    struct StoredState
+    {
+       uint16_t time_to_live = 300;
+       Color snake_color = WHITE;
+       Color snake_head_color = YELLOW;
+       Color field_color = GREEN;
+    };
+
+    static const StoredState EEMEM STORED_STATE;
+
     static const uint16_t TIME_TO_LIVE = 750;
 
     uint8_t period = 0;
 
-    static const uint8_t FIELD_COLOR        = 0b00000100;
-    static const uint8_t SNAKE_COLOR        = WHITE;
-    static const uint8_t SNAKE_HEAD_COLOR   = YELLOW;
+    uint8_t field_color        = 0b00000100;
+    uint8_t snake_color        = WHITE;
+    uint8_t snake_head_color   = YELLOW;
     static const uint8_t TRASH_COLOR        = 0b00010101;
     static const uint8_t WALL_COLOR         = 0b00010000;
 

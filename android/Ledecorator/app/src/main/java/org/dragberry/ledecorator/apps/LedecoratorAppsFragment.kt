@@ -22,7 +22,7 @@ import org.dragberry.ledecorator.R
 import org.dragberry.ledecorator.bluetooth.Commands
 import org.dragberry.ledecorator.bluetooth.DataFrames
 
-private const val TAG = "LedecoratorAppFragment"
+private const val TAG = "LedecoratorAppsFragment"
 
 private const val FRAME_RECEIVED = 3000
 
@@ -59,7 +59,7 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
                         }
                     }
                 }
-                Log.i(TAG, "${selectedApp}")
+                Log.i(TAG, "$selectedApp")
                 bluetoothService?.responseDataFrame = selectedApp.frame
             }
         } else {

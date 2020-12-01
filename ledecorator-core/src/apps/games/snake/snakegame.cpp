@@ -4,6 +4,8 @@
 #include "snakegame.h"
 #include "../../../util/sorting.hpp"
 
+const SnakeGame::StoredState EEMEM SnakeGame::STORED_STATE = SnakeGame::StoredState();
+
 SnakeGame::SnakeGame() :
         steps(0),
         current_speed(MIN_SPEED),
@@ -13,7 +15,12 @@ SnakeGame::SnakeGame() :
         tail{ 0 },
         food(ArrayList<Point, 5>())
 {
-            time_to_live = TIME_TO_LIVE;
+            StoredState state;
+            eeprom_read_block((void*) &state, (const void*) &STORED_STATE, sizeof(state));
+            time_to_live = state.time_to_live;
+            field_color = state.field_color;
+            snake_color = state.snake_color;
+            snake_head_color = state.snake_head_color;
 }
 
 void SnakeGame::run()
@@ -441,7 +448,7 @@ void SnakeGame::draw()
                    color = TRASH_COLOR;
                    break;
                default:
-                   color = FIELD_COLOR;
+                   color = field_color;
                    break;
                }
                break;
@@ -450,10 +457,10 @@ void SnakeGame::draw()
                {
                case SnakePart::BODY:
                case SnakePart::TAIL:
-                   color = SNAKE_COLOR;
+                   color = snake_color;
                    break;
                case SnakePart::HEAD:
-                   color = SNAKE_HEAD_COLOR;
+                   color = snake_head_color;
                    break;
                    break;
                default:

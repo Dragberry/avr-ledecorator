@@ -15,7 +15,19 @@ class LifeGame :
         public Timer
 {
 private:
-    static const uint16_t TIME_TO_LIVE = 300;
+    struct StoredState
+    {
+       enum Mode
+       {
+           RANDOM, SCRIPT, CAROUSEL
+       };
+       uint16_t time_to_live = 300;
+       Color color_life = RED;
+       Color color_dead = WHITE;
+       Mode mode = CAROUSEL;
+    };
+
+    static const StoredState EEMEM STORED_STATE;
 
 	uint8_t color_life;
 	uint8_t color_dead;

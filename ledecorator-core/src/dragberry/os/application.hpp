@@ -68,7 +68,6 @@ public:
         sbi(state, BIT_TERMINATION);
 
     }
-
 };
 
 #endif

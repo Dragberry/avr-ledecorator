@@ -59,7 +59,7 @@ void display::Transmitter::on_uart_rx_event(const uint8_t byte)
 		state = TRANSMIT;
 		return;
 	case FRAME_END:
-		UartBus::free(PC0);
+		UartBus::free(UartBus::Device::DISPLAY);
 		state = IDLE;
 		#ifdef FPS_DEBUG
 			fps::count();
@@ -108,7 +108,7 @@ void display::update_assured()
 {
     #ifndef DISPLAY_DEBUG
         while (is_busy());
-        while (!UartBus::acquire(PC0, UartBus::BaudRate::B_500_000, []() -> void
+        while (!UartBus::acquire(UartBus::Device::DISPLAY, UartBus::BaudRate::B_2_500_000, []() -> void
             {
                 UartBus::set_rx_handler(&transmitter);
                 buffers.swap();

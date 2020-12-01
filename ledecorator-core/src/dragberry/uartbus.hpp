@@ -69,6 +69,13 @@ public:
         B_2_500_000 = 0,
     };
 
+    enum Device
+    {
+        DISPLAY,
+        BLE,
+        USB
+    };
+
     class RxHandler
     {
     public:
@@ -108,9 +115,9 @@ public:
 
     static void set_baud_rate(BaudRate baud);
 
-    static bool acquire(uint8_t device, BaudRate baud, void (*set_handlers)() = [](){});
+    static bool acquire(Device device, BaudRate baud, void (*set_handlers)() = [](){});
 
-    static void free(uint8_t device);
+    static void free(Device device);
 
     inline
     static void send_byte(const uint8_t byte)

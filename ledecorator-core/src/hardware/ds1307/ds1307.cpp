@@ -183,3 +183,8 @@ uint8_t Clock::years_u() const
 {
     return (data[6] & 0x0F);
 }
+
+void Clock::blink(bool enabled)
+{
+    data[7] = enabled ? 0b10010000 : 0;  // 1 Hz
+}

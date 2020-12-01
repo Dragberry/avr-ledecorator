@@ -20,7 +20,7 @@ public:
 	void init()
 	{
 		SPI::init();
-		UartBus::init(UartBus::BaudRate::B_500_000);
+		UartBus::init(UartBus::BaudRate::B_2_500_000);
 		UartBus::set_rx_handler(this);
 		Timers::T1::start(4, Timers::Prescaller::F_1024, this);
 		sei();

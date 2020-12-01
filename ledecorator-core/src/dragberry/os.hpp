@@ -1,12 +1,12 @@
 #ifndef DRAGBERRY_OS_HPP_
 #define DRAGBERRY_OS_HPP_
 
+#include <avr/eeprom.h>
 #include "lib/avr/hardware/timers.hpp"
+#include "ble.hpp"
 #include "os/application.hpp"
 #include "os/display.hpp"
-#include "ble.hpp"
 #include "../util/ringbuffer.hpp"
-#include "lib/avr/hardware/spi.hpp"
 
 class Timer
 {
@@ -18,8 +18,8 @@ public:
 
 struct Execution
 {
-    const char code;
-    void (* const exec)();
+    char code;
+    void (*exec)();
 };
 
 class System
@@ -30,6 +30,7 @@ public:
     static const char APP_WEATHER = 'W';
     static const char APP_CLOCK = 'C';
     static const char APP_LIFE = 'L';
+    static const char APP_SANDBOX = 'B';
 
     static const char COMMAND_INFINITE = 'I';
     static const char COMMAND_FINITE = 'F';
@@ -42,7 +43,23 @@ private:
 
     static Timer *timer;
 
+    static volatile uint8_t curr_app_code;
+
+    static volatile uint8_t next_app_code;
+
+    static const uint8_t NUMBER_OF_PROGRAMMS;
+
+    static const uint8_t EEMEM NUMBER_OF_STORED_PROGRAMMS;
+
+    static const uint8_t EEMEM STORED_PROGRAMMS[];
+
+    static uint8_t number_of_loaded_programms;
+
+    static Execution loaded_programms[];
+
 public:
+    static Application* current_app;
+
     static void register_timer(Timer* timer, uint16_t period);
 
     static void deregister_timer();
@@ -50,6 +67,12 @@ public:
     static void on_system_timer_event();
 
     static void init();
+
+    static void run();
+
+    static void load();
+
+    static void process_event();
 
     class io
     {
@@ -95,44 +118,6 @@ public:
 
     };
 
-    class out
-    {
-    public:
-        template <typename FrameBuilder>
-        static void send_assured(FrameBuilder&& frame_builder)
-        {
-            while (BLE::is_busy());
-            BLE::state = BLE::State::PREPARING;
-//            frame_builder(BLE::tx_frame);
-            BLE::state = BLE::State::READY;
-            while (!BLE::start());
-        }
-
-        template <typename FrameBuilder>
-        static void send(FrameBuilder&& frame_builder)
-        {
-            if (!BLE::is_busy())
-            {
-                BLE::state = BLE::State::PREPARING;
-//                frame_builder(BLE::tx_frame);
-                BLE::state = BLE::State::READY;
-            }
-        }
-    };
-
-private:
-    static volatile uint8_t curr_app_code;
-
-    static volatile uint8_t next_app_code;
-
-    static Execution programms[];
-
-public:
-    static Application* current_app;
-
-    static void run();
-
-    static void process_event();
 };
 
 #endif

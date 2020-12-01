@@ -5,6 +5,7 @@
 #include "../apps/clock/clockapp.hpp"
 #include "../apps/games/life/lifegame.hpp"
 #include "../apps/games/snake/snakegame.h"
+#include "../apps/sandbox/sandboxapp.hpp"
 #include "../apps/weather/weatherapp.hpp"
 
 volatile uint16_t System::time = 0;
@@ -19,42 +20,21 @@ volatile uint8_t System::next_app_code = 0;
 
 Application* System::current_app = nullptr;
 
-static const uint8_t EXECS = 4;
+const uint8_t System::NUMBER_OF_PROGRAMMS = 5;
 
-Execution System::programms[EXECS] = {
-    { APP_SNAKE, []() -> void
-        {
-            SnakeGame app;
-            current_app = &app;
-            app.run();
-            current_app = nullptr;
-        }
-    },
-    { APP_CLOCK, []() -> void
-        {
-            ClockApp app;
-            current_app = &app;
-            app.run();
-            current_app = nullptr;
-        }
-    },
-    { APP_WEATHER, []() -> void
-        {
-            WeatherApp app;
-            current_app = &app;
-            app.run();
-            current_app = nullptr;
-        }
-    },
-    { APP_LIFE, []() -> void
-        {
-            LifeGame app;
-            current_app = &app;
-            app.run();
-            current_app = nullptr;
-        }
-    }
+const uint8_t EEMEM System::NUMBER_OF_STORED_PROGRAMMS = NUMBER_OF_PROGRAMMS;
+
+const uint8_t EEMEM System::STORED_PROGRAMMS[NUMBER_OF_PROGRAMMS] = {
+        APP_SNAKE,
+        APP_CLOCK,
+        APP_WEATHER,
+        APP_LIFE,
+        APP_SANDBOX
 };
+
+uint8_t System::number_of_loaded_programms = 0;
+
+Execution System::loaded_programms[NUMBER_OF_PROGRAMMS] = { 0 };
 
 Timer::~Timer()
 {
@@ -104,8 +84,8 @@ void System::init()
 {
     UartBus::init();
 
-    SPI::init();
-
+    cbi(DDRC, PC3);
+    sbi(PORTC, PC3);
     // BLE Listener input
     cbi(DDRD, PD3);
     sbi(PORTD, PD3);
@@ -131,6 +111,82 @@ void System::init()
     sei();
 }
 
+void System::load()
+{
+    number_of_loaded_programms = 0;
+    uint8_t number_of_stored_programms = eeprom_read_byte(&NUMBER_OF_STORED_PROGRAMMS);
+    uint8_t index = 0;
+    while (index < number_of_stored_programms)
+    {
+        switch (eeprom_read_byte(&STORED_PROGRAMMS[index]))
+        {
+        case APP_SNAKE:
+            loaded_programms[number_of_loaded_programms] =
+            { APP_SNAKE, []() -> void
+                {
+                    SnakeGame app;
+                    current_app = &app;
+                    app.run();
+                    current_app = nullptr;
+                }
+            };
+            number_of_loaded_programms++;
+            break;
+        case APP_CLOCK:
+            loaded_programms[number_of_loaded_programms] =
+            { APP_CLOCK, []() -> void
+                {
+                    ClockApp app;
+                    current_app = &app;
+                    app.run();
+                    current_app = nullptr;
+                }
+            };
+            number_of_loaded_programms++;
+            break;
+        case APP_WEATHER:
+            loaded_programms[number_of_loaded_programms] =
+            { APP_WEATHER, []() -> void
+                {
+                    WeatherApp app;
+                    current_app = &app;
+                    app.run();
+                    current_app = nullptr;
+                }
+            };
+            number_of_loaded_programms++;
+            break;
+        case APP_LIFE:
+            loaded_programms[number_of_loaded_programms] =
+            { APP_LIFE, []() -> void
+                {
+                    LifeGame app;
+                    current_app = &app;
+                    app.run();
+                    current_app = nullptr;
+                }
+            };
+            number_of_loaded_programms++;
+            break;
+        case APP_SANDBOX:
+            loaded_programms[number_of_loaded_programms] =
+            { APP_SANDBOX, []() -> void
+                {
+                    SandboxApp app;
+                    current_app = &app;
+                    app.run();
+                    current_app = nullptr;
+                }
+            };
+            number_of_loaded_programms++;
+            break;
+        default:
+            break;
+        }
+        index++;
+    }
+}
+
 void System::run()
 {
     uint8_t execution_index = 0;
@@ -139,9 +195,9 @@ void System::run()
         if (next_app_code != 0)
         {
             uint8_t i = 0;
-            while (i < EXECS)
+            while (i < number_of_loaded_programms)
             {
-                if (programms[i].code == next_app_code)
+                if (loaded_programms[i].code == next_app_code)
                 {
                     execution_index = i;
                     next_app_code = 0;
@@ -150,9 +206,9 @@ void System::run()
                 i++;
             }
         }
-        curr_app_code = programms[execution_index].code;
-        programms[execution_index].exec();
-        if (++execution_index >= EXECS)
+        curr_app_code = loaded_programms[execution_index].code;
+        loaded_programms[execution_index].exec();
+        if (++execution_index >= number_of_loaded_programms)
         {
             execution_index = 0;
         }
@@ -163,6 +219,31 @@ void System::process_event()
 {
     uint8_t app_code = BLE::rx_buffer[1];
     uint8_t command = BLE::rx_buffer[2];
+
+
+    bool app_code_valid = false;
+    if (app_code == APP_IDLE)
+    {
+        app_code_valid = true;
+    }
+    else
+    {
+        uint8_t i = 0;
+        while (i < number_of_loaded_programms)
+        {
+           if (loaded_programms[i++].code == app_code)
+           {
+               app_code_valid = true;
+               break;
+           }
+        }
+    }
+
+
+    if (!app_code_valid)
+    {
+        return;
+    }
     if (app_code != APP_IDLE && app_code != curr_app_code)
     {
        current_app->terminate();
@@ -173,8 +254,10 @@ void System::process_event()
        switch (command)
        {
        case COMMAND_INFINITE:
+           current_app->ignore_ttl(true);
+           break;
        case COMMAND_FINITE:
-           current_app->ignore_ttl(command == COMMAND_INFINITE);
+           current_app->ignore_ttl(false);
            break;
        case COMMAND_RESTART:
            current_app->terminate();

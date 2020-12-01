@@ -74,6 +74,7 @@ void ClockApp::run()
                             clock.days(frame[7]);
                             clock.months(frame[8]);
                             clock.years(frame[9]);
+                            clock.blink(true);
                             clock.update();
                         }
                     }

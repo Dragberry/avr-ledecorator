@@ -16,7 +16,8 @@ void UartBus::init()
     sbi(UART_UCSRC, UART_UCSZ1);
     // control
     sbi(DDRC, PC0);
-    sbi(DDRC, PC1);
+    sbi(DDRD, PD6);
+    sbi(DDRD, PD7);
 }
 
 void UartBus::set_baud_rate(UartBus::BaudRate baud_rate)
@@ -25,31 +26,53 @@ void UartBus::set_baud_rate(UartBus::BaudRate baud_rate)
     outb(UART_UBRRL, baud_rate);
 }
 
-bool UartBus::acquire(uint8_t device, UartBus::BaudRate baud_rate, void (*on_success)())
+bool UartBus::acquire(UartBus::Device device, UartBus::BaudRate baud_rate, void (*on_success)())
 {
-//    cli();
     if (is_busy)
     {
         return false;
     }
     is_busy = true;
     set_baud_rate(baud_rate);
-    sbi(PORTC, device);
+    switch(device)
+    {
+    case DISPLAY:
+        sbi(PORTC, PC0);
+        break;
+    case BLE:
+        sbi(PORTD, PD7);
+        break;
+    case USB:
+        sbi(PORTD, PD6);
+        break;
+    default:
+        break;
+    }
     on_success();
-//    sei();
     return true;
 }
 
-void UartBus::free(uint8_t device)
+void UartBus::free(UartBus::Device device)
 {
-//    cli();
     while (!check_bit(UART_UCSRA, UART_TXC));
     set_rx_handler();
     set_tx_handler();
     set_udre_handler();
-    cbi(PORTC, device);
+    switch(device)
+    {
+    case DISPLAY:
+        cbi(PORTC, PC0);
+        break;
+    case BLE:
+        cbi(PORTD, PD7);
+        break;
+    case USB:
+        cbi(PORTD, PD6);
+        break;
+    default:
+        break;
+    }
     is_busy = false;
-//    sei();
 }
 
 UartBus::RxHandler::~RxHandler()

@@ -28,6 +28,9 @@ class Commands {
             sb.append("\tColor Live:\t${data[6]}\n")
             sb.append("\tColor Dead:\t${data[7]}\n")
             sb.append("\tRandom:\t${data[8].toInt() != 0}\n")
+        }),
+        SANDBOX('B', {sb, data ->
+            sb.append("\tTime:\t${BleUtils.uint16(data[2], data[3])}\n")
         });
 
         val code: Byte = code.toByte()

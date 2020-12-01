@@ -90,6 +90,8 @@ public:
     uint8_t years_d() const;
 
     uint8_t years_u() const;
+
+    void blink(bool enabled);
 };
 
 }

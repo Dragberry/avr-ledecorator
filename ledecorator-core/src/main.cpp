@@ -14,5 +14,6 @@ using namespace dragberry::os;
 int main()
 {
     System::init();
+    System::load();
     System::run();
 }

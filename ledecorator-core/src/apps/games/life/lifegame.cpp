@@ -4,11 +4,29 @@
 #include "entities.hpp"
 #include "lifegame.hpp"
 
+const LifeGame::StoredState EEMEM LifeGame::STORED_STATE = LifeGame::StoredState();
+
 LifeGame::LifeGame()
 {
-    is_random = rand() % 2;
-	color_life = dragberry::io::read();
-	color_dead = dragberry::io::read();
+    StoredState state;
+    eeprom_read_block((void*) &state, (const void*) &STORED_STATE, sizeof(state));
+    time_to_live = state.time_to_live;
+
+    switch (state.mode)
+    {
+    case StoredState::Mode::RANDOM:
+        is_random = true;
+        break;
+    case StoredState::Mode::SCRIPT:
+        is_random = false;
+        break;
+    default:
+        is_random = rand() % 2;
+        break;
+    }
+    color_life = state.color_life;
+	color_dead = state.color_dead;
+
 	alive_indicator = ALIVE_INDICATOR_01;
 	if (is_random)
 	{
@@ -23,7 +41,6 @@ LifeGame::LifeGame()
 
 	steps = 0;
 	is_step_required = 0;
-	time_to_live = TIME_TO_LIVE;
 }
 
 LifeGame::~LifeGame()
