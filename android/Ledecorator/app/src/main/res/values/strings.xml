@@ -12,6 +12,8 @@
     <string name="refresh">Refresh</string>
     <string name="available_devices">Available Devices</string>
     <string name="connect">Connect</string>
+    <string name="clear">Clear</string>
+    <string name="save">Save</string>
     <string name="select">Select</string>
     <string name="stop">Stop</string>
     <string name="ledecorator_app_mode_manual">Manual</string>
