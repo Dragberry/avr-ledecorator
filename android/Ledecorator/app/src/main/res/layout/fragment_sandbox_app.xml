@@ -17,42 +17,54 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <org.dragberry.ledecorator.apps.sandbox.FieldView
-            android:id="@+id/fieldImageView"
+            android:id="@+id/sandboxFieldImageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/sandboxControlsView"/>
+            app:layout_constraintBottom_toBottomOf="@+id/sandboxControlsView"
+            app:layout_constraintTop_toTopOf="parent" />
 
-
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/sandboxControlsView"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            app:layout_constraintTop_toBottomOf="@id/fieldImageView"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <Button
                 android:id="@+id/sandboxSavePictureButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/save"
-                android:layout_alignParentStart="true" />
+                android:layout_weight="1"
+                android:layout_marginHorizontal="5dp"
+                android:text="@string/save" />
+
+            <Button
+                android:id="@+id/sandboxLoadPictureButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="5dp"
+                android:text="@string/load" />
+
             <Button
                 android:id="@+id/sandboxSelectColorButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Color"
-                android:layout_centerInParent="true" />
+                android:layout_weight="1"
+                android:layout_marginHorizontal="5dp"
+                android:text="Color" />
+
             <Button
                 android:id="@+id/sandboxClearScreenButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/clear"
-                android:layout_alignParentEnd="true" />
-        </RelativeLayout>
+                android:layout_weight="1"
+                android:layout_marginHorizontal="5dp"
+                android:text="@string/clear" />
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

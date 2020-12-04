@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import org.dragberry.ledecorator.apps.LedecoratorApp
 import org.dragberry.ledecorator.apps.LedecoratorAppFragment
@@ -252,9 +251,9 @@ class MainActivity :
                 characteristic: BluetoothGattCharacteristic?
             ) {
                 characteristic?.apply {
-                    Log.i(tag, "Received: ${value.size} : ${value.toString(StandardCharsets.US_ASCII)}")
+//                    Log.i(tag, "Received: ${value.size} : ${value.toString(StandardCharsets.US_ASCII)}")
                     dataFrameHandlers.forEach { (_, handler) -> handler(value) }
-                    Log.i(tag, "Sent: ${responseDataFrame.toString(StandardCharsets.US_ASCII)}")
+//                    Log.i(tag, "Sent: ${responseDataFrame.toString(StandardCharsets.US_ASCII)}")
                     sendDataFrame(responseDataFrame)
                     responseDataFrame = Commands.App.IDLE.frame
                 }

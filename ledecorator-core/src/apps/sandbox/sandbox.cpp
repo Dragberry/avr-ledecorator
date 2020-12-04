@@ -30,6 +30,30 @@ void SandboxApp::run()
             {
                 frame[1] = System::APP_SANDBOX;
                 System::io::decompose(time, 2);
+                if (load_in_progress)
+                {
+                    frame[4] = Command::LOAD_PICTURE;
+                    frame[5] = load_x;
+                    frame[6] = load_y;
+                    frame[7] = LOAD_FRAME_SIZE;
+                    uint8_t loaded = 0;
+                    if (load_in_progress) {
+                        for (; load_y < SCREEN_HEIGHT && loaded < LOAD_FRAME_SIZE; load_y++)
+                        {
+                            for (; load_x < SCREEN_WIDTH && loaded < LOAD_FRAME_SIZE; load_x++)
+                            {
+                                frame[8 + loaded] = field[load_y][load_x];
+                                loaded++;
+                            }
+                            load_x = 0;
+                        }
+                        load_in_progress = false;
+                        load_x = 0;
+                        load_y = 0;
+                        load_size = 0;
+
+                    }
+                }
             },
             [&](char* frame) -> void
             {
@@ -59,6 +83,12 @@ void SandboxApp::run()
                     break;
                 case Command::SAVE_PICTURE:
                     eeprom_update_block((const void*) &field, (void*) &STORED_FIELD, sizeof(STORED_FIELD));
+                    break;
+                case Command::LOAD_PICTURE:
+                    load_x = frame[4];
+                    load_y = frame[5];
+                    load_size = frame[6];
+                    load_in_progress = true;
                     break;
                 default:
                     break;

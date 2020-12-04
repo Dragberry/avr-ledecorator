@@ -12,11 +12,7 @@ import android.widget.GridView
 import androidx.fragment.app.DialogFragment
 import org.dragberry.ledecorator.R
 
-class SelectColorDialogFragment(private val listener: SelectColorDialogListener) : DialogFragment() {
-
-    interface SelectColorDialogListener {
-        fun onColorSelected(color: Pair<Int, Int>)
-    }
+class SelectColorDialogFragment(private val onColorSelected: (color: Color) -> Unit) : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
@@ -31,15 +27,12 @@ class SelectColorDialogFragment(private val listener: SelectColorDialogListener)
 
     inner class ColorsAdapter(private var context: Context?) : BaseAdapter() {
 
-        private val colors: IntArray = IntArray(64) { i -> i}
-
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
             return Button(context).apply {
-                val colorDisplay: Int = colors[position]
-                val color: Int = convertColor(colorDisplay)
-                setBackgroundColor(color)
+                val color: Color = Colors.ALL[position]
+                setBackgroundColor(color.real)
                 setOnClickListener {
-                    listener.onColorSelected(color to colorDisplay)
+                    onColorSelected(color)
                     this@SelectColorDialogFragment.dismiss()
                 }
             }
@@ -51,27 +44,7 @@ class SelectColorDialogFragment(private val listener: SelectColorDialogListener)
 
         override fun getCount(): Int = 64
 
-        private fun convertColor(color: Int): Int {
-            val red = when (color and 0b00000011) {
-                1 -> 0x00550000
-                2 -> 0x00AA0000
-                3 -> 0x00FF0000
-                else -> 0
-            }
-            val green = when(color and 0b00001100 shr 2) {
-                1 -> 0x00005500
-                2 -> 0x0000AA00
-                3 -> 0x0000FF00
-                else -> 0
-            }
-            val blue = when(color and 0b00110000 shr 4) {
-                1 -> 0x00000055
-                2 -> 0x000000AA
-                3 -> 0x000000FF
-                else -> 0
-            }
-            return 0xFF000000.toInt() or red or green or blue
-        }
+
 
     }
 }

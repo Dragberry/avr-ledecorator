@@ -120,42 +120,42 @@ void System::load()
     {
         switch (eeprom_read_byte(&STORED_PROGRAMMS[index]))
         {
-        case APP_SNAKE:
-            loaded_programms[number_of_loaded_programms] =
-            { APP_SNAKE, []() -> void
-                {
-                    SnakeGame app;
-                    current_app = &app;
-                    app.run();
-                    current_app = nullptr;
-                }
-            };
-            number_of_loaded_programms++;
-            break;
-        case APP_CLOCK:
-            loaded_programms[number_of_loaded_programms] =
-            { APP_CLOCK, []() -> void
-                {
-                    ClockApp app;
-                    current_app = &app;
-                    app.run();
-                    current_app = nullptr;
-                }
-            };
-            number_of_loaded_programms++;
-            break;
-        case APP_WEATHER:
-            loaded_programms[number_of_loaded_programms] =
-            { APP_WEATHER, []() -> void
-                {
-                    WeatherApp app;
-                    current_app = &app;
-                    app.run();
-                    current_app = nullptr;
-                }
-            };
-            number_of_loaded_programms++;
-            break;
+//        case APP_SNAKE:
+//            loaded_programms[number_of_loaded_programms] =
+//            { APP_SNAKE, []() -> void
+//                {
+//                    SnakeGame app;
+//                    current_app = &app;
+//                    app.run();
+//                    current_app = nullptr;
+//                }
+//            };
+//            number_of_loaded_programms++;
+//            break;
+//        case APP_CLOCK:
+//            loaded_programms[number_of_loaded_programms] =
+//            { APP_CLOCK, []() -> void
+//                {
+//                    ClockApp app;
+//                    current_app = &app;
+//                    app.run();
+//                    current_app = nullptr;
+//                }
+//            };
+//            number_of_loaded_programms++;
+//            break;
+//        case APP_WEATHER:
+//            loaded_programms[number_of_loaded_programms] =
+//            { APP_WEATHER, []() -> void
+//                {
+//                    WeatherApp app;
+//                    current_app = &app;
+//                    app.run();
+//                    current_app = nullptr;
+//                }
+//            };
+//            number_of_loaded_programms++;
+//            break;
         case APP_LIFE:
             loaded_programms[number_of_loaded_programms] =
             { APP_LIFE, []() -> void
