@@ -31,7 +31,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="?android:attr/buttonBarButtonStyle" >
+
+            <Button
+                android:id="@+id/sandboxWriteButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="5dp"
+                android:text="@string/write"
+                style="?android:attr/buttonBarButtonStyle" />
 
             <Button
                 android:id="@+id/sandboxSavePictureButton"
@@ -39,7 +49,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginHorizontal="5dp"
-                android:text="@string/save" />
+                android:text="@string/save"
+                style="?android:attr/buttonBarButtonStyle" />
 
             <Button
                 android:id="@+id/sandboxLoadPictureButton"
@@ -47,7 +58,18 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginHorizontal="5dp"
-                android:text="@string/load" />
+                android:text="@string/load"
+                style="?android:attr/buttonBarButtonStyle" />
+
+            <Button
+                android:id="@+id/sandboxOpenPictureButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="5dp"
+                android:text="@string/open"
+                style="?android:attr/buttonBarButtonStyle" />
+
 
             <Button
                 android:id="@+id/sandboxSelectColorButton"
@@ -55,7 +77,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginHorizontal="5dp"
-                android:text="Color" />
+                android:text="@string/color"
+                style="?android:attr/buttonBarButtonStyle" />
 
             <Button
                 android:id="@+id/sandboxClearScreenButton"
@@ -63,7 +86,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginHorizontal="5dp"
-                android:text="@string/clear" />
+                android:text="@string/clear"
+                style="?android:attr/buttonBarButtonStyle" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

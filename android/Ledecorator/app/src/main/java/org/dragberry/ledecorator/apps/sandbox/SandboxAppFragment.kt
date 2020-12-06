@@ -1,5 +1,8 @@
 package org.dragberry.ledecorator.apps.sandbox
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Message
 import android.util.Log
@@ -12,6 +15,7 @@ import org.dragberry.ledecorator.apps.AbstractAppFragment
 import org.dragberry.ledecorator.bluetooth.Commands
 import org.dragberry.ledecorator.utils.Colors
 import org.dragberry.ledecorator.utils.SelectColorDialogFragment
+import java.io.IOException
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -20,14 +24,18 @@ private const val TAG = "SanboxAppFragment"
 
 private const val ENABLE_BUTTONS = 6000
 private const val UPDATE_FIELD = 6001
+private const val SAVE_FILE = 6002
+private const val OPEN_FILE = 6003
 
 class SandboxAppFragment : AbstractAppFragment(TAG) {
 
     private lateinit var fieldImageView: FieldView
     private lateinit var savePictureButton: Button
+    private lateinit var openPictureButton: Button
     private lateinit var selectColorButton: Button
     private lateinit var clearScreenButton: Button
     private lateinit var loadPictureButton: Button
+    private lateinit var writeButton: Button
 
     private val commandQueue: Queue<Command> = ConcurrentLinkedQueue()
 
@@ -45,6 +53,9 @@ class SandboxAppFragment : AbstractAppFragment(TAG) {
                     commandQueue.add(DrawPointCommand(x, y, color.display, color.display))
                 }
             }
+            writeButton = findViewById<Button>(R.id.sandboxWriteButton).apply {
+                setOnClickListener { commandQueue.add(SavePictureCommand()) }
+            }
             selectColorButton = findViewById<Button>(R.id.sandboxSelectColorButton).apply {
                 setOnClickListener {
                     fragmentManager?.apply {
@@ -57,7 +68,18 @@ class SandboxAppFragment : AbstractAppFragment(TAG) {
             }
             savePictureButton = findViewById<Button>(R.id.sandboxSavePictureButton).apply {
                 setOnClickListener {
-                    commandQueue.add(SavePictureCommand())
+                    val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
+                    intent.addCategory(Intent.CATEGORY_OPENABLE)
+                    intent.type = "image/png"
+                    startActivityForResult(intent, SAVE_FILE)
+                }
+            }
+            openPictureButton = findViewById<Button>(R.id.sandboxOpenPictureButton).apply {
+                setOnClickListener {
+                    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+                    intent.addCategory(Intent.CATEGORY_OPENABLE)
+                    intent.type = "image/*"
+                    startActivityForResult(intent, OPEN_FILE)
                 }
             }
             clearScreenButton = findViewById<Button>(R.id.sandboxClearScreenButton).apply {
@@ -84,11 +106,47 @@ class SandboxAppFragment : AbstractAppFragment(TAG) {
         return view
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                SAVE_FILE -> {
+                    data?.data?.apply {
+                        try {
+                            val output = context!!.contentResolver.openOutputStream(this)
+                            fieldImageView.getImage {
+                                it.compress(Bitmap.CompressFormat.PNG, 100, output)
+                            }
+                            output!!.flush()
+                            output.close()
+                        } catch (exc: IOException) {
+                            Log.e(TAG, "Failed to save image", exc)
+                        }
+                    }
+                }
+                OPEN_FILE -> {
+                    try {
+                        data?.data?.apply {
+                            val input = context!!.contentResolver.openInputStream(this)
+                            fieldImageView.setImage(input!!) { x, y, color ->
+                                commandQueue.add(DrawPointCommand(x, y, color.display, color.display))
+                            }
+                            input.close()
+                        }
+                    } catch (exc: IOException) {
+                        Log.e(TAG, "Failed to save image", exc)
+                    }
+                }
+            }
+        }
+    }
+
     private fun startLoading() {
         loadingInProgress = true
         selectColorButton.isEnabled = false
         savePictureButton.isEnabled = false
         clearScreenButton.isEnabled = false
+        openPictureButton.isEnabled = false
+        writeButton.isEnabled = false
         loadPictureButton.text = getString(R.string.loading_in_progress)
         commandQueue.add(LoadPictureCommand(0, 0))
     }
@@ -99,6 +157,8 @@ class SandboxAppFragment : AbstractAppFragment(TAG) {
         selectColorButton.isEnabled = true
         savePictureButton.isEnabled = true
         clearScreenButton.isEnabled = true
+        openPictureButton.isEnabled = true
+        writeButton.isEnabled = true
         loadPictureButton.text = getString(R.string.load)
     }
 

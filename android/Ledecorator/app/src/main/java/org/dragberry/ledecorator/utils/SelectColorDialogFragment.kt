@@ -29,7 +29,7 @@ class SelectColorDialogFragment(private val onColorSelected: (color: Color) -> U
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
             return Button(context).apply {
-                val color: Color = Colors.ALL[position]
+                val color: Color = Colors.getByDisplay(position)
                 setBackgroundColor(color.real)
                 setOnClickListener {
                     onColorSelected(color)

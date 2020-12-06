@@ -21,9 +21,10 @@
     <string name="ledecorator_app_status_active">Active</string>
     <string name="ledecorator_app_status_inactive">Inactive</string>
     <string name="update">Update</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="load">Load</string>
     <string name="loading_in_progress">Loading...</string>
+    <string name="reset">Reset</string>
+    <string name="color">Color</string>
+    <string name="write">Write</string>
+    <string name="open">Open</string>
 </resources>
