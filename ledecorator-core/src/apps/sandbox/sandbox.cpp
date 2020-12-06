@@ -51,7 +51,6 @@ void SandboxApp::run()
                         load_x = 0;
                         load_y = 0;
                         load_size = 0;
-
                     }
                 }
             },
@@ -89,6 +88,26 @@ void SandboxApp::run()
                     load_y = frame[5];
                     load_size = frame[6];
                     load_in_progress = true;
+                    if (load_x == 0 && load_y == 0) {
+                        eeprom_read_block((void*) &field, (const void*) &STORED_FIELD, sizeof(STORED_FIELD));
+                    }
+                    break;
+                case Command::DRAW_BLOCK:
+                    {
+                        uint8_t x = frame[4]; // 24
+                        uint8_t y = frame[5]; // 0
+                        uint8_t size = frame[6]; // 12
+                        uint8_t idx = 0;
+                        for (; y < SCREEN_HEIGHT && idx < size; y++)
+                        {
+                            for (; x < SCREEN_WIDTH && idx < size; x++)
+                            {
+                                field[y][x] = frame[7 + idx];
+                                idx++;
+                            }
+                            x = 0;
+                        }
+                    }
                     break;
                 default:
                     break;

@@ -1,10 +1,11 @@
 package org.dragberry.ledecorator.apps.sandbox
 
-private const val LOAD_FRAME_SIZE = 8
+private const val UPLOAD_FRAME_SIZE = 12
 
 enum class Action(val value: Byte) {
     LOAD_PICTURE('L'.toByte()),
     DRAW_POINT('P'.toByte()),
+    DRAW_BLOCK('B'.toByte()),
     CLEAR_SCREEN('C'.toByte()),
     SAVE_PICTURE('S'.toByte())
 }
@@ -21,6 +22,20 @@ class DrawPointCommand(val x: Int, val y: Int, val color: Int, val previousColor
 
     override fun hashCode(): Int {
         return x + y + color
+    }
+
+}
+
+class DrawBlockCommand(val x: Int, val y: Int, val size: Int, val block: IntArray) :
+    Command(Action.DRAW_BLOCK) {
+
+    override fun equals(other: Any?): Boolean {
+        return other != null && other is DrawBlockCommand &&
+                x == other.x && y == other.y && size == other.size && block.contentEquals(other.block)
+    }
+
+    override fun hashCode(): Int {
+        return x + y + size + block.hashCode()
     }
 
 }
@@ -49,7 +64,7 @@ class SavePictureCommand : Command(Action.SAVE_PICTURE) {
 
 }
 
-class LoadPictureCommand(val x: Int, val y: Int, val size: Int = LOAD_FRAME_SIZE) :
+class LoadPictureCommand(val x: Int, val y: Int, val size: Int = UPLOAD_FRAME_SIZE) :
     Command(Action.LOAD_PICTURE) {
 
     override fun equals(other: Any?): Boolean {

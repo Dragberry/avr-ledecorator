@@ -103,6 +103,7 @@ class SandboxAppFragment : AbstractAppFragment(TAG) {
                 }
             }
         }
+        startLoading()
         return view
     }
 
@@ -127,8 +128,8 @@ class SandboxAppFragment : AbstractAppFragment(TAG) {
                     try {
                         data?.data?.apply {
                             val input = context!!.contentResolver.openInputStream(this)
-                            fieldImageView.setImage(input!!) { x, y, color ->
-                                commandQueue.add(DrawPointCommand(x, y, color.display, color.display))
+                            fieldImageView.setImage(input!!) { x, y, size, block ->
+                                commandQueue.add(DrawBlockCommand(x, y, size, block))
                             }
                             input.close()
                         }
@@ -174,7 +175,6 @@ class SandboxAppFragment : AbstractAppFragment(TAG) {
         if (loadingInProgress && bytes[4] == Action.LOAD_PICTURE.value) {
             var x: Int = bytes[5].toInt()
             var y: Int = bytes[6].toInt()
-            Log.i(TAG, "X=$x Y=$y   $bytes")
             for (i in 8..15) {
                 fieldImageView.setPixel(x, y, Colors.convertColor(bytes[i].toInt()))
                 if (++x == FIELD_WIDTH) {
@@ -207,6 +207,22 @@ class SandboxAppFragment : AbstractAppFragment(TAG) {
                         4 -> command.x.toByte()
                         5 -> command.y.toByte()
                         6 -> command.color.toByte()
+                        19 -> Commands.Frame.END.code
+                        else -> 0
+                    }
+                }
+            }
+            is DrawBlockCommand -> {
+                ByteArray(20) {
+                    when (it) {
+                        0 -> Commands.Frame.START.code
+                        1 -> Commands.App.SANDBOX.code
+                        2 -> Commands.System.INFINITE.code
+                        3 -> command.code.value
+                        4 -> command.x.toByte()
+                        5 -> command.y.toByte()
+                        6 -> command.size.toByte()
+                        in 7..18 -> command.block[it - 7].toByte()
                         19 -> Commands.Frame.END.code
                         else -> 0
                     }

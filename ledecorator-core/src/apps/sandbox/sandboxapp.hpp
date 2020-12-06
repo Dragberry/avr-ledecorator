@@ -12,6 +12,7 @@ private:
     enum Command : char
     {
         DRAW_POINT      = 'P',
+        DRAW_BLOCK      = 'B',
         CLEAR_SCREEN    = 'C',
         SAVE_PICTURE    = 'S',
         LOAD_PICTURE    = 'L'

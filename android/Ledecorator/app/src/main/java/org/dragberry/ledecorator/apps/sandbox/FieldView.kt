@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.widget.ImageView
 import org.dragberry.ledecorator.utils.Color
@@ -15,8 +14,7 @@ import kotlin.math.roundToInt
 
 const val FIELD_WIDTH = 32
 const val FIELD_HEIGHT = 16
-
-private const val TAG = "FieldView"
+const val UPLOAD_BLOCK_SIZE = 12
 
 
 class FieldView(context: Context, attributesSet: AttributeSet) :
@@ -42,7 +40,7 @@ class FieldView(context: Context, attributesSet: AttributeSet) :
         temp.recycle()
     }
 
-    fun setImage(input: InputStream, onPixel: (x: Int, y: Int, color: Color) -> Unit) {
+    fun setImage(input: InputStream, onBlock: (x: Int, y: Int, size: Int, block: IntArray) -> Unit) {
         val options = BitmapFactory.Options()
         options.inPreferredConfig = Bitmap.Config.ARGB_8888
         BitmapFactory.decodeStream(input, null, options)?.apply {
@@ -51,13 +49,28 @@ class FieldView(context: Context, attributesSet: AttributeSet) :
             m.postRotate(90.0f)
             bitmap = Bitmap.createBitmap(this, 0, 0, width, height, m, true)
 
+            var block = IntArray(UPLOAD_BLOCK_SIZE)
+            var blockX = 0
+            var blockY = 0
+            var blockProgress = 0
             for (y in 0 until FIELD_HEIGHT) {
                 for (x in 0 until FIELD_WIDTH) {
+                    if (blockProgress == UPLOAD_BLOCK_SIZE) {
+                        onBlock(blockX, blockY, blockProgress, block)
+                        block = IntArray(UPLOAD_BLOCK_SIZE)
+                        blockProgress = 0
+                        blockX = x
+                        blockY = y
+                    }
+
                     val realX = FIELD_HEIGHT - y - 1
                     val pixel = Colors.getByReal(bitmap.getPixel(realX, x))
                     bitmap.setPixel(realX, x, pixel.real)
-                    onPixel(x, y, pixel)
+                    block[blockProgress++] = pixel.display
                 }
+            }
+            if (blockProgress > 0) {
+                onBlock(blockX, blockY, blockProgress, block)
             }
             setImageBitmap(bitmap)
             recycle()
@@ -70,7 +83,6 @@ class FieldView(context: Context, attributesSet: AttributeSet) :
     }
 
     fun setPixel(x: Int, y: Int, color: Int) {
-        Log.i(TAG, "X=${FIELD_HEIGHT - y - 1}   Y=$x Color=$color")
         bitmap.setPixel(FIELD_HEIGHT- y - 1, x, color)
     }
 
@@ -110,7 +122,6 @@ class FieldView(context: Context, attributesSet: AttributeSet) :
         inverseMatrix.mapPoints(points)
         val x = points[0].roundToInt()
         val y = points[1].roundToInt()
-        Log.i(TAG, "x=$x, Y=$y")
 
         if (y in 0 until FIELD_WIDTH && x in 0 until FIELD_HEIGHT) {
             val previousColor: Int = bitmap.getPixel(x, y)
