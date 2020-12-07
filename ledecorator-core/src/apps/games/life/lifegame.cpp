@@ -8,7 +8,6 @@ const LifeGame::StoredState EEMEM LifeGame::STORED_STATE = LifeGame::StoredState
 
 LifeGame::LifeGame()
 {
-    StoredState state;
     eeprom_read_block((void*) &state, (const void*) &STORED_STATE, sizeof(state));
     time_to_live = state.time_to_live;
 
@@ -165,14 +164,39 @@ void LifeGame::run()
             System::io::exchange(
                 [&](char* frame) -> void
                 {
+                    if (load_requested) {
+                        eeprom_read_block((void*) &state, (const void*) &STORED_STATE, sizeof(state));
+                    }
                     frame[1] = System::APP_LIFE;
                     System::io::decompose(time, 2);
                     System::io::decompose(steps, 4);
-                    frame[6] = color_life;
-                    frame[7] = color_dead;
-                    frame[8] = is_random;
+                    frame[6] = load_requested ? Command::LOAD : Command::IDLE;
+                    frame[7] = color_life;
+                    frame[8] = color_dead;
+                    frame[9] = is_random;
+                    load_requested = false;
                 },
-                [&](char* frame) -> void { }
+                [&](char* frame) -> void {
+                    switch (frame[3])
+                    {
+                    case Command::SAVE:
+                        {
+                            color_life = frame[4];
+                            color_dead = frame[5];
+                            state.color_life = color_life;
+                            state.color_dead = color_dead;
+                            eeprom_update_block((const void*) &state, (void*) &STORED_STATE, sizeof(STORED_STATE));
+                            break;
+                        }
+                    case Command::LOAD:
+                        {
+                            load_requested = true;
+                            break;
+                        }
+                    default:
+                        break;
+                    }
+                }
             );
 
 		    build_scene();

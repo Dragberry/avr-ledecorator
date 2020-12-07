@@ -15,6 +15,13 @@ class LifeGame :
         public Timer
 {
 private:
+    enum Command : char
+    {
+        IDLE      = 'I',
+        SAVE      = 'S',
+        LOAD      = 'L',
+    };
+
     struct StoredState
     {
        enum Mode
@@ -29,6 +36,8 @@ private:
 
     static const StoredState EEMEM STORED_STATE;
 
+    StoredState state;
+
 	uint8_t color_life;
 	uint8_t color_dead;
 
@@ -41,6 +50,8 @@ private:
 	volatile bool is_step_required;
 
 	bool is_random;
+
+	bool load_requested = false;
 
 public:
 	LifeGame();
