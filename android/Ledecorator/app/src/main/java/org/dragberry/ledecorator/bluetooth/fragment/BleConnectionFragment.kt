@@ -47,7 +47,9 @@ class BleConnectionFragment : Fragment(), Handler.Callback {
                     if (isChecked) {
                         onConnecting()
                     } else {
-                        onDisconnecting()
+                        if (bluetoothService!!.connected) {
+                            onDisconnecting()
+                        }
                     }
                 }
             }
@@ -99,7 +101,7 @@ class BleConnectionFragment : Fragment(), Handler.Callback {
     }
 
     private fun onConnected() {
-        selectBleDeviceButton.isEnabled = true
+        selectBleDeviceButton.isEnabled = false
         connectBleDeviceSwitch.isEnabled = true
         selectedBleDeviceStatusTextView.text = getString(R.string.status_connected)
     }
@@ -114,15 +116,15 @@ class BleConnectionFragment : Fragment(), Handler.Callback {
     private fun onDisconnected() {
         selectBleDeviceButton.isEnabled = true
         connectBleDeviceSwitch.isEnabled = true
+        connectBleDeviceSwitch.isChecked = false
         selectedBleDeviceStatusTextView.text = getString(R.string.status_disconnected)
     }
 
     private fun onConnectionError(error: String) {
-        selectBleDeviceButton.isEnabled = false
-        connectBleDeviceSwitch.isEnabled = false
+        selectBleDeviceButton.isEnabled = true
+        connectBleDeviceSwitch.isEnabled = true
         connectBleDeviceSwitch.isChecked = false
         selectedBleDeviceStatusTextView.text = getString(R.string.status_connection_error, error)
-        bluetoothService?.disconnect()
     }
 
     override fun handleMessage(msg: Message): Boolean {

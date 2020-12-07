@@ -12,7 +12,6 @@ import org.dragberry.ledecorator.apps.LedecoratorApp
 import org.dragberry.ledecorator.apps.LedecoratorAppFragment
 import org.dragberry.ledecorator.bluetooth.Commands
 import org.dragberry.ledecorator.bluetooth.fragment.BleDeviceSelectionFragment
-import java.nio.charset.StandardCharsets
 import java.util.*
 
 private const val TAG = "MainActivity"
@@ -124,6 +123,8 @@ class MainActivity :
 
         private var scanning = false
 
+        var connected = false
+
         private val scanningHandler: Handler = Handler()
 
         var deviceScanCallback: Handler? = null
@@ -221,12 +222,15 @@ class MainActivity :
                             hideApp()
                             connectionHandler?.apply {
                                 obtainMessage(LEDECORATOR_STATE_DISCONNECTED).sendToTarget()
+                                connected = false
                             }
                         }
                     }
                 } else {
                     connectionHandler?.apply {
+                        hideApp()
                         obtainMessage(LEDECORATOR_STATE_CONNECTION_ERROR, status).sendToTarget()
+                        connected = false
                     }
                 }
             }
@@ -242,6 +246,7 @@ class MainActivity :
                 }
                 connectionHandler?.apply {
                     obtainMessage(LEDECORATOR_STATE_CONNECTED, gatt).sendToTarget()
+                    connected = true
                 }
                 showApp()
             }
@@ -265,8 +270,10 @@ class MainActivity :
         }
 
         fun disconnect() {
-            stopScan()
-            bluetoothGatt?.disconnect()
+            if (connected) {
+                stopScan()
+                bluetoothGatt?.disconnect()
+            }
         }
 
         var responseDataFrame: ByteArray = Commands.App.IDLE.frame

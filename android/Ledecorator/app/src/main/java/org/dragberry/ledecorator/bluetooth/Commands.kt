@@ -25,9 +25,10 @@ class Commands {
         LIFE('L', { sb , data ->
             sb.append("\tTime:\t${BleUtils.uint16(data[2], data[3])}\n")
             sb.append("\tSteps:\t${BleUtils.uint16(data[4], data[5])}\n")
-            sb.append("\tColor Live:\t${data[6]}\n")
-            sb.append("\tColor Dead:\t${data[7]}\n")
-            sb.append("\tRandom:\t${data[8].toInt() != 0}\n")
+            sb.append("\tCommand:\t${data[6]}\n")
+            sb.append("\tColor Live:\t${data[7]}\n")
+            sb.append("\tColor Dead:\t${data[8]}\n")
+            sb.append("\tRandom:\t${data[9].toInt() != 0}\n")
         }),
         SANDBOX('B', {sb, data ->
             sb.append("\tTime:\t${BleUtils.uint16(data[2], data[3])}\n")

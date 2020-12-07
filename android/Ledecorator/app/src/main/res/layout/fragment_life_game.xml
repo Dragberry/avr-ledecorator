@@ -23,12 +23,13 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle">
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginHorizontal="5dp"
+                    android:layout_margin="20dp"
                     android:text="Live color" />
                 <Button
                     android:id="@+id/lifeGameLiveColorButton"
@@ -41,7 +42,8 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle">
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -53,13 +55,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginHorizontal="5dp"
+                    android:layout_margin="20dp"
                     style="?android:attr/buttonBarButtonStyle" />
             </LinearLayout>
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle">
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -71,7 +74,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginHorizontal="5dp" />
+                    android:layout_margin="20dp"
+                    style="?android:attr/buttonBarButtonStyle"/>
             </LinearLayout>
         </LinearLayout>
 
@@ -93,7 +97,7 @@
                 android:text="@string/save"
                 style="?android:attr/buttonBarButtonStyle" />
             <Button
-                android:id="@+id/lifeGameResetButton"
+                android:id="@+id/lifeGameRestartButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
