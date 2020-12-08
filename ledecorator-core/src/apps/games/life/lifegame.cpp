@@ -10,11 +10,7 @@ LifeGame::LifeGame()
 {
     eeprom_read_block((void*) &state, (const void*) &STORED_STATE, sizeof(state));
     time_to_live = state.time_to_live;
-    color_life = state.color_life;
-    color_dead = state.color_dead;
-
     alive_indicator = ALIVE_INDICATOR_01;
-
     switch (state.mode)
     {
     case Mode::RANDOM:
@@ -78,7 +74,7 @@ void LifeGame::build_scene()
 	{
 		for (uint8_t cell = 0; cell < SCREEN_WIDTH; cell++)
 		{
-			Color color = field[row][cell] & alive_indicator ? color_life : color_dead;
+			Color color = field[row][cell] & alive_indicator ? state.color_life : state.color_dead;
 			dragberry::os::display::set_pixel(row, cell, color);
 		}
 	}
@@ -163,12 +159,14 @@ void LifeGame::step_up()
 void LifeGame::on_timer_event()
 {
 	increment_time();
-	is_step_required = true;
+	if (time % state.speed == 0) {
+	    is_step_required = true;
+	}
 }
 
 void LifeGame::run()
 {
-    System::register_timer(this, 10);
+    System::register_timer(this, TICKS_PER_SECOND);
     is_step_required = true;
     dragberry::os::display::clear_screen(BLACK);
     dragberry::os::display::update_assured();
@@ -186,10 +184,12 @@ void LifeGame::run()
                     System::io::decompose(time, 2);
                     System::io::decompose(steps, 4);
                     frame[6] = load_requested ? Command::LOAD : Command::IDLE;
-                    frame[7] = color_life;
-                    frame[8] = color_dead;
+                    frame[7] = state.color_life;
+                    frame[8] = state.color_dead;
                     frame[9] = state.mode;
                     frame[10] = script;
+                    System::io::decompose(state.time_to_live / TICKS_PER_SECOND, 11);
+                    frame[13] = state.speed;
                     load_requested = false;
                 },
                 [&](char* frame) -> void {
@@ -197,12 +197,13 @@ void LifeGame::run()
                     {
                     case Command::SAVE:
                         {
-                            color_life = frame[4];
-                            color_dead = frame[5];
-                            state.color_life = color_life;
-                            state.color_dead = color_dead;
+                            state.color_life = frame[4];
+                            state.color_dead = frame[5];
                             state.mode = (Mode) frame[6];
                             state.script = (Script) frame[7];
+                            System::io::compose(state.time_to_live, 8);
+                            state.time_to_live *= TICKS_PER_SECOND;
+                            state.speed = frame[10];
                             eeprom_update_block((const void*) &state, (void*) &STORED_STATE, sizeof(STORED_STATE));
                             break;
                         }

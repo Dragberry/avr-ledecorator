@@ -3,15 +3,19 @@ package org.dragberry.ledecorator.apps.life
 
 import android.os.Bundle
 import android.os.Message
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import org.dragberry.ledecorator.R
 import org.dragberry.ledecorator.apps.AbstractAppFragment
+import org.dragberry.ledecorator.bluetooth.BleUtils
 import org.dragberry.ledecorator.bluetooth.Commands
 import org.dragberry.ledecorator.utils.Colors
 import org.dragberry.ledecorator.utils.SelectColorDialogFragment
+
 
 private const val TAG = "LifeGameFragment"
 
@@ -64,6 +68,12 @@ class LifeGameFragment : AbstractAppFragment(TAG) {
 
     @Volatile
     private var script = Script.COPERHEAD
+
+    @Volatile
+    private var timeToLive = 5
+
+    @Volatile
+    private var speed = 1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -123,12 +133,46 @@ class LifeGameFragment : AbstractAppFragment(TAG) {
                 }
             }
             timeToLiveEditText = findViewById<EditText>(R.id.lifeGameTimeToLiveEditView).apply {
+                addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {}
 
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int
+                    ) {
+                    }
+
+                    override fun onTextChanged(
+                        text: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int
+                    ) {
+                        timeToLive = try {
+                            text.toString().toInt()
+                        } catch (nfe :NumberFormatException) {
+                            5
+                        }
+                    }
+                })
             }
             speedSelectorSpinner = findViewById<Spinner>(R.id.lifeGameSpeedSelector).apply {
                 adapter = ArrayAdapter<Int>(
-                    context, R.layout.fragment_spinner_text_item, Array(10) { it }
+                    context, R.layout.fragment_spinner_text_item, Array(10) { it + 1 }
                 )
+                onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        speed = position + 1
+                    }
+                }
             }
 
 
@@ -159,6 +203,8 @@ class LifeGameFragment : AbstractAppFragment(TAG) {
                 deadColorButton.setBackgroundColor(deadColor.real)
                 modeSelectorSpinner.setSelection(mode.ordinal)
                 scriptSelectorSpinner.setSelection(script.ordinal)
+                timeToLiveEditText.setText(timeToLive.toString())
+                speedSelectorSpinner.setSelection(speed - 1)
             }
         }
         return true
@@ -173,6 +219,8 @@ class LifeGameFragment : AbstractAppFragment(TAG) {
             handler?.apply {
                 obtainMessage(LOAD_COMPLETE).sendToTarget()
             }
+            timeToLive = BleUtils.uint16(bytes[11], bytes[12])
+            speed = bytes[13].toInt()
             action = Action.IDLE
             return Commands.App.LIFE.frame
         }
@@ -198,6 +246,9 @@ class LifeGameFragment : AbstractAppFragment(TAG) {
                     5 -> deadColor.display.toByte()
                     6 -> mode.value
                     7 -> script.value
+                    8 -> BleUtils.byte0(timeToLive)
+                    9 -> BleUtils.byte1(timeToLive)
+                    10 -> speed.toByte()
                     19 -> Commands.Frame.END.code
                     else -> 0
                 }.apply {

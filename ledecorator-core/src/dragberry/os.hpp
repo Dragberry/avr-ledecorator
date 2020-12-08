@@ -86,6 +86,8 @@ public:
 
         static void decompose(const int32_t& value, const uint8_t idx);
 
+        static void compose(uint16_t& value, const uint8_t idx);
+
         template <typename Out, typename In>
         static void exchange(Out&& out, In&& in)
         {

@@ -22,6 +22,16 @@ class BleUtils {
                     uint8(m2) * 65536 +
                     abs(high.toInt()) * 16777216) * if (high < 0) -1 else 1
         }
+
+        @JvmStatic
+        fun byte0(int: Int): Byte {
+            return int.toByte()
+        }
+
+        @JvmStatic
+        fun byte1(int: Int): Byte {
+            return (int shr 8).toByte()
+        }
     }
 
 }

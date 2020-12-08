@@ -1,6 +1,7 @@
 package org.dragberry.ledecorator.bluetooth
 
 import java.lang.StringBuilder
+import org.dragberry.ledecorator.apps.life.LifeGameFragment
 
 class Commands {
     enum class App(code: Char, private val logger: (sb: StringBuilder, data: ByteArray) -> Unit) {
@@ -28,7 +29,10 @@ class Commands {
             sb.append("\tCommand:\t${data[6]}\n")
             sb.append("\tColor Live:\t${data[7]}\n")
             sb.append("\tColor Dead:\t${data[8]}\n")
-            sb.append("\tRandom:\t${data[9].toInt() != 0}\n")
+            sb.append("\tMode:\t${LifeGameFragment.Mode.values()[data[9].toInt()]}\n")
+            sb.append("\tScript:\t${LifeGameFragment.Script.values()[data[10].toInt()]}\n")
+            sb.append("\tTTL:\t${BleUtils.uint16(data[11], data[12])}\n")
+            sb.append("\tSpeed:\t${data[13]}\n")
         }),
         SANDBOX('B', {sb, data ->
             sb.append("\tTime:\t${BleUtils.uint16(data[2], data[3])}\n")

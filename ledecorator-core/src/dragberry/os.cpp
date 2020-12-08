@@ -282,6 +282,11 @@ void System::io::decompose(const int32_t& value, const uint8_t idx)
     BLE::tx_buffer[idx + 3] = (char)(value >> 24);
 }
 
+void System::io::compose(uint16_t& value, const uint8_t idx)
+{
+    value = (((uint16_t) BLE::rx_buffer[idx + 1]) << 8) | BLE::rx_buffer[idx];
+}
+
 ISR(TIMER0_COMPA_vect)
 {
     System::on_system_timer_event();

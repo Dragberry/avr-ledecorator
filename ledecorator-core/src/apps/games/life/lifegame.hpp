@@ -15,6 +15,8 @@ class LifeGame :
         public Timer
 {
 private:
+    static const uint8_t TICKS_PER_SECOND = 10;
+
     enum Command : char
     {
         IDLE      = 'I',
@@ -44,19 +46,17 @@ private:
     struct StoredState
     {
 
-       uint16_t time_to_live = 300;
+       uint16_t time_to_live = 30 * TICKS_PER_SECOND;
        Color color_life = RED;
        Color color_dead = WHITE;
        Mode mode = CAROUSEL;
        Script script = COPERHEAD;
+       uint8_t speed = 1;
     };
 
     static const StoredState EEMEM STORED_STATE;
 
     StoredState state;
-
-	uint8_t color_life;
-	uint8_t color_dead;
 
 	uint8_t alive_indicator;
 
