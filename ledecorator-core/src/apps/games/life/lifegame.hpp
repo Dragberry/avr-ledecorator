@@ -22,16 +22,33 @@ private:
         LOAD      = 'L',
     };
 
+    enum Mode: uint8_t
+    {
+        RANDOM = 0,
+        CAROUSEL = 1,
+        CONSTANT = 2,
+    };
+
+    static const uint8_t TOTAL_SCRIPTS = 4;
+
+    enum Script : uint8_t
+    {
+        RANDOM_SEA = 0,
+        SHIPS = 1,
+        SHIPS_RANDOM = 2,
+        COPERHEAD = 3,
+    };
+
+    Script script;
+
     struct StoredState
     {
-       enum Mode
-       {
-           RANDOM, SCRIPT, CAROUSEL
-       };
+
        uint16_t time_to_live = 300;
        Color color_life = RED;
        Color color_dead = WHITE;
        Mode mode = CAROUSEL;
+       Script script = COPERHEAD;
     };
 
     static const StoredState EEMEM STORED_STATE;
@@ -48,8 +65,6 @@ private:
 	uint16_t steps;
 
 	volatile bool is_step_required;
-
-	bool is_random;
 
 	bool load_requested = false;
 

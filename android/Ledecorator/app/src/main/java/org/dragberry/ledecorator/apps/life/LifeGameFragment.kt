@@ -6,8 +6,7 @@ import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Spinner
+import android.widget.*
 import org.dragberry.ledecorator.R
 import org.dragberry.ledecorator.apps.AbstractAppFragment
 import org.dragberry.ledecorator.bluetooth.Commands
@@ -23,6 +22,9 @@ class LifeGameFragment : AbstractAppFragment(TAG) {
     private lateinit var liveColorButton: Button
     private lateinit var deadColorButton: Button
     private lateinit var modeSelectorSpinner: Spinner
+    private lateinit var scriptSelectorSpinner: Spinner
+    private lateinit var timeToLiveEditText: EditText
+    private lateinit var speedSelectorSpinner: Spinner
 
     private lateinit var saveButton: Button
     private lateinit var restartButton: Button
@@ -35,6 +37,19 @@ class LifeGameFragment : AbstractAppFragment(TAG) {
         LOAD('L'.toByte())
     }
 
+    enum class Mode(val value: Byte) {
+        RANDOM(0.toByte()),
+        CAROUSEL(1.toByte()),
+        CONSTANT(2.toByte())
+    }
+
+    enum class Script(val value: Byte) {
+        RANDOM_SEA(0.toByte()),
+        SHIPS(1.toByte()),
+        SHIPS_RANDOM(2.toByte()),
+        COPERHEAD(3.toByte()),
+    }
+
     @Volatile
     private var action = Action.LOAD
 
@@ -43,6 +58,12 @@ class LifeGameFragment : AbstractAppFragment(TAG) {
 
     @Volatile
     private var deadColor = Colors.BLACK
+
+    @Volatile
+    private var mode = Mode.CAROUSEL
+
+    @Volatile
+    private var script = Script.COPERHEAD
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -72,11 +93,45 @@ class LifeGameFragment : AbstractAppFragment(TAG) {
                 }
             }
             modeSelectorSpinner = findViewById<Spinner>(R.id.lifeGameModeSelector).apply {
-//                adapter = object ArrayAdapter<String> {
+                adapter = ArrayAdapter<Mode>(context, R.layout.fragment_spinner_text_item, Mode.values())
+                onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        mode = Mode.values()[position]
+                    }
 
-//                }
+                }
+            }
+            scriptSelectorSpinner = findViewById<Spinner>(R.id.lifeGameScriptSelector).apply {
+                adapter = ArrayAdapter<Script>(context, R.layout.fragment_spinner_text_item, Script.values())
+                onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        script = Script.values()[position]
+                    }
+
+                }
+            }
+            timeToLiveEditText = findViewById<EditText>(R.id.lifeGameTimeToLiveEditView).apply {
 
             }
+            speedSelectorSpinner = findViewById<Spinner>(R.id.lifeGameSpeedSelector).apply {
+                adapter = ArrayAdapter<Int>(
+                    context, R.layout.fragment_spinner_text_item, Array(10) { it }
+                )
+            }
+
+
             saveButton = findViewById<Button>(R.id.lifeGameSaveButton).apply {
                 setOnClickListener {
                     action = Action.SAVE
@@ -102,6 +157,8 @@ class LifeGameFragment : AbstractAppFragment(TAG) {
             LOAD_COMPLETE -> {
                 liveColorButton.setBackgroundColor(liveColor.real)
                 deadColorButton.setBackgroundColor(deadColor.real)
+                modeSelectorSpinner.setSelection(mode.ordinal)
+                scriptSelectorSpinner.setSelection(script.ordinal)
             }
         }
         return true
@@ -111,6 +168,8 @@ class LifeGameFragment : AbstractAppFragment(TAG) {
         if (bytes[6] == Action.LOAD.value) {
             liveColor = Colors.getByDisplay(bytes[7].toInt())
             deadColor = Colors.getByDisplay(bytes[8].toInt())
+            mode = Mode.values().first { it.value == bytes[9] }
+            script = Script.values().first { it.value == bytes[10] }
             handler?.apply {
                 obtainMessage(LOAD_COMPLETE).sendToTarget()
             }
@@ -137,6 +196,8 @@ class LifeGameFragment : AbstractAppFragment(TAG) {
                     3 -> Action.SAVE.value
                     4 -> liveColor.display.toByte()
                     5 -> deadColor.display.toByte()
+                    6 -> mode.value
+                    7 -> script.value
                     19 -> Commands.Frame.END.code
                     else -> 0
                 }.apply {

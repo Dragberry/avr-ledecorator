@@ -27,4 +27,10 @@
     <string name="color">Color</string>
     <string name="write">Write</string>
     <string name="open">Open</string>
+    <string name="script">Script</string>
+    <string name="mode">Mode</string>
+    <string name="dead_color">Dead color</string>
+    <string name="live_color">Live color</string>
+    <string name="time_to_live">Time to live</string>
+    <string name="speed">Speed</string>
 </resources>

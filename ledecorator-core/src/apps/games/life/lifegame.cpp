@@ -10,33 +10,38 @@ LifeGame::LifeGame()
 {
     eeprom_read_block((void*) &state, (const void*) &STORED_STATE, sizeof(state));
     time_to_live = state.time_to_live;
+    color_life = state.color_life;
+    color_dead = state.color_dead;
+
+    alive_indicator = ALIVE_INDICATOR_01;
 
     switch (state.mode)
     {
-    case StoredState::Mode::RANDOM:
-        is_random = true;
-        break;
-    case StoredState::Mode::SCRIPT:
-        is_random = false;
+    case Mode::RANDOM:
+        script = (Script) (TOTAL_SCRIPTS % (rand() % 4));
         break;
     default:
-        is_random = rand() % 2;
+        script = state.script;
         break;
     }
-    color_life = state.color_life;
-	color_dead = state.color_dead;
 
-	alive_indicator = ALIVE_INDICATOR_01;
-	if (is_random)
-	{
-	    random_field();
-	}
-	else
-	{
-	    place_entity<5, 4>(0, 0, alive_indicator, &Entities::SHIP_LIGHT);
+    switch (script)
+    {
+    case Script::RANDOM_SEA:
+        random_field();
+        break;
+    case Script::SHIPS:
+    case Script::SHIPS_RANDOM:
+        place_entity<5, 4>(0, 0, alive_indicator, &Entities::SHIP_LIGHT);
         place_entity<6, 5>(10, 0, alive_indicator, &Entities::SHIP_MEDIUM);
         place_entity<7, 5>(20, 0, alive_indicator, &Entities::SHIP_LARGE);
-	}
+        break;
+    case Script::COPERHEAD:
+        place_entity<12, 8>(12, 4, alive_indicator, &Entities::COPPERHEAD);
+        break;
+    default:
+        break;
+    }
 
 	steps = 0;
 	is_step_required = 0;
@@ -44,6 +49,16 @@ LifeGame::LifeGame()
 
 LifeGame::~LifeGame()
 {
+    if (state.mode == Mode::CAROUSEL)
+    {
+        uint8_t script = state.script;
+        if (++script == TOTAL_SCRIPTS)
+        {
+           script = Script::RANDOM_SEA;
+        }
+        state.script = (Script) script;
+        eeprom_update_block((const void*) &state, (void*) &STORED_STATE, sizeof(STORED_STATE));
+    }
 }
 
 void LifeGame::random_field()
@@ -126,7 +141,7 @@ void LifeGame::step_up()
 		}
 	}
 
-	if (!is_random)
+	if (script == Script::SHIPS_RANDOM)
 	{
         if (time >= 16 && (time % (14 + rand() % 8)) == 0)
         {
@@ -154,9 +169,9 @@ void LifeGame::on_timer_event()
 void LifeGame::run()
 {
     System::register_timer(this, 10);
-	is_step_required = true;
-	dragberry::os::display::clear_screen(BLACK);
-	dragberry::os::display::update_assured();
+    is_step_required = true;
+    dragberry::os::display::clear_screen(BLACK);
+    dragberry::os::display::update_assured();
 	do
 	{
 		if (is_step_required)
@@ -173,7 +188,8 @@ void LifeGame::run()
                     frame[6] = load_requested ? Command::LOAD : Command::IDLE;
                     frame[7] = color_life;
                     frame[8] = color_dead;
-                    frame[9] = is_random;
+                    frame[9] = state.mode;
+                    frame[10] = script;
                     load_requested = false;
                 },
                 [&](char* frame) -> void {
@@ -185,6 +201,8 @@ void LifeGame::run()
                             color_dead = frame[5];
                             state.color_life = color_life;
                             state.color_dead = color_dead;
+                            state.mode = (Mode) frame[6];
+                            state.script = (Script) frame[7];
                             eeprom_update_block((const void*) &state, (void*) &STORED_STATE, sizeof(STORED_STATE));
                             break;
                         }

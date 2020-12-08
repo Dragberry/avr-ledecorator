@@ -29,14 +29,16 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="20dp"
-                    android:text="Live color" />
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:text="@string/live_color" />
                 <Button
                     android:id="@+id/lifeGameLiveColorButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="20dp"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
                     style="?android:attr/buttonBarButtonStyle" />
             </LinearLayout>
             <LinearLayout
@@ -48,14 +50,16 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="20dp"
-                    android:text="Dead color" />
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:text="@string/dead_color" />
                 <Button
                     android:id="@+id/lifeGameDeadColorButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="20dp"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
                     style="?android:attr/buttonBarButtonStyle" />
             </LinearLayout>
             <LinearLayout
@@ -67,16 +71,83 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="20dp"
-                    android:text="Dead color" />
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:text="@string/mode" />
                 <Spinner
                     android:id="@+id/lifeGameModeSelector"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="20dp"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
                     style="?android:attr/buttonBarButtonStyle"/>
             </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:text="@string/script" />
+                <Spinner
+                    android:id="@+id/lifeGameScriptSelector"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    style="?android:attr/buttonBarButtonStyle"/>
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:text="@string/time_to_live" />
+                <EditText
+                    android:id="@+id/lifeGameTimeToLiveEditView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:inputType="numberSigned"
+                    style="?android:attr/buttonBarButtonStyle" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:text="@string/speed" />
+                <Spinner
+                    android:id="@+id/lifeGameSpeedSelector"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    style="?android:attr/buttonBarButtonStyle" />
+            </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
