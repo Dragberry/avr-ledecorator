@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/fragment_ledecorator_apps_list"
+        android:id="@+id/ledecoratorAppsAppsListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
@@ -20,12 +20,41 @@
 
     <fragment
         android:name="org.dragberry.ledecorator.bluetooth.fragment.BleConsoleFragment"
-        android:id="@+id/ble_console_fragment"
+        android:id="@+id/ledecoratorAppBleConsole"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_ledecorator_apps_list"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/ledecoratorAppsAppsListView"
+        app:layout_constraintBottom_toTopOf="@+id/ledecoratorAppsControlsView"/>
+
+    <LinearLayout
+        android:id="@+id/ledecoratorAppsControlsView"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:layout_constraintTop_toBottomOf="@id/ledecoratorAppBleConsole"
+        app:layout_constraintBottom_toBottomOf="parent"
+        style="?android:attr/buttonBarButtonStyle" >
+
+        <Button
+            android:id="@+id/ledecoratorAppsSaveButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="5dp"
+            android:text="@string/save"
+            style="?android:attr/buttonBarButtonStyle" />
+
+        <Button
+            android:id="@+id/ledecoratorAppsLoadButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="5dp"
+            android:text="@string/load"
+            style="?android:attr/buttonBarButtonStyle" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

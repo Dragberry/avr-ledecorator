@@ -36,6 +36,8 @@ uint8_t System::number_of_loaded_programms = 0;
 
 Execution System::loaded_programms[NUMBER_OF_PROGRAMMS] = { 0 };
 
+bool System::load_requested = false;
+
 Timer::~Timer()
 {
 }
@@ -120,42 +122,42 @@ void System::load()
     {
         switch (eeprom_read_byte(&STORED_PROGRAMMS[index]))
         {
-//        case APP_SNAKE:
-//            loaded_programms[number_of_loaded_programms] =
-//            { APP_SNAKE, []() -> void
-//                {
-//                    SnakeGame app;
-//                    current_app = &app;
-//                    app.run();
-//                    current_app = nullptr;
-//                }
-//            };
-//            number_of_loaded_programms++;
-//            break;
-//        case APP_CLOCK:
-//            loaded_programms[number_of_loaded_programms] =
-//            { APP_CLOCK, []() -> void
-//                {
-//                    ClockApp app;
-//                    current_app = &app;
-//                    app.run();
-//                    current_app = nullptr;
-//                }
-//            };
-//            number_of_loaded_programms++;
-//            break;
-//        case APP_WEATHER:
-//            loaded_programms[number_of_loaded_programms] =
-//            { APP_WEATHER, []() -> void
-//                {
-//                    WeatherApp app;
-//                    current_app = &app;
-//                    app.run();
-//                    current_app = nullptr;
-//                }
-//            };
-//            number_of_loaded_programms++;
-//            break;
+        case APP_SNAKE:
+            loaded_programms[number_of_loaded_programms] =
+            { APP_SNAKE, []() -> void
+                {
+                    SnakeGame app;
+                    current_app = &app;
+                    app.run();
+                    current_app = nullptr;
+                }
+            };
+            number_of_loaded_programms++;
+            break;
+        case APP_CLOCK:
+            loaded_programms[number_of_loaded_programms] =
+            { APP_CLOCK, []() -> void
+                {
+                    ClockApp app;
+                    current_app = &app;
+                    app.run();
+                    current_app = nullptr;
+                }
+            };
+            number_of_loaded_programms++;
+            break;
+        case APP_WEATHER:
+            loaded_programms[number_of_loaded_programms] =
+            { APP_WEATHER, []() -> void
+                {
+                    WeatherApp app;
+                    current_app = &app;
+                    app.run();
+                    current_app = nullptr;
+                }
+            };
+            number_of_loaded_programms++;
+            break;
         case APP_LIFE:
             loaded_programms[number_of_loaded_programms] =
             { APP_LIFE, []() -> void
@@ -262,10 +264,45 @@ void System::process_event()
        case COMMAND_RESTART:
            current_app->terminate();
            break;
+       case COMMAND_SAVE:
+           do_save();
+           break;
+       case COMMAND_LOAD:
+           request_load();
+           break;
        default:
            break;
        }
     }
+}
+
+void System::request_load()
+{
+    load_requested = true;
+}
+
+void System::do_load()
+{
+    BLE::tx_buffer[1] = System::APP_IDLE;
+    BLE::tx_buffer[2] = System::COMMAND_LOAD;
+    BLE::tx_buffer[3] = eeprom_read_byte(&NUMBER_OF_STORED_PROGRAMMS);
+    eeprom_read_block(
+            (void*) &BLE::tx_buffer[4],
+            (const void*) &STORED_PROGRAMMS,
+            NUMBER_OF_PROGRAMMS
+    );
+}
+
+void System::do_save()
+{
+    eeprom_update_byte((uint8_t*) &NUMBER_OF_STORED_PROGRAMMS, BLE::rx_buffer[3]);
+    eeprom_update_block(
+            (const void*) &BLE::rx_buffer[4],
+            (void*) &STORED_PROGRAMMS,
+            NUMBER_OF_PROGRAMMS
+            );
+    load();
+    current_app->terminate();
 }
 
 void System::io::decompose(const uint16_t& value, const uint8_t idx)

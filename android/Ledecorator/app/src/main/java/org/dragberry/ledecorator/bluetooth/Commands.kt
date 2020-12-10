@@ -72,7 +72,9 @@ class Commands {
     enum class System(code: Char) {
         INFINITE('I'),
         FINITE('F'),
-        RESTART('R');
+        RESTART('R'),
+        LOAD('L'),
+        SAVE('S');
 
         val code: Byte = code.toByte()
     }
@@ -84,5 +86,30 @@ class DataFrames {
         fun check(bytes: ByteArray): Boolean {
             return Commands.Frame.START.code == bytes[0] && Commands.Frame.END.code == bytes[19]
         }
+
+        val loadAppsFrame: ByteArray = ByteArray(20) {
+            when (it) {
+                0 -> Commands.Frame.START.code
+                1 -> Commands.App.IDLE.code
+                2 -> Commands.System.LOAD.code
+                19 -> Commands.Frame.END.code
+                else -> 0.toByte()
+            }
+        }
+
+        fun saveAppsFrame(vararg apps: Commands.App): ByteArray {
+            return ByteArray(20) {
+                when (it) {
+                    0 -> Commands.Frame.START.code
+                    1 -> Commands.App.IDLE.code
+                    2 -> Commands.System.SAVE.code
+                    3 -> apps.size.toByte()
+                    in 4 until 4 + apps.size -> apps[it - 4].code
+                    19 -> Commands.Frame.END.code
+                    else -> 0.toByte()
+                }
+            }
+        }
     }
+
 }

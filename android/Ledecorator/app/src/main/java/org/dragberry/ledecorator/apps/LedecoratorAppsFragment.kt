@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
@@ -28,6 +29,19 @@ private const val FRAME_RECEIVED = 3000
 
 class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.() -> Unit)) :
     Fragment(), Handler.Callback {
+
+    enum class Action(val value: Byte) {
+        IDLE('I'.toByte()),
+        LOAD('L'.toByte()),
+        SAVE('S'.toByte()),
+    }
+
+    @Volatile
+    private var action = Action.IDLE
+
+    private lateinit var saveButton: Button
+
+    private lateinit var loadButton: Button
 
     private var bluetoothService: MainActivity.BluetoothService? = null
 
@@ -60,7 +74,19 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
                     }
                 }
                 Log.i(TAG, "$selectedApp")
-                bluetoothService?.responseDataFrame = selectedApp.frame
+                bluetoothService?.responseDataFrame = when (action) {
+                    Action.LOAD -> DataFrames.loadAppsFrame
+                    Action.SAVE -> DataFrames.saveAppsFrame(
+                        Commands.App.CLOCK,
+                        Commands.App.SNAKE,
+                        Commands.App.WEATHER,
+                        Commands.App.SANDBOX,
+                        Commands.App.LIFE
+
+                    )
+                    else -> selectedApp.frame
+                }
+                action = Action.IDLE
             }
         } else {
             throw RuntimeException("$context must implement ${BluetoothServiceHolder::javaClass.name}")
@@ -81,9 +107,20 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
     ): View? {
         val view = inflater.inflate(R.layout.fragment_ledecorator_apps, container, false)
         if (view != null) {
-            view.findViewById<RecyclerView>(R.id.fragment_ledecorator_apps_list)?.apply {
+            view.findViewById<RecyclerView>(R.id.ledecoratorAppsAppsListView)?.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = ledecoratorAppRecyclerViewAdapter
+            }
+            saveButton = view.findViewById<Button>(R.id.ledecoratorAppsSaveButton).apply {
+                setOnClickListener {
+                    action = Action.SAVE
+                }
+            }
+            loadButton = view.findViewById<Button>(R.id.ledecoratorAppsLoadButton).apply {
+                setOnClickListener {
+                    action = Action.LOAD
+                }
+
             }
         }
         return view

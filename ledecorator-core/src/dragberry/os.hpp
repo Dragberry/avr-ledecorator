@@ -35,6 +35,8 @@ public:
     static const char COMMAND_INFINITE = 'I';
     static const char COMMAND_FINITE = 'F';
     static const char COMMAND_RESTART = 'R';
+    static const char COMMAND_LOAD = 'L';
+    static const char COMMAND_SAVE = 'S';
 
 private:
     static volatile uint16_t time;
@@ -56,6 +58,14 @@ private:
     static uint8_t number_of_loaded_programms;
 
     static Execution loaded_programms[];
+
+    static bool load_requested;
+
+    static void request_load();
+
+    static void do_load();
+
+    static void do_save();
 
 public:
     static Application* current_app;
@@ -105,15 +115,25 @@ public:
                 }
                 BLE::tx_buffer[0] = FRAME_START;
                 BLE::tx_buffer[19] = FRAME_END;
-                out(BLE::tx_buffer);
-
+                if (load_requested)
+                {
+                    load_requested = false;
+                    do_load();
+                }
+                else
+                {
+                    out(BLE::tx_buffer);
+                }
                 BLE::state = BLE::State::READY;
                 while (!BLE::start());
 
                 while (BLE::state != BLE::State::IDLE);
                 if (BLE::rx_buffer[0] == FRAME_START && BLE::rx_buffer[19] == FRAME_END)
                 {
-                    in(BLE::rx_buffer);
+                    if (BLE::rx_buffer[2] != COMMAND_LOAD && BLE::rx_buffer[2] != COMMAND_SAVE)
+                    {
+                        in(BLE::rx_buffer);
+                    }
                 }
             }
         }

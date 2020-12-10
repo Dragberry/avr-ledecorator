@@ -12,6 +12,7 @@ import org.dragberry.ledecorator.apps.LedecoratorApp
 import org.dragberry.ledecorator.apps.LedecoratorAppFragment
 import org.dragberry.ledecorator.bluetooth.Commands
 import org.dragberry.ledecorator.bluetooth.fragment.BleDeviceSelectionFragment
+import java.nio.charset.StandardCharsets
 import java.util.*
 
 private const val TAG = "MainActivity"
@@ -256,9 +257,9 @@ class MainActivity :
                 characteristic: BluetoothGattCharacteristic?
             ) {
                 characteristic?.apply {
-//                    Log.i(tag, "Received: ${value.size} : ${value.toString(StandardCharsets.US_ASCII)}")
+                    Log.i(tag, "Received: ${value.size} : ${value.toString(StandardCharsets.US_ASCII)}")
                     dataFrameHandlers.forEach { (_, handler) -> handler(value) }
-//                    Log.i(tag, "Sent: ${responseDataFrame.toString(StandardCharsets.US_ASCII)}")
+                    Log.i(tag, "Sent: ${responseDataFrame.toString(StandardCharsets.US_ASCII)}")
                     sendDataFrame(responseDataFrame)
                     responseDataFrame = Commands.App.IDLE.frame
                 }
