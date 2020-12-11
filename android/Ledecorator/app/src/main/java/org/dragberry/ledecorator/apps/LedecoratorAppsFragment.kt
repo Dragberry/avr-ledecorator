@@ -10,7 +10,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
+import android.widget.ImageButton
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,6 +30,8 @@ private const val TAG = "LedecoratorAppsFragment"
 
 private const val FRAME_RECEIVED = 3000
 
+private const val STOP_EDITING = 3001
+
 class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.() -> Unit)) :
     Fragment(), Handler.Callback {
 
@@ -39,7 +44,14 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
     @Volatile
     private var action = Action.IDLE
 
+    @Volatile
+    private var editable = false
+
     private lateinit var saveButton: Button
+
+    private lateinit var cancelButton: Button
+
+    private lateinit var editButton: Button
 
     private lateinit var loadButton: Button
 
@@ -61,11 +73,26 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
                 if (DataFrames.check(this)) {
                     var updateRequired = false
                     LedecoratorApps.APPS.forEach {
-                        val active = it.command == Commands.App.valueOf(get(1))
-                        if (it.active != active) {
-                            updateRequired = true
+                        val currentApp: Commands.App = Commands.App.valueOf(get(1))
+                        if (Commands.App.IDLE == currentApp) {
+                            if (Commands.System.LOAD == Commands.System.valueOf(get(2))) {
+                                val size: Int = get(3).toInt()
+                                ledecoratorAppRecyclerViewAdapter.reset()
+                                for (index in 0 until size) {
+                                    val app = Commands.App.valueOf(get(index + 4))
+                                    ledecoratorAppRecyclerViewAdapter.updateApp(app, index)
+                                }
+                                handler?.apply {
+                                    obtainMessage(FRAME_RECEIVED).sendToTarget()
+                                }
+                            }
+                        } else {
+                            val active = it.command == currentApp
+                            if (it.active != active) {
+                                updateRequired = true
+                            }
+                            it.active = active
                         }
-                        it.active = active
                     }
                     if (updateRequired) {
                         handler?.apply {
@@ -76,14 +103,12 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
                 Log.i(TAG, "$selectedApp")
                 bluetoothService?.responseDataFrame = when (action) {
                     Action.LOAD -> DataFrames.loadAppsFrame
-                    Action.SAVE -> DataFrames.saveAppsFrame(
-                        Commands.App.CLOCK,
-                        Commands.App.SNAKE,
-                        Commands.App.WEATHER,
-                        Commands.App.SANDBOX,
-                        Commands.App.LIFE
-
-                    )
+                    Action.SAVE -> {
+                        handler?.apply {
+                            obtainMessage(STOP_EDITING).sendToTarget()
+                        }
+                        DataFrames.saveAppsFrame(ledecoratorAppRecyclerViewAdapter.enabledApps)
+                    }
                     else -> selectedApp.frame
                 }
                 action = Action.IDLE
@@ -91,6 +116,7 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
         } else {
             throw RuntimeException("$context must implement ${BluetoothServiceHolder::javaClass.name}")
         }
+        action = Action.LOAD
     }
 
     override fun onDetach() {
@@ -112,42 +138,77 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
                 adapter = ledecoratorAppRecyclerViewAdapter
             }
             saveButton = view.findViewById<Button>(R.id.ledecoratorAppsSaveButton).apply {
+                visibility = View.GONE
                 setOnClickListener {
                     action = Action.SAVE
+                }
+            }
+            cancelButton = view.findViewById<Button>(R.id.ledecoratorAppsCancelButton).apply {
+                visibility = View.GONE
+                setOnClickListener {
+                    stopEditing()
+                    action = Action.LOAD
+                }
+            }
+            editButton = view.findViewById<Button>(R.id.ledecoratorAppsEditButton).apply {
+                setOnClickListener {
+                    startEditing()
                 }
             }
             loadButton = view.findViewById<Button>(R.id.ledecoratorAppsLoadButton).apply {
                 setOnClickListener {
                     action = Action.LOAD
                 }
-
             }
         }
         return view
     }
 
+    private fun startEditing() {
+        editable = true
+        editButton.visibility = View.GONE
+        saveButton.visibility = View.VISIBLE
+        cancelButton.visibility = View.VISIBLE
+        ledecoratorAppRecyclerViewAdapter.clearSelection()
+    }
+
+    private fun stopEditing() {
+        editable = false
+        editButton.visibility = View.VISIBLE
+        saveButton.visibility = View.GONE
+        cancelButton.visibility = View.GONE
+        ledecoratorAppRecyclerViewAdapter.notifyDataSetChanged()
+    }
+
     override fun handleMessage(msg: Message): Boolean {
         when (msg.what) {
-            FRAME_RECEIVED -> {
-                ledecoratorAppRecyclerViewAdapter.notifyDataSetChanged()
-            }
+            FRAME_RECEIVED -> ledecoratorAppRecyclerViewAdapter.notifyDataSetChanged()
+            STOP_EDITING -> stopEditing()
         }
         return true
     }
 
-    inner class LedecoratorAppsRecyclerViewAdapter(private val appList: List<LedecoratorApp>) :
+    inner class LedecoratorAppsRecyclerViewAdapter(appList: List<LedecoratorApp>) :
         ListAdapter<LedecoratorApp, LedecoratorAppsRecyclerViewAdapter.ViewHolder>(DiffCallback()) {
+
+        private val appList: ArrayList<LedecoratorApp> = ArrayList(appList)
+
+        val enabledApps: List<Commands.App>
+            get() = appList.filter { it.enabled }.map { it.command }
 
         private var selectedIndex: Int = -1
 
         init {
-            submitList(appList)
+            submitList(this.appList)
         }
 
         inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
             val appNameTextView: TextView = view.ledecoratorAppNameTextView
-            val appCodeTextView: TextView = view.ledecoratorAppCodeTextView
             val appStatusTextView: TextView = view.ledecoratorAppStatusTextView
+            val enabledCheckBox: CheckBox = view.ledecoratorAppAppEnabledCheckBox
+            val upButton: ImageButton = view.ledecoratorAppUpButton
+            val downButton: ImageButton = view.ledecoratorAppDownButton
+
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
@@ -157,42 +218,107 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
             val item = appList[position]
             holder.apply {
                 appNameTextView.text = item.name
-                appCodeTextView.text = item.command.code.toString()
                 appStatusTextView.apply {
                     if (item.active) {
                         text = getString(R.string.ledecorator_app_status_active)
                         visibility = View.VISIBLE
                         holder.view.setBackgroundColor(
                             if (selectedApp == Commands.App.IDLE)
-                                Color.WHITE
+                                if (item.enabled) {
+                                    Color.WHITE
+                                } else {
+                                    Color.GRAY
+                                }
                             else
                                 Color.GREEN
                         )
                     } else {
                         text = getString(R.string.ledecorator_app_status_active)
                         visibility = View.GONE
-                        holder.view.setBackgroundColor(Color.WHITE)
+                        holder.view.setBackgroundColor(
+                            if (item.enabled) {
+                                Color.WHITE
+                            } else {
+                                Color.GRAY
+                            }
+                        )
+                    }
+                }
+                enabledCheckBox.isEnabled = editable
+                enabledCheckBox.setOnCheckedChangeListener(null)
+                enabledCheckBox.isChecked = item.enabled
+                enabledCheckBox.setOnCheckedChangeListener { _, isChecked ->
+                    item.enabled = isChecked
+                    notifyItemChanged(position)
+                    saveButton.isEnabled = enabledApps.isNotEmpty()
+                }
+
+                upButton.apply {
+                    visibility = if (editable) View.VISIBLE else View.GONE
+                    isEnabled = position != 0
+                    setOnClickListener {
+                        appList[position] = appList[position - 1].also {
+                            appList[position - 1] = appList[position]
+                        }
+                        notifyItemRangeChanged(position - 1, 2)
+                    }
+                }
+                downButton.apply {
+                    visibility = if (editable) View.VISIBLE else View.GONE
+                    isEnabled = position != appList.size - 1
+                    setOnClickListener {
+                        appList[position] = appList[position + 1].also {
+                            appList[position + 1] = appList[position]
+                        }
+                        notifyItemRangeChanged(position, 2)
                     }
                 }
 
                 view.setOnLongClickListener {
-                    if (selectedIndex == holder.adapterPosition) {
-                        selectedIndex = -1
-                        selectedApp = Commands.App.IDLE
-                        it.setBackgroundColor(Color.WHITE)
+                    if (!editable && item.enabled) {
+                        if (selectedIndex == holder.adapterPosition) {
+                            selectedIndex = -1
+                            selectedApp = Commands.App.IDLE
+                            it.setBackgroundColor(Color.WHITE)
+                        }
                     }
                     true
                 }
 
                 view.setOnClickListener {
-                    if (selectedIndex != holder.adapterPosition) {
-                        selectedIndex = holder.adapterPosition
-                        selectedApp = item.command
-                    } else {
-                        onAppSelectedListener.invoke(item)
+                    if (!editable && item.enabled) {
+                        if (selectedIndex != holder.adapterPosition) {
+                            selectedIndex = holder.adapterPosition
+                            selectedApp = item.command
+                        } else {
+                            onAppSelectedListener.invoke(item)
+                        }
                     }
                 }
             }
+        }
+
+        fun updateApp(app: Commands.App, order: Int) {
+            appList.find { it.command == app }?.apply {
+                enabled = true
+                val index = appList.indexOf(this)
+                if (order != index && index != -1) {
+                    appList[order] = appList[index].also { appList[index] = appList[order] }
+                }
+            }
+        }
+
+        fun reset() {
+            appList.forEach {
+                it.enabled = false
+                it.active = false
+            }
+        }
+
+        fun clearSelection() {
+            selectedIndex = -1
+            selectedApp = Commands.App.IDLE
+            notifyDataSetChanged()
         }
     }
 
@@ -206,4 +332,5 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
             return oldItem.command == newItem.command
         }
     }
+
 }

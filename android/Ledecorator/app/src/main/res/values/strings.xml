@@ -33,4 +33,7 @@
     <string name="live_color">Live color</string>
     <string name="time_to_live">Time to live</string>
     <string name="speed">Speed</string>
+    <string name="down">Down</string>
+    <string name="up">Up</string>
+    <string name="edit">Edit</string>
 </resources>

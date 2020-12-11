@@ -14,7 +14,7 @@ LifeGame::LifeGame()
     switch (state.mode)
     {
     case Mode::RANDOM:
-        script = (Script) (TOTAL_SCRIPTS % (rand() % 4));
+        script = (Script) (rand() % TOTAL_SCRIPTS);
         break;
     default:
         script = state.script;
@@ -27,6 +27,10 @@ LifeGame::LifeGame()
         random_field();
         break;
     case Script::SHIPS:
+        place_entity<5, 4>(0, 0, alive_indicator, &Entities::SHIP_LIGHT);
+        place_entity<6, 5>(10, 4, alive_indicator, &Entities::SHIP_MEDIUM);
+        place_entity<7, 5>(20, 9, alive_indicator, &Entities::SHIP_LARGE);
+        break;
     case Script::SHIPS_RANDOM:
         place_entity<5, 4>(0, 0, alive_indicator, &Entities::SHIP_LIGHT);
         place_entity<6, 5>(10, 0, alive_indicator, &Entities::SHIP_MEDIUM);

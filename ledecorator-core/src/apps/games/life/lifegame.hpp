@@ -85,12 +85,13 @@ public:
 
 	void on_timer_event();
 
-	template <uint8_t width, uint8_t height>
+//	template <uint8_t width, uint8_t height>
 	void place_entity(
 	        const uint8_t start_x,
 	        const uint8_t start_y,
 	        const uint8_t next_alive,
-	        const BitMap<width * height>* data
+	        const BitMap<width * height>* data,
+	        uint8_t width, uint8_t height
 	        )
 	{
 	    for (uint8_t y = 0; y < height; y++)

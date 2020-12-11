@@ -41,27 +41,6 @@ class MainActivity :
         bluetoothService.disconnect()
     }
 
-//    override fun onWindowFocusChanged(hasFocus: Boolean) {
-//        super.onWindowFocusChanged(hasFocus)
-//        if (hasFocus) hideSystemUI()
-//    }
-//
-//    private fun hideSystemUI() {
-//        // Enables regular immersive mode.
-//        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-//        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-//        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
-//                // Set the content to appear under the system bars so that the
-//                // content doesn't resize when the system bars hide and show.
-//                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                // Hide the nav bar and status bar
-//                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                or View.SYSTEM_UI_FLAG_FULLSCREEN)
-//    }
-
-
     fun startBleDeviceSelection() {
         supportFragmentManager.findFragmentById(R.id.mainFragmentLayout).apply {
             supportFragmentManager
@@ -84,7 +63,7 @@ class MainActivity :
                     LedecoratorAppFragment { replaceApp(this) },
                     ACTIVE_LEDECORATOR_APP
                 )
-                .addToBackStack(null)
+//                .addToBackStack(null)
                 .commit()
         }
     }
@@ -257,9 +236,9 @@ class MainActivity :
                 characteristic: BluetoothGattCharacteristic?
             ) {
                 characteristic?.apply {
-                    Log.i(tag, "Received: ${value.size} : ${value.toString(StandardCharsets.US_ASCII)}")
+//                    Log.i(tag, "Received: ${value.size} : ${value.toString(StandardCharsets.US_ASCII)}")
                     dataFrameHandlers.forEach { (_, handler) -> handler(value) }
-                    Log.i(tag, "Sent: ${responseDataFrame.toString(StandardCharsets.US_ASCII)}")
+//                    Log.i(tag, "Sent: ${responseDataFrame.toString(StandardCharsets.US_ASCII)}")
                     sendDataFrame(responseDataFrame)
                     responseDataFrame = Commands.App.IDLE.frame
                 }

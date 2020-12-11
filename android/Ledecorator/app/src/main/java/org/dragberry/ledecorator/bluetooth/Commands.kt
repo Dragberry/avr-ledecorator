@@ -77,6 +77,10 @@ class Commands {
         SAVE('S');
 
         val code: Byte = code.toByte()
+
+        companion object {
+            fun valueOf(code: Byte): System = values().find { it.code == code } ?: FINITE
+        }
     }
 }
 
@@ -97,7 +101,7 @@ class DataFrames {
             }
         }
 
-        fun saveAppsFrame(vararg apps: Commands.App): ByteArray {
+        fun saveAppsFrame(apps: List<Commands.App>): ByteArray {
             return ByteArray(20) {
                 when (it) {
                     0 -> Commands.Frame.START.code

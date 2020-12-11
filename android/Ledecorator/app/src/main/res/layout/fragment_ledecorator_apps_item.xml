@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/weatherSensorView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
+    <CheckBox android:id="@+id/ledecoratorAppAppEnabledCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <TextView
         android:id="@+id/ledecoratorAppNameTextView"
@@ -12,27 +18,38 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="Snake Game"
         android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ledecoratorAppAppEnabledCheckBox"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/ledecoratorAppCodeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="0X01"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ledecoratorAppNameTextView" />
 
     <TextView
         android:id="@+id/ledecoratorAppStatusTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="Live"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toEndOf="@+id/ledecoratorAppAppEnabledCheckBox"
         app:layout_constraintTop_toBottomOf="@+id/ledecoratorAppNameTextView" />
+
+    <ImageButton
+        android:id="@+id/ledecoratorAppDownButton"
+        android:layout_width="24dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/baseline_south_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:contentDescription="@string/up" />
+
+    <ImageButton
+        android:id="@+id/ledecoratorAppUpButton"
+        android:layout_width="24dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/baseline_north_24"
+        app:layout_constraintEnd_toStartOf="@+id/ledecoratorAppDownButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:contentDescription="@string/down" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

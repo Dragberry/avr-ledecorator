@@ -22,5 +22,6 @@ class LedecoratorApp(
     val command: Commands.App,
     val name: String,
     val fragment: (() -> AbstractAppFragment),
-    var active: Boolean = false
+    var active: Boolean = false,
+    var enabled: Boolean = false
 )

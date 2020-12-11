@@ -79,6 +79,7 @@ class BleConnectionFragment : Fragment(), Handler.Callback {
     }
 
     private fun onBleDeviceSelection() {
+        selectBleDeviceButton.isEnabled = false
         connectBleDeviceSwitch.isEnabled = false
         bluetoothService?.startDeviceSelection {
             if (this != null) {

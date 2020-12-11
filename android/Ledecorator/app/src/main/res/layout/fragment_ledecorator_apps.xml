@@ -48,6 +48,24 @@
             style="?android:attr/buttonBarButtonStyle" />
 
         <Button
+            android:id="@+id/ledecoratorAppsCancelButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="5dp"
+            android:text="@string/cancel"
+            style="?android:attr/buttonBarButtonStyle" />
+
+        <Button
+            android:id="@+id/ledecoratorAppsEditButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="5dp"
+            android:text="@string/edit"
+            style="?android:attr/buttonBarButtonStyle" />
+
+        <Button
             android:id="@+id/ledecoratorAppsLoadButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
