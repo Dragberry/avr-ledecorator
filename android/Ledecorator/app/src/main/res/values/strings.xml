@@ -39,4 +39,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="field_color">Field Color</string>
+    <string name="snake_body_color">Body Color</string>
+    <string name="snake_head_color">Head Color</string>
 </resources>

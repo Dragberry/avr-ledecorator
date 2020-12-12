@@ -13,23 +13,41 @@ class SnakeGame :
 {
 public:
 private:
+    static const uint8_t TICKS_PER_SECOND = 4;
+
+    enum Mode : char
+    {
+        AUTO      = 'A',
+        MANUAL    = 'M',
+        SAVE      = 'S',
+        LOAD      = 'L',
+    };
+
+    enum Command : char
+    {
+        IDLE         = 'I',
+        MOVE_LEFT    = 'L',
+        MOVE_RIGHT   = 'R',
+    };
+
     struct StoredState
     {
-       uint16_t time_to_live = 300;
-       Color snake_color = WHITE;
-       Color snake_head_color = YELLOW;
+       uint16_t time_to_live = 30 * TICKS_PER_SECOND;
        Color field_color = GREEN;
+       Color snake_head_color = YELLOW;
+       Color snake_body_color = WHITE;
+       Color snake_dead_color = TRASH_COLOR;
+       uint8_t speed = 10;
     };
 
     static const StoredState EEMEM STORED_STATE;
 
-    static const uint16_t TIME_TO_LIVE = 750;
+    StoredState state;
+
+    bool load_requested = false;
 
     uint8_t period = 0;
 
-    uint8_t field_color        = 0b00000100;
-    uint8_t snake_color        = WHITE;
-    uint8_t snake_head_color   = YELLOW;
     static const uint8_t TRASH_COLOR        = 0b00010101;
     static const uint8_t WALL_COLOR         = 0b00010000;
 
@@ -95,7 +113,7 @@ private:
 
     uint8_t current_speed = 20;
 
-    volatile uint8_t remaining_time = 0;
+    volatile bool is_step_required;
 
     uint8_t field[SCREEN_HEIGHT][SCREEN_WIDTH];
 
@@ -159,12 +177,6 @@ public:
     void on_timer_event();
 
 private:
-    inline
-    void refresh_remaining_time()
-    {
-        remaining_time = MAX_SPEED + 1 - current_speed;
-    }
-
     bool do_step();
 
     void set(const uint8_t x, const uint8_t y, const uint8_t data);

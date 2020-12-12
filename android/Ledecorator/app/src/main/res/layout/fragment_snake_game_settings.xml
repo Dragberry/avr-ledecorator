@@ -13,6 +13,150 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <ScrollView
+            android:id="@+id/scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/snakeGameSettingsControlsView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent">
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/buttonBarButtonStyle">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        android:text="@string/field_color" />
+                    <Button
+                        android:id="@+id/snakeGameSettingsFieldColorButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.67"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        style="?android:attr/buttonBarButtonStyle" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/buttonBarButtonStyle">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        android:text="@string/snake_head_color" />
+                    <Button
+                        android:id="@+id/snakeGameSettingsSnakeHeadColorButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.67"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        style="?android:attr/buttonBarButtonStyle" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/buttonBarButtonStyle">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        android:text="@string/snake_body_color" />
+                    <Button
+                        android:id="@+id/snakeGameSettingsSnakeBodyColorButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.67"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        style="?android:attr/buttonBarButtonStyle" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/buttonBarButtonStyle">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        android:text="@string/snake_body_color" />
+                    <Button
+                        android:id="@+id/snakeGameSettingsSnakeDeadColorButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.67"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        style="?android:attr/buttonBarButtonStyle" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/buttonBarButtonStyle">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        android:text="@string/time_to_live" />
+                    <EditText
+                        android:id="@+id/snakeGameSettingsTimeToLiveEditView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.67"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        android:inputType="numberSigned"
+                        style="?android:attr/buttonBarButtonStyle" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/buttonBarButtonStyle">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        android:text="@string/speed" />
+                    <Spinner
+                        android:id="@+id/snakeGameSettingsSpeedSelector"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.67"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        style="?android:attr/buttonBarButtonStyle" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
 
         <LinearLayout
             android:id="@+id/snakeGameSettingsControlsView"

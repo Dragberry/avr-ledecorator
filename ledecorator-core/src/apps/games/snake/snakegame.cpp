@@ -9,7 +9,6 @@ const SnakeGame::StoredState EEMEM SnakeGame::STORED_STATE = SnakeGame::StoredSt
 SnakeGame::SnakeGame() :
         steps(0),
         current_speed(MIN_SPEED),
-        remaining_time(0),
         field{ 0 },
         head{ 0 },
         tail{ 0 },
@@ -18,9 +17,8 @@ SnakeGame::SnakeGame() :
             StoredState state;
             eeprom_read_block((void*) &state, (const void*) &STORED_STATE, sizeof(state));
             time_to_live = state.time_to_live;
-            field_color = state.field_color;
-            snake_color = state.snake_color;
-            snake_head_color = state.snake_head_color;
+            current_speed = state.speed;
+            is_step_required = true;
 }
 
 void SnakeGame::run()
@@ -34,9 +32,7 @@ void SnakeGame::run()
     place_food();
     place_food();
 
-    current_speed = 35;
-    refresh_remaining_time();
-    System::register_timer(this, 4);
+    System::register_timer(this, TICKS_PER_SECOND);
     do
     {
         if (!do_step())
@@ -49,7 +45,7 @@ void SnakeGame::run()
 
 bool SnakeGame::do_step()
 {
-    if (remaining_time == 0)
+    if (is_step_required)
     {
         if (!move())
         {
@@ -58,7 +54,6 @@ bool SnakeGame::do_step()
 
         draw();
         dragberry::os::display::update_assured();
-        refresh_remaining_time();
         steps++;
     }
     return true;
@@ -67,43 +62,75 @@ bool SnakeGame::do_step()
 void SnakeGame::on_timer_event()
 {
     increment_time();
-    if (remaining_time > 0)
-    {
-        remaining_time--;
+    if (time % current_speed == 0) {
+        is_step_required = true;
     }
 }
 
 bool SnakeGame::move()
 {
-    volatile char mode = 'A';
-    volatile char action = 'N';
+    volatile Mode mode = Mode::AUTO;
+    volatile Command command = Command::IDLE;
     System::io::exchange(
         [&](char* frame) -> void
         {
             frame[1] = System::APP_SNAKE;
             System::io::decompose(time, 2);
-            frame[4] = head.x;
-            frame[5] = head.y;
-            frame[6] = tail.x;
-            frame[7] = tail.y;
-            frame[8] = current_speed;
+            if (load_requested)
+            {
+                eeprom_read_block((void*) &state, (const void*) &STORED_STATE, sizeof(state));
+                frame[4] = Mode::LOAD;
+                System::io::decompose(state.time_to_live / TICKS_PER_SECOND, 5);
+                frame[7] = state.field_color;
+                frame[8] = state.snake_head_color;
+                frame[9] = state.snake_body_color;
+                frame[10] = state.snake_dead_color;
+                frame[11] = state.speed;
+                load_requested = false;
+            }
+            else
+            {
+                frame[4] = mode;
+                frame[5] = head.x;
+                frame[6] = head.y;
+                frame[7] = tail.x;
+                frame[8] = tail.y;
+                frame[9] = current_speed;
+            }
         },
         [&](char* frame) -> void
         {
-            mode = frame[3];
-            action = frame[4];
+            mode = (Mode)frame[3];
+            command = (Command)frame[4];
+            switch (mode) {
+            case LOAD:
+                load_requested = true;
+                break;
+            case SAVE:
+                System::io::compose(state.time_to_live, 5);
+                state.time_to_live *= TICKS_PER_SECOND;
+                state.field_color = frame[7];
+                state.snake_head_color = frame[8];
+                state.snake_body_color = frame[9];
+                state.snake_dead_color = frame[10];
+                state.speed = frame[11];
+                eeprom_update_block((const void*) &state, (void*) &STORED_STATE, sizeof(STORED_STATE));
+                break;
+            default:
+                break;
+            }
         }
     );
 
     SnakeDirection direction = get_direction(head);
-    if (mode == 'M')
+    if (mode == Mode::MANUAL)
     {
-        switch (action)
+        switch (command)
         {
-        case 'L':
+        case Command::MOVE_LEFT:
             direction = turn_left(direction);
             break;
-        case 'R':
+        case Command::MOVE_RIGHT:
             direction = turn_right(direction);
             break;
         default:
@@ -448,7 +475,7 @@ void SnakeGame::draw()
                    color = TRASH_COLOR;
                    break;
                default:
-                   color = field_color;
+                   color = state.field_color;
                    break;
                }
                break;
@@ -457,10 +484,10 @@ void SnakeGame::draw()
                {
                case SnakePart::BODY:
                case SnakePart::TAIL:
-                   color = snake_color;
+                   color = state.snake_body_color;
                    break;
                case SnakePart::HEAD:
-                   color = snake_head_color;
+                   color = state.snake_head_color;
                    break;
                    break;
                default:

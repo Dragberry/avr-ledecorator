@@ -12,6 +12,8 @@ import android.widget.GridView
 import androidx.fragment.app.DialogFragment
 import org.dragberry.ledecorator.R
 
+const val TAG = "SelectColorDialogFragment"
+
 class SelectColorDialogFragment(private val onColorSelected: (color: Color) -> Unit) : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -43,9 +45,12 @@ class SelectColorDialogFragment(private val onColorSelected: (color: Color) -> U
         override fun getItemId(position: Int): Long = 0
 
         override fun getCount(): Int = 64
+    }
 
 
-
+    companion object {
+        @JvmStatic
+        val DIALOG_TAG = TAG
     }
 }
 

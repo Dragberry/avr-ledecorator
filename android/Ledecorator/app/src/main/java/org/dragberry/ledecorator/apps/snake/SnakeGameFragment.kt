@@ -19,7 +19,9 @@ class SnakeGameFragment : AbstractAppFragment(TAG) {
 
     enum class Mode(val value: Byte) {
         AUTO('A'.toByte()),
-        MANUAL('M'.toByte())
+        MANUAL('M'.toByte()),
+        SAVE('S'.toByte()),
+        LOAD('L'.toByte())
     }
 
     @Volatile

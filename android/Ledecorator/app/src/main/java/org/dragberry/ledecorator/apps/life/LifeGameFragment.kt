@@ -232,7 +232,7 @@ class LifeGameFragment : AbstractAppFragment(TAG) {
                     2 -> Commands.System.RESTART.code
                     19 -> Commands.Frame.END.code
                     else -> 0
-                }.apply {
+                }.also {
                     action = Action.IDLE
                 }
             }
@@ -251,7 +251,7 @@ class LifeGameFragment : AbstractAppFragment(TAG) {
                     10 -> speed.toByte()
                     19 -> Commands.Frame.END.code
                     else -> 0
-                }.apply {
+                }.also {
                     action = Action.IDLE
                 }
             }
