@@ -100,7 +100,7 @@ class LedecoratorAppFragment(private val onAppSelectedListener: (LedecoratorApp.
                         }
                     }
                 }
-                Log.i(TAG, "$selectedApp")
+//                Log.i(TAG, "$selectedApp")
                 bluetoothService?.responseDataFrame = when (action) {
                     Action.LOAD -> DataFrames.loadAppsFrame
                     Action.SAVE -> {

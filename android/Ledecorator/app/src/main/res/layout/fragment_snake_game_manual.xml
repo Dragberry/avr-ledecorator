@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".apps.snake.SnakeGameManualFragment">
+
+    <LinearLayout
+        android:id="@+id/snakeGameSettingsControlsView"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        style="?android:attr/buttonBarStyle">
+
+        <Button
+            android:id="@+id/snakeGameManualLeftButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/button_round"
+            android:text="LEFT" />
+        <Button
+            android:id="@+id/snakeGameManualRightButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/button_round"
+            android:text="RIGHT" />
+    </LinearLayout>
+
+
+</FrameLayout>
