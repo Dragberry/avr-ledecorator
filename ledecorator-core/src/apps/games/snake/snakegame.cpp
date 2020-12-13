@@ -14,10 +14,9 @@ SnakeGame::SnakeGame() :
         tail{ 0 },
         food(ArrayList<Point, 5>())
 {
-            StoredState state;
-            eeprom_read_block((void*) &state, (const void*) &STORED_STATE, sizeof(state));
-            time_to_live = state.time_to_live;
-            current_speed = state.speed;
+            eeprom_read_block((void*) &game_state, (const void*) &STORED_STATE, sizeof(STORED_STATE));
+            time_to_live = game_state.time_to_live;
+            current_speed = game_state.speed;
             is_step_required = true;
 }
 
@@ -32,7 +31,7 @@ void SnakeGame::run()
     place_food();
     place_food();
 
-    System::register_timer(this, TICKS_PER_SECOND);
+    System::register_timer(this, System::TIMER_FREQ / TICKS_PER_SECOND);
     do
     {
         if (!do_step())
@@ -70,7 +69,7 @@ void SnakeGame::on_timer_event()
 bool SnakeGame::move()
 {
     volatile Mode mode = Mode::AUTO;
-    volatile Command command = Command::IDLE;
+    volatile ManualCommand command = ManualCommand::IDLE;
     System::io::exchange(
         [&](char* frame) -> void
         {
@@ -78,43 +77,59 @@ bool SnakeGame::move()
             System::io::decompose(time, 2);
             if (load_requested)
             {
-                eeprom_read_block((void*) &state, (const void*) &STORED_STATE, sizeof(state));
-                frame[4] = Mode::LOAD;
-                System::io::decompose(state.time_to_live / TICKS_PER_SECOND, 5);
-                frame[7] = state.field_color;
-                frame[8] = state.snake_head_color;
-                frame[9] = state.snake_body_color;
-                frame[10] = state.snake_dead_color;
-                frame[11] = state.speed;
+                eeprom_read_block((void*) &game_state, (const void*) &STORED_STATE, sizeof(STORED_STATE));
+                frame[4] = System::COMMAND_LOAD;
+                System::io::decompose(game_state.time_to_live / TICKS_PER_SECOND, 5);
+                frame[7] = game_state.field_color;
+                frame[8] = game_state.snake_head_color;
+                frame[9] = game_state.snake_body_color;
+                frame[10] = game_state.snake_dead_color;
+                frame[11] = game_state.food_increment_color;
+                frame[12] = game_state.food_decrement_color;
+                frame[13] = game_state.food_speed_up_color;
+                frame[14] = game_state.food_speed_down_color;
+                frame[15] = game_state.wall_color;
+                frame[16] = game_state.wall;
+                frame[17] = game_state.speed;
                 load_requested = false;
             }
             else
             {
-                frame[4] = mode;
-                frame[5] = head.x;
-                frame[6] = head.y;
-                frame[7] = tail.x;
-                frame[8] = tail.y;
-                frame[9] = current_speed;
+                frame[4] = System::COMMAND_EMPTY;
+                frame[5] = mode;
+                frame[6] = head.x;
+                frame[7] = head.y;
+                frame[8] = tail.x;
+                frame[9] = tail.y;
+                frame[10] = current_speed;
             }
         },
         [&](char* frame) -> void
         {
-            mode = (Mode)frame[3];
-            command = (Command)frame[4];
-            switch (mode) {
-            case LOAD:
+            mode = (Mode)frame[4];
+            command = (ManualCommand)frame[5];
+            switch (frame[3])
+            {
+            case System::COMMAND_LOAD:
                 load_requested = true;
                 break;
-            case SAVE:
-                System::io::compose(state.time_to_live, 5);
-                state.time_to_live *= TICKS_PER_SECOND;
-                state.field_color = frame[7];
-                state.snake_head_color = frame[8];
-                state.snake_body_color = frame[9];
-                state.snake_dead_color = frame[10];
-                state.speed = frame[11];
-                eeprom_update_block((const void*) &state, (void*) &STORED_STATE, sizeof(STORED_STATE));
+            case System::COMMAND_SAVE:
+                System::io::compose(game_state.time_to_live, 4);
+                game_state.time_to_live *= TICKS_PER_SECOND;
+                game_state.field_color = frame[6];
+                game_state.snake_head_color = frame[7];
+                game_state.snake_body_color = frame[8];
+                game_state.snake_dead_color = frame[9];
+                game_state.food_increment_color = frame[10];
+                game_state.food_decrement_color = frame[11];
+                game_state.food_speed_up_color = frame[12];
+                game_state.food_speed_down_color = frame[13];
+                game_state.wall_color = frame[14];
+                game_state.wall = (Wall) frame[15];
+                game_state.speed = frame[16];
+                eeprom_update_block((const void*) &game_state, (void*) &STORED_STATE, sizeof(STORED_STATE));
+                load_requested = true;
+                current_speed = game_state.speed;
                 break;
             default:
                 break;
@@ -127,10 +142,10 @@ bool SnakeGame::move()
     {
         switch (command)
         {
-        case Command::MOVE_LEFT:
+        case ManualCommand::MOVE_LEFT:
             direction = turn_left(direction);
             break;
-        case Command::MOVE_RIGHT:
+        case ManualCommand::MOVE_RIGHT:
             direction = turn_right(direction);
             break;
         default:
@@ -268,17 +283,17 @@ void SnakeGame::eat(Point& where_to_eat, FoodType what_to_eat)
 
 void SnakeGame::speed_up()
 {
-    if (current_speed < MAX_SPEED)
+    if (current_speed > 0)
     {
-        current_speed++;
+        current_speed--;
     }
 }
 
 void SnakeGame::slow_down()
 {
-    if (current_speed > 0)
+    if (current_speed <= MAX_SPEED)
     {
-        current_speed--;
+        current_speed++;
     }
 }
 
@@ -454,7 +469,17 @@ void SnakeGame::place_snake(uint8_t start_x, uint8_t start_y, uint8_t length)
 
 void SnakeGame::place_walls()
 {
-//    place_wall<12, 8>(10, 4, &Walls::TUNNEL);
+    switch (game_state.wall)
+    {
+    case Wall::TUNNEL:
+        place_wall<12, 8>(10, 4, &Walls::TUNNEL);
+        break;
+    case Wall::CROSS:
+        place_wall<8, 8>(12, 4, &Walls::CROSS);
+        break;
+    default:
+        break;
+    }
 }
 
 void SnakeGame::draw()
@@ -472,10 +497,10 @@ void SnakeGame::draw()
                switch(data & MASK_FIELD_TYPE)
                {
                case TRASH:
-                   color = TRASH_COLOR;
+                   color = game_state.snake_dead_color;
                    break;
                default:
-                   color = state.field_color;
+                   color = game_state.field_color;
                    break;
                }
                break;
@@ -484,10 +509,10 @@ void SnakeGame::draw()
                {
                case SnakePart::BODY:
                case SnakePart::TAIL:
-                   color = state.snake_body_color;
+                   color = game_state.snake_body_color;
                    break;
                case SnakePart::HEAD:
-                   color = state.snake_head_color;
+                   color = game_state.snake_head_color;
                    break;
                    break;
                default:
@@ -498,20 +523,20 @@ void SnakeGame::draw()
                switch (data & MASK_FOOD_TYPE)
                {
                case INCREMENT:
-                   color = FOOD_INCREMENT_COLOR;
+                   color = game_state.food_increment_color;
                    break;
                case DECREMENT:
-                   color = FOOD_DECREMENT_COLOR;
+                   color = game_state.food_decrement_color;
                    break;
                case SPEED_UP:
-                  color = FOOD_SPEED_UP_COLOR;
+                  color = game_state.food_speed_up_color;
                   break;
                case SLOW_DOWN:
-                  color = FOOD_SPEED_DOWN_COLOR;
+                  color = game_state.food_speed_down_color;
                }
                break;
            case Type::WALL:
-               color = WALL_COLOR;
+               color = game_state.wall_color;
                break;
            default:
                break;

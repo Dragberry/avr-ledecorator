@@ -42,4 +42,11 @@
     <string name="field_color">Field Color</string>
     <string name="snake_body_color">Body Color</string>
     <string name="snake_head_color">Head Color</string>
+    <string name="food_increment_color">Inc Color</string>
+    <string name="food_decrement_color">Dec Color</string>
+    <string name="wall_color">Wall Color</string>
+    <string name="wall">Wall</string>
+    <string name="food_speed_down_color">Speed Down Color</string>
+    <string name="food_speed_up_color">Speed Up Color</string>
+    <string name="snake_dead_color">Dead Color</string>
 </resources>

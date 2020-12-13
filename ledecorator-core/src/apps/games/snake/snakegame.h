@@ -13,48 +13,49 @@ class SnakeGame :
 {
 public:
 private:
-    static const uint8_t TICKS_PER_SECOND = 4;
+    static const uint8_t TICKS_PER_SECOND = 25;
 
     enum Mode : char
     {
         AUTO      = 'A',
         MANUAL    = 'M',
-        SAVE      = 'S',
-        LOAD      = 'L',
     };
 
-    enum Command : char
+    enum ManualCommand : char
     {
         IDLE         = 'I',
         MOVE_LEFT    = 'L',
         MOVE_RIGHT   = 'R',
     };
 
+    enum Wall : uint8_t
+    {
+        NO      = 0,
+        CROSS   = 1,
+        TUNNEL  = 2,
+    };
+
     struct StoredState
     {
-       uint16_t time_to_live = 30 * TICKS_PER_SECOND;
-       Color field_color = GREEN;
-       Color snake_head_color = YELLOW;
-       Color snake_body_color = WHITE;
-       Color snake_dead_color = TRASH_COLOR;
-       uint8_t speed = 10;
+        uint16_t time_to_live = 30 * TICKS_PER_SECOND;
+        Color field_color = 0b00000100;
+        Color snake_head_color = YELLOW;
+        Color snake_body_color = WHITE;
+        Color snake_dead_color = 0b00010101;
+        Color food_increment_color = RED;
+        Color food_decrement_color = BLUE;
+        Color food_speed_up_color = MAGENTA;
+        Color food_speed_down_color = 0b00010011;
+        Color wall_color = 0b00010000;
+        Wall wall = Wall::NO;
+        uint8_t speed = 10;
     };
 
     static const StoredState EEMEM STORED_STATE;
 
-    StoredState state;
-
-    bool load_requested = false;
+    StoredState game_state;
 
     uint8_t period = 0;
-
-    static const uint8_t TRASH_COLOR        = 0b00010101;
-    static const uint8_t WALL_COLOR         = 0b00010000;
-
-    static const uint8_t FOOD_INCREMENT_COLOR   = RED;
-    static const uint8_t FOOD_DECREMENT_COLOR   = BLUE;
-    static const uint8_t FOOD_SPEED_UP_COLOR    = MAGENTA;
-    static const uint8_t FOOD_SPEED_DOWN_COLOR  = 0b00010011;
 
     static const uint8_t MASK_TYPE = 0b00000011;
 
@@ -106,14 +107,16 @@ private:
         SLOW_DOWN   = 0b00001100,
     };
 
-    const static uint8_t MAX_SPEED = 40;
-    const static uint8_t MIN_SPEED = 1;
+    const static uint8_t MAX_SPEED = 1;
+    const static uint8_t MIN_SPEED = 40;
 
     uint8_t steps = 0;
 
-    uint8_t current_speed = 20;
+    uint8_t current_speed = MIN_SPEED;
 
     volatile bool is_step_required;
+
+    volatile bool load_requested = false;
 
     uint8_t field[SCREEN_HEIGHT][SCREEN_WIDTH];
 

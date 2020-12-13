@@ -2,15 +2,29 @@ package org.dragberry.ledecorator.bluetooth
 
 import java.lang.StringBuilder
 import org.dragberry.ledecorator.apps.life.LifeGameFragment
+import org.dragberry.ledecorator.apps.snake.SnakeGameFragment
 
 class Commands {
     enum class App(code: Char, private val logger: (sb: StringBuilder, data: ByteArray) -> Unit) {
         IDLE('I', { _, _ -> }),
         SNAKE('S', { sb , data ->
             sb.append("\tTime:\t${BleUtils.uint16(data[2], data[3])}\n")
-            sb.append("\tHead:\t[X=${data[4]};Y=${data[5]}]\n")
-            sb.append("\tTail:\t[X=${data[6]};Y=${data[7]}]\n")
-            sb.append("\tSpeed:\t${data[8]}")
+            when (data[4]) {
+                System.LOAD.code -> {
+                    sb.append("\tTTL:\t${BleUtils.uint16(data[5], data[6])}\n")
+                    sb.append("\tField color:\t${data[7]}\n")
+                    sb.append("\tHead color:\t${data[8]}\n")
+                    sb.append("\tBody color:\t${data[9]}\n")
+                    sb.append("\tDead color:\t${data[10]}\n")
+                    sb.append("\tSpeed:\t${data[11]}\n")
+                }
+                System.EMPTY.code -> {
+                    sb.append("\tMode:\t${SnakeGameFragment.Mode.valueOf(data[5])}\n")
+                    sb.append("\tHead:\t[X=${data[6]};Y=${data[7]}]\n")
+                    sb.append("\tTail:\t[X=${data[8]};Y=${data[9]}]\n")
+                    sb.append("\tSpeed:\t${data[10]}")
+                }
+            }
         }),
         WEATHER('W', { sb , data ->
             sb.append("\tTime:\t${BleUtils.uint16(data[2], data[3])}\n")
@@ -25,14 +39,24 @@ class Commands {
         }),
         LIFE('L', { sb , data ->
             sb.append("\tTime:\t${BleUtils.uint16(data[2], data[3])}\n")
-            sb.append("\tSteps:\t${BleUtils.uint16(data[4], data[5])}\n")
-            sb.append("\tCommand:\t${data[6]}\n")
-            sb.append("\tColor Live:\t${data[7]}\n")
-            sb.append("\tColor Dead:\t${data[8]}\n")
-            sb.append("\tMode:\t${LifeGameFragment.Mode.values()[data[9].toInt()]}\n")
-            sb.append("\tScript:\t${LifeGameFragment.Script.values()[data[10].toInt()]}\n")
-            sb.append("\tTTL:\t${BleUtils.uint16(data[11], data[12])}\n")
-            sb.append("\tSpeed:\t${data[13]}\n")
+            when (data[4]) {
+                System.LOAD.code -> {
+                    sb.append("\tTTL:\t${BleUtils.uint16(data[5], data[6])}\n")
+                    sb.append("\tLife color:\t${data[7]}\n")
+                    sb.append("\tDead color:\t${data[8]}\n")
+                    sb.append("\tMode:\t${data[9]}\n")
+                    sb.append("\tScript:\t${data[10]}\n")
+                    sb.append("\tSpeed:\t${data[11]}\n")
+                }
+                System.EMPTY.code -> {
+                    sb.append("\tLife color:\t${data[5]}\n")
+                    sb.append("\tDead color:\t${data[6]}\n")
+                    sb.append("\tMode:\t${LifeGameFragment.Mode.valueOf(data[7])}\n")
+                    sb.append("\tScript:\t${LifeGameFragment.Script.valueOf(data[8])}\n")
+                    sb.append("\tSpeed:\t${data[9]}\n")
+                    sb.append("\tSteps:\t${BleUtils.uint16(data[10], data[11])}\n")
+                }
+            }
         }),
         SANDBOX('B', {sb, data ->
             sb.append("\tTime:\t${BleUtils.uint16(data[2], data[3])}\n")
@@ -74,7 +98,8 @@ class Commands {
         FINITE('F'),
         RESTART('R'),
         LOAD('L'),
-        SAVE('S');
+        SAVE('S'),
+        EMPTY('E');
 
         val code: Byte = code.toByte()
 

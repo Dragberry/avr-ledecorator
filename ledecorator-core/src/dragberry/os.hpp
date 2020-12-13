@@ -37,6 +37,9 @@ public:
     static const char COMMAND_RESTART = 'R';
     static const char COMMAND_LOAD = 'L';
     static const char COMMAND_SAVE = 'S';
+    static const char COMMAND_EMPTY = 'E';
+
+    static const uint8_t TIMER_FREQ = 100;
 
 private:
     static volatile uint16_t time;

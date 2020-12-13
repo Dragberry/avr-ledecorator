@@ -54,8 +54,8 @@ class SnakeGameManualFragment : AbstractAppFragment(TAG) {
                     0 -> Commands.Frame.START.code
                     1 -> Commands.App.SNAKE.code
                     2 -> Commands.System.INFINITE.code
-                    3 -> SnakeGameFragment.Mode.MANUAL.value
-                    4 -> action.value
+                    4 -> SnakeGameFragment.Mode.MANUAL.value
+                    5 -> action.value
                     19 -> Commands.Frame.END.code
                     else -> 0
                 }
@@ -66,8 +66,8 @@ class SnakeGameManualFragment : AbstractAppFragment(TAG) {
                     0 -> Commands.Frame.START.code
                     1 -> Commands.App.SNAKE.code
                     2 -> Commands.System.INFINITE.code
-                    3 -> SnakeGameFragment.Mode.MANUAL.value
-                    4 -> Action.NO_ACTION.value
+                    4 -> SnakeGameFragment.Mode.MANUAL.value
+                    5 -> Action.NO_ACTION.value
                     19 -> Commands.Frame.END.code
                     else -> 0
                 }

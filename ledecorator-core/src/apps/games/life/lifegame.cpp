@@ -8,16 +8,16 @@ const LifeGame::StoredState EEMEM LifeGame::STORED_STATE = LifeGame::StoredState
 
 LifeGame::LifeGame()
 {
-    eeprom_read_block((void*) &state, (const void*) &STORED_STATE, sizeof(state));
-    time_to_live = state.time_to_live;
+    eeprom_read_block((void*) &game_state, (const void*) &STORED_STATE, sizeof(STORED_STATE));
+    time_to_live = game_state.time_to_live;
     alive_indicator = ALIVE_INDICATOR_01;
-    switch (state.mode)
+    switch (game_state.mode)
     {
     case Mode::RANDOM:
         script = (Script) (rand() % TOTAL_SCRIPTS);
         break;
     default:
-        script = state.script;
+        script = game_state.script;
         break;
     }
 
@@ -49,15 +49,15 @@ LifeGame::LifeGame()
 
 LifeGame::~LifeGame()
 {
-    if (state.mode == Mode::CAROUSEL)
+    if (game_state.mode == Mode::CAROUSEL)
     {
-        uint8_t script = state.script;
+        uint8_t script = game_state.script;
         if (++script == TOTAL_SCRIPTS)
         {
            script = Script::RANDOM_SEA;
         }
-        state.script = (Script) script;
-        eeprom_update_block((const void*) &state, (void*) &STORED_STATE, sizeof(STORED_STATE));
+        game_state.script = (Script) script;
+        eeprom_update_block((const void*) &game_state, (void*) &STORED_STATE, sizeof(STORED_STATE));
     }
 }
 
@@ -78,7 +78,7 @@ void LifeGame::build_scene()
 	{
 		for (uint8_t cell = 0; cell < SCREEN_WIDTH; cell++)
 		{
-			Color color = field[row][cell] & alive_indicator ? state.color_life : state.color_dead;
+			Color color = field[row][cell] & alive_indicator ? game_state.color_life : game_state.color_dead;
 			dragberry::os::display::set_pixel(row, cell, color);
 		}
 	}
@@ -163,14 +163,14 @@ void LifeGame::step_up()
 void LifeGame::on_timer_event()
 {
 	increment_time();
-	if (time % state.speed == 0) {
+	if (time % game_state.speed == 0) {
 	    is_step_required = true;
 	}
 }
 
 void LifeGame::run()
 {
-    System::register_timer(this, TICKS_PER_SECOND);
+    System::register_timer(this, System::TIMER_FREQ / TICKS_PER_SECOND);
     is_step_required = true;
     dragberry::os::display::clear_screen(BLACK);
     dragberry::os::display::update_assured();
@@ -181,41 +181,48 @@ void LifeGame::run()
             System::io::exchange(
                 [&](char* frame) -> void
                 {
-                    if (load_requested) {
-                        eeprom_read_block((void*) &state, (const void*) &STORED_STATE, sizeof(state));
-                    }
                     frame[1] = System::APP_LIFE;
                     System::io::decompose(time, 2);
-                    System::io::decompose(steps, 4);
-                    frame[6] = load_requested ? Command::LOAD : Command::IDLE;
-                    frame[7] = state.color_life;
-                    frame[8] = state.color_dead;
-                    frame[9] = state.mode;
-                    frame[10] = script;
-                    System::io::decompose(state.time_to_live / TICKS_PER_SECOND, 11);
-                    frame[13] = state.speed;
-                    load_requested = false;
+                    if (load_requested)
+                    {
+                        eeprom_read_block((void*) &game_state, (const void*) &STORED_STATE, sizeof(STORED_STATE));
+                        frame[4] = System::COMMAND_LOAD;
+                        System::io::decompose(game_state.time_to_live / TICKS_PER_SECOND, 5);
+                        frame[7] = game_state.color_life;
+                        frame[8] = game_state.color_dead;
+                        frame[9] = game_state.mode;
+                        frame[10] = script;
+                        frame[11] = game_state.speed;
+                        load_requested = false;
+                    }
+                    else
+                    {
+                        frame[4] = System::COMMAND_EMPTY;
+                        frame[5] = game_state.color_life;
+                        frame[6] = game_state.color_dead;
+                        frame[7] = game_state.mode;
+                        frame[8] = script;
+                        frame[9] = game_state.speed;
+                        System::io::decompose(steps, 10);
+                    }
                 },
                 [&](char* frame) -> void {
                     switch (frame[3])
                     {
-                    case Command::SAVE:
-                        {
-                            state.color_life = frame[4];
-                            state.color_dead = frame[5];
-                            state.mode = (Mode) frame[6];
-                            state.script = (Script) frame[7];
-                            System::io::compose(state.time_to_live, 8);
-                            state.time_to_live *= TICKS_PER_SECOND;
-                            state.speed = frame[10];
-                            eeprom_update_block((const void*) &state, (void*) &STORED_STATE, sizeof(STORED_STATE));
-                            break;
-                        }
-                    case Command::LOAD:
-                        {
-                            load_requested = true;
-                            break;
-                        }
+                    case System::COMMAND_LOAD:
+                        load_requested = true;
+                        break;
+                    case System::COMMAND_SAVE:
+                        System::io::compose(game_state.time_to_live, 4);
+                        game_state.time_to_live *= TICKS_PER_SECOND;
+                        game_state.color_life = frame[6];
+                        game_state.color_dead = frame[7];
+                        game_state.mode = (Mode) frame[8];
+                        game_state.script = (Script) frame[9];
+                        game_state.speed = frame[10];
+                        eeprom_update_block((const void*) &game_state, (void*) &STORED_STATE, sizeof(STORED_STATE));
+                        load_requested = true;
+                        break;
                     default:
                         break;
                     }

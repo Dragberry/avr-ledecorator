@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.Switch
 import org.dragberry.ledecorator.R
 import org.dragberry.ledecorator.apps.AbstractAppFragment
-import org.dragberry.ledecorator.bluetooth.Commands.*
+import org.dragberry.ledecorator.bluetooth.Commands
 
 private const val TAG = "SnakeGameFragment"
 
@@ -19,9 +19,11 @@ class SnakeGameFragment : AbstractAppFragment(TAG) {
 
     enum class Mode(val value: Byte) {
         AUTO('A'.toByte()),
-        MANUAL('M'.toByte()),
-        SAVE('S'.toByte()),
-        LOAD('L'.toByte())
+        MANUAL('M'.toByte());
+
+        companion object {
+            fun valueOf(code: Byte): Mode = values().find { it.value == code } ?: AUTO
+        }
     }
 
     @Volatile
@@ -75,20 +77,6 @@ class SnakeGameFragment : AbstractAppFragment(TAG) {
     }
 
     override fun onDataFrame(bytes: ByteArray): ByteArray {
-        return SNAKE_IDLE
-    }
-
-    companion object {
-        @JvmStatic
-        val SNAKE_IDLE = ByteArray(20) {
-            when (it) {
-                0 -> Frame.START.code
-                1 -> App.SNAKE.code
-                2 -> System.INFINITE.code
-                3 -> Mode.AUTO.value
-                19 -> Frame.END.code
-                else -> 0
-            }
-        }
+        return Commands.App.SNAKE.frame
     }
 }

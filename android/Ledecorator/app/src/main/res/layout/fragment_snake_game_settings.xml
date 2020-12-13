@@ -102,9 +102,135 @@
                         android:layout_weight="0.33"
                         android:layout_marginVertical="3dp"
                         android:layout_marginHorizontal="20dp"
-                        android:text="@string/snake_body_color" />
+                        android:text="@string/snake_dead_color" />
                     <Button
                         android:id="@+id/snakeGameSettingsSnakeDeadColorButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.67"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        style="?android:attr/buttonBarButtonStyle" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/buttonBarButtonStyle">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        android:text="@string/food_increment_color" />
+                    <Button
+                        android:id="@+id/snakeGameSettingsFoodIncrementColorButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.67"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        style="?android:attr/buttonBarButtonStyle" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/buttonBarButtonStyle">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        android:text="@string/food_decrement_color" />
+                    <Button
+                        android:id="@+id/snakeGameSettingsFoodDecrementColorButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.67"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        style="?android:attr/buttonBarButtonStyle" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/buttonBarButtonStyle">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        android:text="@string/food_speed_up_color" />
+                    <Button
+                        android:id="@+id/snakeGameSettingsFoodSpeedUpColorButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.67"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        style="?android:attr/buttonBarButtonStyle" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/buttonBarButtonStyle">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        android:text="@string/food_speed_down_color" />
+                    <Button
+                        android:id="@+id/snakeGameSettingsFoodSpeedDownColorButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.67"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        style="?android:attr/buttonBarButtonStyle" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/buttonBarButtonStyle">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        android:text="@string/wall_color" />
+                    <Button
+                        android:id="@+id/snakeGameSettingsWallColorButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.67"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        style="?android:attr/buttonBarButtonStyle" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/buttonBarButtonStyle">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.33"
+                        android:layout_marginVertical="3dp"
+                        android:layout_marginHorizontal="20dp"
+                        android:text="@string/wall" />
+                    <Spinner
+                        android:id="@+id/snakeGameSettingsWallSelector"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.67"

@@ -34,28 +34,29 @@ class LifeGameFragment : AbstractAppFragment(TAG) {
     private lateinit var restartButton: Button
     private lateinit var loadButton: Button
 
-    enum class Action(val value: Byte) {
-        IDLE('I'.toByte()),
-        SAVE('S'.toByte()),
-        RESTART(Commands.System.RESTART.code),
-        LOAD('L'.toByte())
-    }
-
     enum class Mode(val value: Byte) {
         RANDOM(0.toByte()),
         CAROUSEL(1.toByte()),
-        CONSTANT(2.toByte())
+        CONSTANT(2.toByte());
+
+        companion object {
+            fun valueOf(code: Byte): Mode = values().find { it.value == code } ?: RANDOM
+        }
     }
 
     enum class Script(val value: Byte) {
         RANDOM_SEA(0.toByte()),
         SHIPS(1.toByte()),
         SHIPS_RANDOM(2.toByte()),
-        COPERHEAD(3.toByte()),
+        COPERHEAD(3.toByte());
+
+        companion object {
+            fun valueOf(code: Byte): Script = values().find { it.value == code } ?: RANDOM_SEA
+        }
     }
 
     @Volatile
-    private var action = Action.LOAD
+    private var action = Commands.System.EMPTY
 
     @Volatile
     private var liveColor = Colors.WHITE
@@ -178,21 +179,21 @@ class LifeGameFragment : AbstractAppFragment(TAG) {
 
             saveButton = findViewById<Button>(R.id.lifeGameSaveButton).apply {
                 setOnClickListener {
-                    action = Action.SAVE
+                    action = Commands.System.SAVE
                 }
             }
             restartButton = findViewById<Button>(R.id.lifeGameRestartButton).apply {
                 setOnClickListener {
-                    action = Action.RESTART
+                    action = Commands.System.RESTART
                 }
             }
             loadButton = findViewById<Button>(R.id.lifeGameLoadButton).apply {
                 setOnClickListener {
-                    action = Action.LOAD
+                    action = Commands.System.LOAD
                 }
             }
         }
-        action = Action.LOAD
+        action = Commands.System.LOAD
         return view
     }
 
@@ -211,65 +212,63 @@ class LifeGameFragment : AbstractAppFragment(TAG) {
     }
 
     override fun onDataFrame(bytes: ByteArray): ByteArray {
-        if (bytes[6] == Action.LOAD.value) {
+        if (bytes[4] == Commands.System.LOAD.code) {
+            timeToLive = BleUtils.uint16(bytes[5], bytes[6])
             liveColor = Colors.getByDisplay(bytes[7].toInt())
             deadColor = Colors.getByDisplay(bytes[8].toInt())
-            mode = Mode.values().first { it.value == bytes[9] }
-            script = Script.values().first { it.value == bytes[10] }
+            mode = Mode.valueOf(bytes[9])
+            script = Script.valueOf(bytes[10])
+            speed = bytes[11].toInt()
+            action = Commands.System.EMPTY
             handler?.apply {
                 obtainMessage(LOAD_COMPLETE).sendToTarget()
             }
-            timeToLive = BleUtils.uint16(bytes[11], bytes[12])
-            speed = bytes[13].toInt()
-            action = Action.IDLE
-            return Commands.App.LIFE.frame
         }
         return when (action) {
-            Action.RESTART -> ByteArray(20) {
+            Commands.System.RESTART -> ByteArray(20) {
                 when (it) {
                     0 -> Commands.Frame.START.code
                     1 -> Commands.App.LIFE.code
                     2 -> Commands.System.RESTART.code
                     19 -> Commands.Frame.END.code
                     else -> 0
-                }.also {
-                    action = Action.IDLE
                 }
             }
-            Action.SAVE -> ByteArray(20) {
+            Commands.System.SAVE -> ByteArray(20) {
                 when (it) {
                     0 -> Commands.Frame.START.code
                     1 -> Commands.App.LIFE.code
                     2 -> Commands.System.INFINITE.code
-                    3 -> Action.SAVE.value
-                    4 -> liveColor.display.toByte()
-                    5 -> deadColor.display.toByte()
-                    6 -> mode.value
-                    7 -> script.value
-                    8 -> BleUtils.byte0(timeToLive)
-                    9 -> BleUtils.byte1(timeToLive)
+                    3 -> Commands.System.SAVE.code
+                    4 -> BleUtils.byte0(timeToLive)
+                    5 -> BleUtils.byte1(timeToLive)
+                    6 -> liveColor.display.toByte()
+                    7 -> deadColor.display.toByte()
+                    8 -> mode.value
+                    9 -> script.value
                     10 -> speed.toByte()
                     19 -> Commands.Frame.END.code
                     else -> 0
-                }.also {
-                    action = Action.IDLE
                 }
             }
-            Action.LOAD -> ByteArray(20) {
-                when (it) {
-                    0 -> Commands.Frame.START.code
-                    1 -> Commands.App.LIFE.code
-                    2 -> Commands.System.INFINITE.code
-                    3 -> Action.LOAD.value
-                    19 -> Commands.Frame.END.code
-                    else -> 0
-                }.apply {
-                    action = Action.IDLE
-                }
-            }
+            Commands.System.LOAD -> LIFE_LOAD
             else -> Commands.App.LIFE.frame
+        }.also {
+            action = Commands.System.EMPTY
         }
     }
 
-
+    companion object {
+        @JvmStatic
+        val LIFE_LOAD = ByteArray(20) {
+            when (it) {
+                0 -> Commands.Frame.START.code
+                1 -> Commands.App.LIFE.code
+                2 -> Commands.System.INFINITE.code
+                3 -> Commands.System.LOAD.code
+                19 -> Commands.Frame.END.code
+                else -> 0
+            }
+        }
+    }
 }

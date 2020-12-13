@@ -17,13 +17,6 @@ class LifeGame :
 private:
     static const uint8_t TICKS_PER_SECOND = 10;
 
-    enum Command : char
-    {
-        IDLE      = 'I',
-        SAVE      = 'S',
-        LOAD      = 'L',
-    };
-
     enum Mode: uint8_t
     {
         RANDOM = 0,
@@ -56,7 +49,7 @@ private:
 
     static const StoredState EEMEM STORED_STATE;
 
-    StoredState state;
+    StoredState game_state;
 
 	uint8_t alive_indicator;
 
@@ -66,7 +59,7 @@ private:
 
 	volatile bool is_step_required;
 
-	bool load_requested = false;
+	volatile bool load_requested = false;
 
 public:
 	LifeGame();
