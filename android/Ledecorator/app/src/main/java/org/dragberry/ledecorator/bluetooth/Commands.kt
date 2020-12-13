@@ -34,8 +34,11 @@ class Commands {
         }),
         CLOCK('C', { sb , data ->
             sb.append("\tTime:\t${BleUtils.uint16(data[2], data[3])}\n")
-            sb.append("\t${data[4]}:${data[5]}:${data[6]} ${data[7]}/${data[8]}/${data[9]}")
-
+            when (data[4]) {
+                System.EMPTY.code -> {
+                    sb.append("\t${data[5]}:${data[6]}:${data[7]} ${data[8]}/${data[9]}/${data[10]}")
+                }
+            }
         }),
         LIFE('L', { sb , data ->
             sb.append("\tTime:\t${BleUtils.uint16(data[2], data[3])}\n")

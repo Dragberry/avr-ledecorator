@@ -33,22 +33,24 @@ private:
         NO      = 0,
         CROSS   = 1,
         TUNNEL  = 2,
+        BRIDGE  = 3,
+        RANDOM  = 127,
     };
 
     struct StoredState
     {
         uint16_t time_to_live = 30 * TICKS_PER_SECOND;
-        Color field_color = 0b00000100;
+        Color field_color = BLACK;
         Color snake_head_color = YELLOW;
         Color snake_body_color = WHITE;
         Color snake_dead_color = 0b00010101;
         Color food_increment_color = RED;
         Color food_decrement_color = BLUE;
         Color food_speed_up_color = MAGENTA;
-        Color food_speed_down_color = 0b00010011;
-        Color wall_color = 0b00010000;
-        Wall wall = Wall::NO;
-        uint8_t speed = 10;
+        Color food_speed_down_color = GREEN;
+        Color wall_color = 0b00000111;
+        Wall wall = Wall::RANDOM;
+        uint8_t speed = 3;
     };
 
     static const StoredState EEMEM STORED_STATE;
@@ -224,30 +226,10 @@ private:
 
     void draw();
 
-    template <uint8_t width, uint8_t height>
     void place_wall(
             const uint8_t start_x,
             const uint8_t start_y,
-            const BitMap<width * height>* data)
-    {
-        for (uint8_t y = 0; y < height; y++)
-        {
-            for (uint8_t x = 0; x < width; x++)
-            {
-                uint8_t real_y = start_y + y;
-                if (real_y > SCREEN_HEIGHT)
-                {
-                    real_y -=SCREEN_HEIGHT;
-                }
-                uint8_t real_x = start_x + x;
-                if (real_x > SCREEN_WIDTH)
-                {
-                    real_x -=SCREEN_WIDTH;
-                }
-                set(real_x, real_y, data->get_bit(x, y) ? Type::WALL : Type::FIELD);
-            }
-        }
-    }
+            const BitMap8x8* data);
 };
 
 #endif

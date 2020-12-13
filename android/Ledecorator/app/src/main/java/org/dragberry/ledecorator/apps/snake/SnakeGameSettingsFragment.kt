@@ -43,7 +43,9 @@ class SnakeGameSettingsFragment :  AbstractAppFragment(TAG) {
     enum class Wall(val value: Byte) {
         NO(0.toByte()),
         CROSS(1.toByte()),
-        TUNNEL(2.toByte());
+        TUNNEL(2.toByte()),
+        BRIDGE(3.toByte()),
+        RANDOM(127.toByte());
 
         companion object {
             fun valueOf(code: Byte): Wall = values().find { it.value == code } ?: NO
@@ -81,7 +83,7 @@ class SnakeGameSettingsFragment :  AbstractAppFragment(TAG) {
     private var wallColor = Colors.BLACK
 
     @Volatile
-    private var wall = Wall.NO
+    private var wall = Wall.RANDOM
 
     @Volatile
     private var timeToLive = 5

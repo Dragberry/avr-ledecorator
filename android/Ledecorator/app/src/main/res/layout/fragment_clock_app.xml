@@ -14,15 +14,154 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/clockAppUpdateButton"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/update"
+            app:layout_constraintTop_toTopOf="parent">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.33"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:text="@string/time_color" />
+                <Button
+                    android:id="@+id/clockAppTimeColorButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.67"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    style="?android:attr/buttonBarButtonStyle" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.33"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:text="@string/seconds_color" />
+                <Button
+                    android:id="@+id/clockAppSecondsColorButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.67"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    style="?android:attr/buttonBarButtonStyle" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.33"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:text="@string/date_color" />
+                <Button
+                    android:id="@+id/clockAppDateColorButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.67"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    style="?android:attr/buttonBarButtonStyle" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.33"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:text="@string/background" />
+                <Button
+                    android:id="@+id/clockAppBackgroundColorButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.67"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    style="?android:attr/buttonBarButtonStyle" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.33"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:text="@string/time_to_live" />
+                <EditText
+                    android:id="@+id/clockAppTimeToLiveEditView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.67"
+                    android:layout_marginVertical="3dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:inputType="numberSigned"
+                    style="?android:attr/buttonBarButtonStyle" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lifeGameControlsView"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            style="?android:attr/buttonBarStyle">
+
+            <Button
+                android:id="@+id/clockAppSaveButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="5dp"
+                android:text="@string/save"
+                style="?android:attr/buttonBarButtonStyle" />
+            <Button
+                android:id="@+id/clockAppSetTimeButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="5dp"
+                android:text="@string/set_time"
+                style="?android:attr/buttonBarButtonStyle" />
+
+            <Button
+                android:id="@+id/clockAppLoadButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="5dp"
+                android:text="@string/load"
+                style="?android:attr/buttonBarButtonStyle" />
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

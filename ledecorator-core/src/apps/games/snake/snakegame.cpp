@@ -54,6 +54,7 @@ bool SnakeGame::do_step()
         draw();
         dragberry::os::display::update_assured();
         steps++;
+        is_step_required = false;
     }
     return true;
 }
@@ -283,7 +284,7 @@ void SnakeGame::eat(Point& where_to_eat, FoodType what_to_eat)
 
 void SnakeGame::speed_up()
 {
-    if (current_speed > 0)
+    if (current_speed > MAX_SPEED)
     {
         current_speed--;
     }
@@ -291,7 +292,7 @@ void SnakeGame::speed_up()
 
 void SnakeGame::slow_down()
 {
-    if (current_speed <= MAX_SPEED)
+    if (current_speed <= MIN_SPEED)
     {
         current_speed++;
     }
@@ -469,18 +470,54 @@ void SnakeGame::place_snake(uint8_t start_x, uint8_t start_y, uint8_t length)
 
 void SnakeGame::place_walls()
 {
-    switch (game_state.wall)
+    Wall wall = game_state.wall;
+    if (wall == Wall::RANDOM)
+    {
+        wall = (Wall) (rand() % 4) ;
+    }
+    switch (wall)
     {
     case Wall::TUNNEL:
-        place_wall<12, 8>(10, 4, &Walls::TUNNEL);
+        place_wall(8, 4, &Walls::TUNNEL);
+        place_wall(16, 4, &Walls::TUNNEL);
         break;
     case Wall::CROSS:
-        place_wall<8, 8>(12, 4, &Walls::CROSS);
+        place_wall(8, 4, &Walls::CROSS);
+        place_wall(16, 4, &Walls::CROSS);
+        break;
+    case Wall::BRIDGE:
+        place_wall(12, 0, &Walls::BRIDGE_TOP);
+        place_wall(12, 8, &Walls::BRIDGE_BOTTOM);
         break;
     default:
         break;
     }
 }
+
+void SnakeGame::place_wall(
+            const uint8_t start_x,
+            const uint8_t start_y,
+            const BitMap8x8* data)
+{
+    for (uint8_t y = 0; y < 8; y++)
+    {
+        for (uint8_t x = 0; x < 8; x++)
+        {
+            uint8_t real_y = start_y + y;
+            if (real_y > SCREEN_HEIGHT)
+            {
+                real_y -=SCREEN_HEIGHT;
+            }
+            uint8_t real_x = start_x + x;
+            if (real_x > SCREEN_WIDTH)
+            {
+                real_x -=SCREEN_WIDTH;
+            }
+            set(real_x, real_y, data->get_bit(x, y) ? Type::WALL : Type::FIELD);
+        }
+    }
+}
+
 
 void SnakeGame::draw()
 {
