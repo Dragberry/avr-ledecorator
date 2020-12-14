@@ -4,6 +4,10 @@
 #include "../../data/font3x5.hpp"
 #include "../../data/font5x7.hpp"
 
+
+const ClockApp::StoredState EEMEM ClockApp::STORED_STATE = ClockApp::StoredState();
+
+
 ClockApp::ClockApp() :
         clock(DS1307::Clock(DS1307_ADDRESS,
                 I2C::device_read<DS1307::Status, DS1307::Status::OK, DS1307::Status::DEV_NOT_FOUND>,
@@ -17,20 +21,26 @@ ClockApp::ClockApp() :
         date_string_value{"--/--/--"},
         date_string(DrawableString3x5(0, 10, 32, 5))
 {
-    hh_mm_string.color = WHITE;
+    eeprom_read_block((void*) &app_state, (const void*) &STORED_STATE, sizeof(STORED_STATE));
+    time_to_live = app_state.time_to_live;
     hh_mm_string.set_string(hh_mm_string_value);
-
-    ss_string.color = RED;
     ss_string.set_string(ss_string_value);
-
-    date_string.color = YELLOW;
     date_string.set_string(date_string_value);
-
-    time_to_live = TIME_TO_LIVE;
+    set_colors();
 }
 
 ClockApp::~ClockApp()
 {
+}
+
+void ClockApp::set_colors()
+{
+    hh_mm_string.color = app_state.time_color;
+    hh_mm_string.bg_color = app_state.background_color;
+    ss_string.color = app_state.seconds_color;
+    ss_string.bg_color = app_state.background_color;
+    date_string.color = app_state.date_color;
+    date_string.bg_color = app_state.background_color;
 }
 
 void ClockApp::run()
@@ -57,17 +67,47 @@ void ClockApp::run()
                     {
                         frame[1] = System::APP_CLOCK;
                         System::io::decompose(time, 2);
-                        frame[4] = clock.hours();
-                        frame[5] = clock.minutes();
-                        frame[6] = clock.seconds();
-                        frame[7] = clock.days();
-                        frame[8] = clock.months();
-                        frame[9] = clock.years();
+                        if (load_requested)
+                        {
+                            eeprom_read_block((void*) &app_state, (const void*) &STORED_STATE, sizeof(STORED_STATE));
+                            frame[4] = System::COMMAND_LOAD;
+                            System::io::decompose(app_state.time_to_live / TICKS_PER_SECOND, 5);
+                            frame[7] = app_state.time_color;
+                            frame[8] = app_state.seconds_color;
+                            frame[9] = app_state.date_color;
+                            frame[10] = app_state.background_color;
+                            load_requested = false;
+                        }
+                        else
+                        {
+                            frame[4] = System::COMMAND_EMPTY;
+                            frame[5] = clock.hours();
+                            frame[6] = clock.minutes();
+                            frame[7] = clock.seconds();
+                            frame[8] = clock.days();
+                            frame[9] = clock.months();
+                            frame[10] = clock.years();
+                        }
                     },
                     [&](char* frame) -> void
                     {
-                        if (frame[3] == 'U')
+                        switch (frame[3])
                         {
+                        case System::COMMAND_LOAD:
+                            load_requested = true;
+                            break;
+                        case System::COMMAND_SAVE:
+                            System::io::compose(app_state.time_to_live, 4);
+                            app_state.time_to_live *= TICKS_PER_SECOND;
+                            app_state.time_color = frame[6];
+                            app_state.seconds_color = frame[7];
+                            app_state.date_color = frame[8];
+                            app_state.background_color = frame[9];
+                            set_colors();
+                            eeprom_update_block((const void*) &app_state, (void*) &STORED_STATE, sizeof(STORED_STATE));
+                            load_requested = true;
+                            break;
+                        case SET_TIME_COMMAND:
                             clock.hours(frame[4]);
                             clock.minutes(frame[5]);
                             clock.seconds(frame[6]);
@@ -76,6 +116,9 @@ void ClockApp::run()
                             clock.years(frame[9]);
                             clock.blink(true);
                             clock.update();
+                            break;
+                        default:
+                            break;
                         }
                     }
                 );
@@ -108,7 +151,7 @@ void ClockApp::run()
                 date_string.set_string(date_string_value);
             }
 
-            dragberry::os::display::clear_screen(BLACK);
+            dragberry::os::display::clear_screen(app_state.background_color);
             hh_mm_string.draw();
             ss_string.draw();
             date_string.draw();
